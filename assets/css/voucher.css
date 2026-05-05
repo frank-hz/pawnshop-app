@@ -1,0 +1,36 @@
+* {
+	box-sizing: border-box;
+
+}
+
+body {
+	font-family: 'DejaVu Sanss', sans-serif;
+	border: 1px solid #B9BEC1;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	font-size: 10px;
+}
+.titulo{
+	font-size: 1.4em;
+	/*letter-spacing: .5px;*/
+	font-weight: 400;
+	text-align: center;
+	padding: 0;
+	margin: 0;
+}
+.header{
+	width: 100%;
+	padding: 0 4px;
+}
+
+.tabla-v {
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	border: 1px solid #B9BEC1;
+}
+
+.font-bold {
+	font-weight: bold;
+}

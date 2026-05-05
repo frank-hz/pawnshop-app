@@ -1,0 +1,102 @@
+.inicioLayout {
+    width: 100%;
+    height: 100%;
+    padding: 1rem .6rem;
+}
+.inicioHeader {
+    padding-bottom: 5px;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    color: #1f3044;
+    overflow-x: hidden !important;
+}
+.inicioTitle h2 {
+    font-size: clamp(1.2rem, 1.3vw, 1.5rem);
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1rem;
+}
+.inicioTitle p {
+    padding: 0;
+    margin: 0;
+    line-height: 10px;
+    font-size: .9rem;
+    font-weight: 600;
+    color: #445378;
+}
+.inicioTitleButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+.inicioContent {
+    display: flex;
+    width: 100%;
+    gap: 5px;
+}
+.widgets {
+    width: 300px;
+}
+.widget-information h3 {
+    font-size: 1rem;
+    font-weight: 500;
+}
+.label-info {
+    padding: .1rem .8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.label-info span {
+    font-size: .9rem;
+    font-weight: 500;
+}
+.label-info h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+.label-info-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.label-info-card h2 {
+    order: 1;
+}
+.label-info-card span,
+.label-info-card p {
+    order: 2;
+}
+.records {
+    width: 100%;
+    overflow-x:auto;
+}
+.graphBalance {
+    min-width: 450px;
+}
+
+
+
+
+@media (min-width: 1024px) and (max-width: 1440px) {
+    .widgets {
+        width: 380px;
+    }
+}
+@media (max-width: 800px){
+    .inicioTitleButtons {
+        margin: 10px 0;
+    }
+    
+}
+@media (max-width: 600px){
+    .inicioContent {
+        flex-direction: column;
+    }
+    .widgets {
+        width: 100%;
+    }
+}

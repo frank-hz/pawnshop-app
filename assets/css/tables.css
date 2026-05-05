@@ -1,0 +1,350 @@
+:root {
+    /* Tablespace colors */
+    --tablespace_color: #193561;
+    --tablespace_border: rgba(208, 214, 220, .9);
+    --tablespace_border_cell: rgba(208, 214, 220, .7);
+    --tablespace_button_border: 142, 160, 184;
+    --tablespace_button_color: #193561;
+    --input_border: 143, 155, 163;
+
+
+
+    /* ModalTable colors */
+    --modaltable_border: rgba(208, 214, 220, .9);
+    --modaltable_border_cell: rgba(208, 214, 220, .7);
+    --modaltable_button_color: #193561;
+    --modaltable_button_border: 142, 160, 184;
+}
+
+
+/* TABLE SPACE */
+.tablespace {
+    position: relative;
+    margin: .5rem .3rem;
+    border: 1px solid var(--tablespace_border);
+    color: var(--tablespace_color);
+}
+.tablespace-header {
+    width: 100%;
+    border-bottom: 1px solid var(--tablespace_border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    padding: .8em 1rem;
+}
+.tablespace-title {
+    font-size: 1.3em;
+    font-weight: 800;
+    letter-spacing: .5px;    
+}
+.tablespace-title .fe {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-right: 0px !important;
+}
+.tablespace-options {
+    display: inline-flex;
+}
+.tablespace-option {
+    background: transparent;
+    border: none;
+    outline: none;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: .95rem;
+    margin: 0 2px;
+    padding: .5rem .6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    color: rgb(37, 88, 208);
+    transition: all .1s ease;
+}
+.tablespace-option:hover {
+    background: rgba(37, 88, 208, .15);
+}
+.tablespace-option:focus {
+    outline: none;
+}
+.tablespace-data {
+    border-top: 1px solid var(--tablespace_border);
+    overflow-x: auto;
+}
+.tablespace-data table {
+    width: 100%;
+    border-collapse: collapse;    
+    white-space: nowrap;
+}
+.tablespace-data table tbody {
+    width: 100%;
+}
+.tablespace-data table th,
+.tablespace-data table td {
+    border: 1px solid var(--tablespace_border_cell);
+    padding: .4rem .6rem;
+}
+.tablespace-data table th:first-child,
+.tablespace-data table td:first-child {
+    border-left: none;
+}
+.tablespace-data table th:last-child,
+.tablespace-data table td:last-child {
+    border-right: none;
+}
+.tablespace-data table tr:last-child td {
+    border-bottom: none;
+}
+.tablespace-data table th {
+    font-weight: 600;
+    font-size: .85rem;
+    border-top: none;
+}
+.tablespace-data table td {
+    font-weight: 500;
+    font-size: .95rem;
+    padding: .2rem .6rem;
+}
+.tablespace-data tbody tr:nth-child(odd) {
+    background-color: #ecf0f7;
+}
+.tablespace-button {
+    outline: none;
+    border: none;
+    text-decoration: none !important;
+    cursor: pointer;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;    
+    height: 38px;
+    padding: .4rem .6rem;
+    margin: 1px;
+    color: var(--tablespace_button_color) !important;
+    background: #fff;
+    border: 1px solid rgba(var(--tablespace_button_border), .6);
+    border-radius: 6px;    
+    font-size: .85rem;
+    font-weight: 600;
+    transition: all .1s ease;
+
+    white-space: nowrap;
+    vertical-align: middle;
+    
+}
+.tablespace-button i,
+.tablespace-button span {
+    color: var(--tablespace_button_color);
+    font-size: 1rem;
+    pointer-events: none;
+    font-weight: 500;
+}
+.tablespace-button:focus {
+    outline: none;
+}
+.tablespace-button:hover {
+    border-color: rgba(var(--tablespace_button_border), 1);
+    background: rgba(var(--tablespace_button_border),.1);
+}
+.tablespace-filters {
+    /* padding: .3rem 1rem; */
+}
+.tablespace-filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;    
+    border-bottom: 1px solid var(--tablespace_border);
+    padding: .6rem 1rem;
+    flex-wrap: wrap;
+}
+.tablespace-filter-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+.tablespace-filter-search {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin: 1px;
+}
+.tablespace-filter-search .tablespace-search-input {
+    outline: none;
+    appearance: none;
+    width: 100%;
+    height: 38px;
+    min-width: 180px;
+    border-radius: 3px;
+    padding: .4rem .6rem;
+    border: 1px solid rgba(var(--input_border), .8);
+    padding-left: 26px;
+    font-size: .95rem;
+    color: #40494f;
+    transition: all .2s ease;
+}
+.tablespace-filter-search .tablespace-search-input:focus,
+.tablespace-filter-search .tablespace-search-input:hover {
+    border: 1px solid rgba(var(--input_border), 1);
+}
+.tablespace-filter-search .tablespace-search-input:focus {
+    border-color: rgba(31, 79, 255, .9);
+    box-shadow: rgba(31, 79, 255, 0.3) 0px 0px 0px 3px;
+}
+.tablespace-filter-search .filter-search-icon {
+    font-size: 1rem;
+    font-weight: 500;
+    position: absolute;
+    left: 0;
+    width: 25px;
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #5c6870;
+    pointer-events: none;
+}
+.tablespace-filter-search-right .tablespace-search-input {
+    padding-left: .4rem;
+    padding-right: 25px;
+}
+.tablespace-filter-search-right .filter-search-icon {
+    left: inherit;
+    right: 0;
+}
+.tablespace-body {
+    padding: .1rem;
+}
+.tablespace-filters-stash {
+    padding: .4rem .4rem;
+    padding-bottom: .3rem;
+}
+.tablespace-filters-title {
+    font-size: .9rem;
+    font-weight: 700;
+    letter-spacing: .2px;
+    display: block;
+    padding: .3rem 1rem;
+    margin-top: 4px;
+}
+.tablespace-filter-row {
+    display: flex;
+    align-items: center;
+    /* justify-content: space-between; */
+    gap: .4rem;
+}
+.tablespace-filters-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: .4rem .4rem;
+}
+.tablespace-filter-tag {
+    display: inline-flex;
+    text-align: center;
+    align-items: center;
+    font-size: .85rem;
+    font-weight: 600;
+    padding: .4rem .6rem;
+    height: 30px;
+    background: rgba(31, 79, 255, .2);
+    color: rgba(31, 79, 255, 1);
+    border-radius: 8px;
+    margin: 1px;
+}
+.tablespace-filter-tag-close {
+    text-decoration: none;
+    font-size: .7rem;
+    font-weight: 600;
+    margin-left: .5rem;
+}
+.tablespace-filter-tag-close:hover {
+    text-decoration: none;
+}
+.tablespace-filter-options {
+    display: flexs;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+
+@media screen and (max-width: 700px) {
+    .tablespace-header {
+        flex-direction: column;
+        height: auto;
+        padding: .2rem .6rem;
+    }
+    .tablespace-title {
+        font-size: 1.1em;
+        font-weight: 800;
+        letter-spacing: .1px;    
+    }
+    .tablespace-filter-row .form-group {
+        width: 100%;
+    }
+}
+
+
+
+
+
+
+
+/* MODAL TABLE */
+.modal-table {
+    border-top: 1px solid var(--modaltable_border);
+    overflow-x: auto;
+}
+.modal-table table {
+    width: 100%;
+    border-collapse: collapse;    
+    white-space: nowrap;
+}
+.modal-table table  tbody {
+    width: 100%;
+}
+.modal-table table th,
+.modal-table table td {
+    border-bottom: 1px solid var(--modaltable_border_cell);
+    padding: .4rem .6rem;
+}
+.modal-table table th:first-child,
+.modal-table table td:first-child {
+    border-left: none;
+}
+.modal-table-button {
+    outline: none;
+    border: none;
+    text-decoration: none !important;
+    cursor: pointer;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;    
+    height: 36px;
+    padding: .35rem .6rem;
+    margin: 1px;
+    color: var(--modaltable_button_color) !important;
+    background: #fff;
+    border: 1px solid rgba(var(--modaltable_button_border), .6);
+    border-radius: 6px;    
+    font-size: .85rem;
+    font-weight: 600;
+    transition: all .1s ease;
+}
+.modal-table-button i,
+.modal-table-button span {
+    color: var(--modaltable_button_color);
+    font-size: 1rem;
+}
+.modal-table-button:focus {
+    outline: none;
+}
+.modal-table-button:hover {
+    border-color: rgba(var(--modaltable_button_border), 1);
+    background: rgba(var(--modaltable_button_border),.1);
+}
+
+.table-wrap td {
+    text-wrap: wrap;
+}
+.tablespace-border-input {
+    border-color: rgba(var(--input_border), .8) !important;
+}

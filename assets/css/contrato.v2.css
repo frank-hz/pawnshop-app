@@ -1,0 +1,71 @@
+*{
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+
+}
+
+.contrato {
+	width: 100%;
+	max-height: 1110px;
+	/*height: 100%;*/
+	/*position: relative;*/
+	/*border-collapse: collapse;*/
+}
+
+.header{
+	width: 100%;
+	height: 60px;
+	
+	font-family: 'DejaVu Sans', serif;
+}
+.header .logo {
+	width: 30%;
+	text-align: center;
+}
+.logo img {
+	width: 130px;
+}
+.header .wsp {
+	width: 30%;
+	text-align: center;
+}
+.wsp h5{
+	/*font-weight: bold;*/
+	font-size: 14px;
+}
+.header .codigo{
+	width: 30%;
+	text-align: center;
+}
+
+.title{
+	width: 100%;
+	border: 1px solid red;
+	text-align: center;
+	font-family: 'DejaVu Sans', serif;
+	/*border-bottom: 1px solid red;*/
+}
+.title h4{
+	font-size: 21px;
+}
+
+.sub{
+	font-family: 'DejaVu Sans', serif;
+	width: 100%;
+}
+.sub .liquida{
+	width: 30%;
+	padding-left: 10px;
+	padding-right: 4px;
+	/*font-weight: bold;*/
+	;
+}
+.liquida h5{
+	font-size: 14px
+	font-weight: 300;
+}
+
+.sub .fecha{
+	width: 30%;
+}

@@ -1,0 +1,538 @@
+<?php 
+    class AnalisisRestModel extends CI_Model{   
+        
+        public $idsuc;
+        function __construct(){
+            $this->idsuc = $this->session->userdata('pres_ses_sucursal');
+        }
+        function get_line_time(){
+			$sql = "
+				SELECT 
+					DISTINCT YEAR(pag_fecha) as value  
+				FROM pago  
+				INNER JOIN credito ON cred_codigo = pag_credito 
+				WHERE 
+					cred_sucursal = ?
+			";
+			$res = $this->db->query($sql, [$this->idsuc]);
+			return $res->result();
+		}
+        function get_rango_fecha_sucursal(){
+			$sql = "
+				SELECT 
+					MIN(DATE(cred_create_at)) AS inicio,
+					MAX(DATE(cred_create_at)) AS final 
+				FROM credito
+				WHERE 
+					cred_sucursal = ? AND  
+					DATE(cred_create_at) != 0000-00-00
+			";
+			$res = $this->db->query($sql, [ $this->idsuc ]);
+			return $res->row();
+		}
+        function get_credito_activo(){
+			$sql = "
+				SELECT COUNT(cred_monto) AS value FROM credito
+				WHERE 
+					cred_sucursal = ? AND
+					cred_estado = 'E'
+			";
+			$res = $this->db->query($sql, [ $this->idsuc ]);
+			return $res->row();
+		}
+        function get_dinero_activo(){
+			$sql = "
+				SELECT SUM(cred_monto) AS value FROM credito
+				WHERE 
+					cred_sucursal = ? AND
+					cred_estado = 'E'
+			";
+			$res = $this->db->query($sql, [ $this->idsuc ]);
+			return $res->row();
+		}
+        function get_all_credito_generado($data){
+			$array_attr = [];
+			$sql = "
+				SELECT 
+					c.cred_codigo as id,
+					c.cred_serie as serie,
+					c.cred_monto as monto,
+					'GEN' as tipo,
+					CONCAT(
+						cl.cli_nombres,' ',
+						cl.cli_paterno,' ',
+						cl.cli_materno
+					) as cliente_nombre,
+					IF (
+						c.cred_prenda > 0,
+						(SELECT pren_descripcion FROM prenda WHERE pren_codigo = c.cred_prenda),
+						'Sin Datos'
+					) as prenda_descripcion
+				FROM credito c
+				JOIN cliente cl ON cl.cli_codigo = c.cred_cliente 
+				WHERE 
+					(c.cred_estado = 'E' OR c.cred_estado = 'R') AND
+					c.cred_sucursal = ?
+			";
+			switch ($data->mode) {
+				case 'MES':
+					$sql .= "AND YEAR(c.cred_creacion) = ? AND MONTH(c.cred_creacion) = ?";
+					$array_attr = [$this->idsuc, $data->in_anio, $data->in_mes];
+					break;
+				
+				case 'ANIO':
+					$sql .= "AND YEAR(c.cred_creacion) = ?";
+					$array_attr = [$this->idsuc, $data->in_anio];
+					break;
+
+				case 'FECHA':
+					$sql .= "AND DATE(c.cred_creacion) = ?";
+					$array_attr = [$this->idsuc, $data->in_fecha];
+					break;
+
+				case 'FECHA_ACTUAL':
+					$sql .= "AND DATE(c.cred_creacion) = ?";
+					$array_attr = [$this->idsuc, date("Y-m-d")];
+					break;
+
+				case 'RANGO':
+					$sql .= "AND DATE(c.cred_creacion) BETWEEN ? AND ?";
+					$array_attr = [$this->idsuc, $data->in_rango_inicial, $data->in_rango_final];
+					break;
+				
+				case 'MES_ACTUAL':
+					$mesAC = date("m");
+					$anioAC = date("Y"); 
+					$sql .= "AND YEAR(c.cred_creacion) = ? AND MONTH(c.cred_creacion) = ?";
+					$array_attr = [$this->idsuc, $anioAC, $mesAC];
+					break;
+			}
+			$res = $this->db->query($sql, $array_attr);
+			return $res->result();
+		}
+		function get_all_credito_recuperado($data){			
+			$sql = "
+				SELECT 
+					c.cred_codigo as id,
+					c.cred_serie as serie,
+					c.cred_monto as monto,
+					'RECU' as tipo,
+					CONCAT(
+						cl.cli_nombres,' ',
+						cl.cli_paterno,' ',
+						cl.cli_materno
+					) as cliente_nombre,
+					IF (
+						c.cred_prenda > 0,
+						(SELECT pren_descripcion FROM prenda WHERE pren_codigo = c.cred_prenda),
+						'Sin Datos'
+					) as prenda_descripcion
+				FROM credito c 
+				JOIN cliente cl ON cl.cli_codigo = c.cred_cliente
+				WHERE 
+					cred_estado = 'R' AND
+					cred_sucursal = ?
+			";
+            $params = [$this->idsuc];
+			switch ($data->mode) {
+				case 'MES':
+					$sql .= "AND YEAR(c.cred_liquidacion) = ? AND MONTH(c.cred_liquidacion) = ?";
+                    array_push($params, $data->in_anio);
+                    array_push($params, $data->in_mes);
+					break;
+				
+				case 'ANIO':
+					$sql .= "AND YEAR(c.cred_liquidacion) = ?";
+                    array_push($params, $data->in_anio);
+					break;
+
+				case 'FECHA':
+					$sql .= "AND DATE(c.cred_liquidacion) = ?";
+                    array_push($params, $data->in_fecha);
+					break;
+
+				case 'FECHA_ACTUAL':
+
+					$sql .= "AND DATE(c.cred_liquidacion) = ?";
+                    array_push($params, date("Y-m-d"));
+					break;
+
+				case 'RANGO':
+					$sql .= "AND DATE(c.cred_liquidacion) BETWEEN ? AND ?";
+                    array_push($params, $data->in_rango_inicial);
+                    array_push($params, $data->in_rango_final);
+					break;
+				
+				case 'MES_ACTUAL':
+					$mesAC = date("m");
+					$anioAC = date("Y"); 
+					$sql .= "
+						AND YEAR(c.cred_liquidacion) = ? 
+						AND MONTH(c.cred_liquidacion) = ?
+					";
+                    array_push($params, $anioAC);
+                    array_push($params, $mesAC);
+					break;
+			}
+			$res = $this->db->query($sql, $params);
+			return $res->result();
+		}
+        function get_all_credito_rematado($data){			
+			$sql = "
+				SELECT 
+					c.cred_codigo as id,
+					c.cred_serie as serie,
+					c.cred_monto as monto,
+					'REM' as tipo,
+					CONCAT(
+						cl.cli_nombres,' ',
+						cl.cli_paterno,' ',
+						cl.cli_materno
+					) as cliente_nombre,
+					IF (
+						c.cred_prenda > 0,
+						(SELECT pren_descripcion FROM prenda WHERE pren_codigo = c.cred_prenda),
+						'Sin Datos'
+					) as prenda_descripcion
+				FROM credito c 
+				JOIN cliente cl ON cl.cli_codigo = c.cred_cliente 
+				WHERE 
+					c.cred_estado = 'A' AND
+					c.cred_sucursal = ?
+			";
+            $params = [$this->idsuc];
+			switch ($data->mode) {
+				case 'MES':
+					$sql .= "AND YEAR(c.cred_liquidacion) = ? AND MONTH(c.cred_liquidacion) = ?";
+                    array_push($params, $data->in_anio);
+                    array_push($params, $data->in_mes);
+					break;
+				
+				case 'ANIO':
+					$sql .= "AND YEAR(c.cred_liquidacion) = ?";
+                    array_push($params, $data->in_anio);
+					break;
+
+				case 'FECHA':
+					$sql .= "AND DATE(c.cred_liquidacion) = ?";
+                    array_push($params, $data->in_fecha);
+					break;
+
+				case 'FECHA_ACTUAL':
+					$sql .= "AND DATE(c.cred_liquidacion) = ?";
+                    array_push($params, date("Y-m-d"));
+					break;
+
+				case 'RANGO':
+					$sql .= "AND DATE(c.cred_liquidacion) BETWEEN ? AND ?";
+                    array_push($params, $data->in_rango_inicial);
+                    array_push($params, $data->in_rango_final);
+					break;
+				
+				case 'MES_ACTUAL':
+					$mesAC = date("m");
+					$anioAC = date("Y"); 
+					$sql .= "
+						AND YEAR(c.cred_liquidacion) = ? 
+						AND MONTH(c.cred_liquidacion) = ?
+					";
+                    array_push($params, $anioAC);
+                    array_push($params, $mesAC);
+					break;
+			}
+			$res = $this->db->query($sql, $params);
+			return $res->result();
+		}
+
+
+        function get_all_pagos($data){
+			$sql = "
+				SELECT 
+					pd.pdet_codigo as id,
+					pd.pdet_tipo as tipo,
+					pd.pdet_monto as monto,
+					p.pag_codigo as id_pago,
+					p.pag_serie as serie_pago,
+					c.cred_codigo as id_credito,
+					c.cred_serie as serie_credito,
+					IF(
+						c.cred_prenda > 0,
+						(SELECT pren_descripcion FROM prenda WHERE pren_codigo = c.cred_prenda),
+						'SIN GARANTIA'
+					) as 'prenda_descripcion',
+					CONCAT(
+						cl.cli_nombres,' ',
+						cl.cli_paterno,' ',
+						cl.cli_materno
+					) as cliente_nombre
+				FROM pago_detalle pd
+				INNER JOIN pago p ON pdet_pago = p.pag_codigo
+				INNER JOIN credito c ON p.pag_credito = c.cred_codigo  
+				INNER JOIN cliente cl ON cl.cli_codigo = c.cred_cliente
+				WHERE
+					(pd.pdet_tipo = 'CU' OR pd.pdet_tipo = 'MO') AND
+					c.cred_sucursal = ?
+			";
+            $params = [$this->idsuc];
+			switch ($data->mode) {
+				case 'MES':
+					$sql .= "AND YEAR(p.pag_fecha) = ? AND MONTH(p.pag_fecha) = ?";
+                    array_push($params, $data->in_anio);
+                    array_push($params, $data->in_mes);
+					break;
+				
+				case 'ANIO':
+					$sql .= "AND YEAR(p.pag_fecha) = ?";
+                    array_push($params, $data->in_anio);
+					break;
+
+				case 'FECHA':
+					$sql .= "AND DATE(p.pag_fecha) = ?";
+                    array_push($params, $data->in_fecha);
+					break;
+
+				case 'RANGO':
+					$sql .= "AND DATE(p.pag_fecha) BETWEEN ? AND ?";
+                    array_push($params, $data->in_rango_inicial);
+                    array_push($params, $data->in_rango_final);
+					break;
+				
+				case 'MES_ACTUAL':
+					$mesAC = date("m");
+					$anioAC = date("Y"); 
+					$sql .= "
+						AND YEAR(p.pag_fecha) = ? 
+						AND MONTH(p.pag_fecha) = ?
+					";
+                    array_push($params, $anioAC);
+                    array_push($params, $mesAC);
+					break;
+				case 'DIA_ACTUAL':
+					$da = date("Y-m-d");
+					$sql .= "AND DATE(p.pag_fecha) = ?";
+					array_push($params, $da);
+					break;
+			}
+			$res = $this->db->query($sql, $params);
+			return $res->result();
+		}
+		function get_all_descuentos($data){
+			$sql = "
+				SELECT 
+					p.pag_codigo as id_pago,
+					p.pag_serie as serie_pago,
+					c.cred_codigo as id_credito,
+					c.cred_serie as serie_credito,
+					p.pag_descuento as monto,
+					'DESC' as tipo,
+					IF(
+						c.cred_prenda > 0,
+						(SELECT pren_descripcion FROM prenda WHERE pren_codigo = c.cred_prenda),
+						'SIN GARANTIA'
+					) as 'prenda_descripcion',
+					CONCAT(
+						cl.cli_nombres,' ',
+						cl.cli_paterno,' ',
+						cl.cli_materno
+					) as cliente_nombre
+				FROM pago p
+				INNER JOIN credito c ON p.pag_credito = c.cred_codigo  
+				INNER JOIN cliente cl ON cl.cli_codigo = c.cred_cliente
+				WHERE
+					p.pag_descuento > 0 AND
+					c.cred_sucursal = ?
+			";
+            $params = [$this->idsuc];
+			switch ($data->mode) {
+				case 'MES':
+					$sql .= "AND YEAR(p.pag_fecha) = ? AND MONTH(p.pag_fecha) = ?";
+                    array_push($params, $data->in_anio);
+                    array_push($params, $data->in_mes);
+					break;
+				
+				case 'ANIO':
+					$sql .= "AND YEAR(p.pag_fecha) = ?";
+                    array_push($params, $data->in_anio);
+					break;
+
+				case 'FECHA':
+					$sql .= "AND DATE(p.pag_fecha) = ?";
+                    array_push($params, $data->in_fecha);
+					break;
+
+				case 'RANGO':
+					$sql .= "AND DATE(p.pag_fecha) BETWEEN ? AND ?";
+                    array_push($params, $data->in_rango_inicial);
+                    array_push($params, $data->in_rango_final);
+					break;
+				
+				case 'MES_ACTUAL':
+					$mesAC = date("m");
+					$anioAC = date("Y"); 
+					$sql .= "
+						AND YEAR(p.pag_fecha) = ? 
+						AND MONTH(p.pag_fecha) = ?
+					";
+                    array_push($params, $anioAC);
+                    array_push($params, $mesAC);
+					break;
+				case 'DIA_ACTUAL':
+					$da = date("Y-m-d");
+					$sql .= "AND DATE(p.pag_fecha) = ?";
+					array_push($params, $da);
+					break;
+				
+			}
+			$res = $this->db->query($sql, $params);
+			return $res->result();
+		}
+		function get_all_adicionales($data){
+			$sql = "
+				SELECT 
+					p.pag_codigo as id_pago,
+					c.cred_codigo as id_credito,
+					p.pag_adicional as monto,
+					'DESC' as tipo
+				FROM pago p 
+				INNER JOIN credito c ON p.pag_credito = c.cred_codigo  
+				WHERE
+					p.pag_adicional > 0 AND
+					c.cred_sucursal = ?
+			";
+            $params = [$this->idsuc];
+			switch ($data->mode) {
+				case 'MES':
+					$sql .= "AND YEAR(p.pag_fecha) = ? AND MONTH(p.pag_fecha) = ?";
+                    array_push($params, $data->in_anio);
+                    array_push($params, $data->in_mes);
+					break;
+				
+				case 'ANIO':
+					$sql .= "AND YEAR(p.pag_fecha) = ?";
+                    array_push($params, $data->in_anio);
+					break;
+
+				case 'FECHA':
+					$sql .= "AND DATE(p.pag_fecha) = ?";
+                    array_push($params, $data->in_fecha);
+					break;
+
+				case 'RANGO':
+					$sql .= "AND DATE(p.pag_fecha) BETWEEN ? AND ?";
+                    array_push($params, $data->in_rango_inicial);
+                    array_push($params, $data->in_rango_final);
+					break;
+				
+				case 'MES_ACTUAL':
+					$mesAC = date("m");
+					$anioAC = date("Y"); 
+					$sql .= "
+						AND YEAR(p.pag_fecha) = ? 
+						AND MONTH(p.pag_fecha) = ?
+					";
+                    array_push($params, $anioAC);
+                    array_push($params, $mesAC);
+					break;
+				case 'DIA_ACTUAL':
+					$da = date("Y-m-d");
+					$sql .= "AND DATE(p.pag_fecha) = ?";
+					array_push($params, $da);
+					break;
+				
+			}
+			$res = $this->db->query($sql, $params);
+			return $res->result();
+		}
+        function get_entradas_total($data){
+            $sql = "
+                SELECT 
+                    SUM(pag_total) AS total,
+                    COUNT(*) AS cantidad 
+                FROM pago 
+                INNER JOIN credito ON cred_codigo = pag_credito
+                WHERE 
+                    cred_sucursal = ? 
+            ";
+            $params = [$this->idsuc];
+            switch ($data->mode) {
+				case 'MES':
+					$sql .= "AND YEAR(pag_fecha) = ? AND MONTH(pag_fecha) = ?";
+					array_push($params, $data->in_anio);
+                    array_push($params, $data->in_mes);
+					break;
+				
+				case 'ANIO':
+					$sql .= "AND YEAR(pag_fecha) = ?";
+					array_push($params, $data->in_anio);
+					break;				
+
+				case 'FECHA':
+					$sql .= "AND DATE(pag_fecha) = ?";
+					array_push($params, $data->in_fecha);
+					break;
+
+				case 'RANGO':
+					$sql .= "AND DATE(pag_fecha) BETWEEN ? AND ?";
+					array_push($params, $data->in_rango_inicial);
+                    array_push($params, $data->in_rango_final);
+					break;
+					
+				case 'MES_ACTUAL':
+					$mesAC = date("m");
+					$anioAC = date("Y");
+					$sql .= "AND YEAR(pag_fecha) = ? AND MONTH(pag_fecha) = ?";
+					array_push($params, $anioAC);
+                    array_push($params, $mesAC);
+					break;
+			}
+			$res = $this->db->query($sql, $params);
+			return $res->row();
+        }        
+        function get_salidas_total($data){
+            $sql = "
+                SELECT 
+                    SUM(pag_descuento) AS total,
+                    COUNT(*) AS cantidad 
+                FROM pago 
+                INNER JOIN credito ON cred_codigo = pag_credito
+                WHERE 
+                    pag_descuento > 0 AND
+                    cred_sucursal = ? 
+            ";
+            $params = [$this->idsuc];
+            switch ($data->mode) {
+				case 'MES':
+					$sql .= "AND YEAR(pag_fecha) = ? AND MONTH(pag_fecha) = ?";
+					array_push($params, $data->in_anio);
+                    array_push($params, $data->in_mes);
+					break;
+				
+				case 'ANIO':
+					$sql .= "AND YEAR(pag_fecha) = ?";
+					array_push($params, $data->in_anio);
+					break;				
+
+				case 'FECHA':
+					$sql .= "AND DATE(pag_fecha) = ?";
+					array_push($params, $data->in_fecha);
+					break;
+
+				case 'RANGO':
+					$sql .= "AND DATE(pag_fecha) BETWEEN ? AND ?";
+					array_push($params, $data->in_rango_inicial);
+                    array_push($params, $data->in_rango_final);
+					break;
+					
+				case 'MES_ACTUAL':
+					$mesAC = date("m");
+					$anioAC = date("Y");
+					$sql .= "AND YEAR(pag_fecha) = ? AND MONTH(pag_fecha) = ?";
+					array_push($params, $anioAC);
+                    array_push($params, $mesAC);
+					break;
+			}
+			$res = $this->db->query($sql, $params);
+			return $res->row();
+        }
+
+    }

@@ -1,0 +1,1 @@
+<?php echo "current_db: ".$this->db->database; ?>

@@ -1,0 +1,235 @@
+:root {
+	--ok       : #42B883;
+	--error    : #C82641;
+	--aviso    : #FCC70A;
+	--activo   : #007BFF;
+
+	--blue     : #007EE5;
+	--blue2    : #1277BA;
+	--dark     : #2a363b;
+	--dark_v1  : #303F4E;
+	--dark_v2  : #2C3A47;
+	--dark_v3  : #35495E;
+	--red      : #E92C4C;
+	--borde_v1 : #E4E9EB;
+	--borde_v2 : #E3E4E8;
+	
+	--titulos  : #666B6E;
+	--texto    : #595d6e;
+
+	--ground_v1 : #ECECEC;
+}
+
+.load-overlay {
+  	visibility: hidden;
+  	display: flex;
+	position: fixed;
+	z-index: 9999;
+	left: 0;
+	top: 0;
+  	width: 100%;
+  	height: 100%;
+  	background-color: rgba(0,0,0,0.8); 
+  	width: 100%; 
+	height: 100%; 
+	overflow: auto;
+  	justify-content: center;
+  	align-items: center;
+  	/*transition: .3s all linear;*/
+
+  	-webkit-animation-name: slideIn; 
+  	-webkit-animation-duration: 0.4s;
+  	animation-name: slideIn;
+  	animation-duration: 0.4s
+}
+.box-view{
+	width: 30%;
+	background: #EBEEF3;
+	border-radius: 4px;
+	padding: 1.7em .5em;
+}
+.box-view .box-load{
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-content: center;
+}
+.box-load img {
+	width: 120px;
+}
+.box-mssg{
+	font-size: 1.2em;
+	text-align: center;
+	font-weight: bold;
+	margin-top: .2em; 
+}
+@media (max-width: 800px) {
+	
+	.box-view {
+		width: 95%;
+	}
+}
+
+
+.window {
+	width: 50%;
+	background: #fff;
+	border: 1px solid var(--borde_v1);
+	border-radius: 5px;
+	font-family: 'Roboto', Segoe ui;
+}
+.window-overlay {
+	position: fixed;
+	display: none;
+	z-index: 9999;
+	left: 0;
+	top: 0;
+  	width: 100%;
+  	height: 100%;
+  	background-color: rgba(0,0,0,0.4); 
+  	width: 100%; 
+	height: 100%; 
+	overflow: auto;
+  	justify-content: center;
+  	align-items: center;
+  	display: none;
+  	transition: .5s all linear;
+
+  	-webkit-animation-name: slideIn; 
+  	-webkit-animation-duration: 0.4s;
+  	animation-name: slideIn;
+  	animation-duration: 0.4s
+}
+.window {
+	width: 50%;
+	background: #fff;
+	border: 1px solid var(--borde_v1);
+	border-radius: 5px;
+	font-family: 'Roboto', Segoe ui;
+}
+.window .window-header {
+	font-family: 'Varela Round', sans-serif;
+	/*background: red;*/
+}
+.window-header h3 {
+	padding: .4em .2em;
+} 
+.window .window-content {
+	padding: 1em 2em;
+}
+.window-header .window-close {
+	display: block;
+	text-align: right;
+	cursor: pointer;
+	font-weight: 600;
+	padding: 5px 10px;
+	margin: 5px;
+	font-size: 1.2em; 
+	font-weight: bold;
+	color: #7E8B98;
+	transition: .3s all ease;
+	font-family: Segoe ui;
+}
+.window-header .window-close:hover {
+	color: #35495E;
+}
+.window-close:hover .window-content {
+	top: -100vh;
+}
+.window-header .window-title {
+	display: block;
+	font-weight: 600;
+	text-align: center;
+	font-size: 1.4em;
+	margin: 0;
+	letter-spacing: .4px;
+}
+.window-title  span, .window-title  i {
+	color: #007BFF;
+}
+
+.feed-red {
+	color: #E92C4C;
+	font-size: .8em;
+}
+
+
+
+@-webkit-keyframes slideIn {
+  from {bottom: -300px; opacity: 0} 
+  to {bottom: 0; opacity: 1}
+}
+
+@keyframes slideIn {
+  from {bottom: -300px; opacity: 0}
+  to {bottom: 0; opacity: 1}
+}
+
+@-webkit-keyframes fadeIn {
+  from {opacity: 0} 
+  to {opacity: 1}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0} 
+  to {opacity: 1}
+}
+
+
+
+/* TABLES */
+.tableset {
+	width: 100%;
+  	max-width: 100%;
+  	margin-bottom: 1rem;
+  	background-color: transparent;
+  	border-collapse: collapse;
+    border-color: grey;
+
+  	/*display: table;
+    border-collapse: separate;
+    border-spacing: 2px;*/
+}
+.tableset tr {
+	display: table-row;
+}
+/*.tableset thead{
+	background: #EBEEF3;
+	color: #fff;
+}
+.tableset thead th{
+	border-color: #0077C0;
+}*/
+.tableset td {
+	min-height: 2.5rem;
+    padding: .8125rem .5rem;
+    line-height: 1.5;
+    color: #444;
+    vertical-align: inherit;
+    /*font-size: .9rem;*/
+}
+
+.tableset th, .text-wrap table th,
+.tableset td,
+.text-wrap table td {
+	
+  	padding: 0.40rem;
+  	vertical-align: top;
+  	border-top: 1px solid #dee2e6;
+  	border-left: 1px solid #dee2e6;
+  	border-right: 1px solid #dee2e6;
+  	text-transform: uppercase;
+}
+
+.tableset thead th, .text-wrap table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.tableset tbody + tbody, .text-wrap table tbody + tbody {
+  border-top: 2px solid #dee2e6;
+}
+
+.tableset .tableset, .text-wrap table .table, .table .text-wrap table, .text-wrap .table table, .text-wrap table table {
+  background-color: #f5f7fb;
+}
