@@ -166,7 +166,6 @@
             }
         }
         if (ev.id === 'btn_delete') {
-            console.log(id_base)
             if (!id_base) not.Aviso('Credito no identificado','',1000);
             const aswer = await Swal.fire({
                 type: 'question',
@@ -183,7 +182,16 @@
                     try {
                         let del = await mdl_credito.delete(id_base);
                         if (del.code === 'OK'){
-                            not.Ok('Credito eliminado','',2000);
+                            // not.Ok('Credito eliminado','',2000);
+                            Swal.fire({
+                                title: "Eliminado correctamente!",
+                                text: "El registro se ha borrado.",
+                                // type: 'success',
+                                imageUrl: `${srv.url()}/assets/animation/delete.gif`,
+                                imageWidth: 75,
+                                imageHeight: 70,
+                                imageAlt: "Custom image"
+                            });
                             setTimeout(() => {
                                 window.location.href = srv.url()+'credito';
                             }, 350);

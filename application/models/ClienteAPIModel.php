@@ -39,7 +39,8 @@
 					cli_email as 'email',
 					cli_bloqueo_atencion as bloqueo_atencion,
 					cli_bloqueo_motivo as bloqueo_motivo,
-					cli_puntuacion as puntuacion			
+					cli_puntuacion as puntuacion,
+					(SELECT COUNT(*) FROM prenda p WHERE p.pren_cliente = cli_codigo) as prendas_cantidad
 				FROM cliente 
 				INNER JOIN ubigeo ON ubi_codigo = cli_ubigeo 
 				$query_search

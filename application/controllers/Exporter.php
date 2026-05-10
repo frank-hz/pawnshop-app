@@ -2,9 +2,8 @@
     class Exporter extends CI_Controller {
         function __construct(){
             parent::__construct();
-            $this->load->library("MYPDF_ANEXO");
+            // $this->load->library("MYPDF_ANEXO");
         }
-
 
         function exportAnexoPDF(){
             ob_start();
@@ -91,8 +90,7 @@
             $pdf->writeHTML($html, true, false, false, false, '');
             // Salida del archivo
             $pdf->Output('detalle_credito.pdf', 'I');
-        }
-        
+        }        
         function export2(){
             $this->load->library('Tcpdf');
             $html = $this->load->view("credito/anexo", [], TRUE);
@@ -117,7 +115,6 @@
             // Salida del PDF
             $pdf->Output('detalle_credito.pdf', 'I');
         }
-
         function export3(){
             $this->load->library('Dompdf_lib');
 
@@ -126,5 +123,26 @@
 
             // Generar PDF
             $this->dompdf_lib->generate($html, 'reporte.pdf', true);
+        }
+
+        function backup_db(){
+            $this->load->database();
+            $this->load->dbutil();
+            // $this->db->dbutil();            
+            $prefs = [
+                'format'     => 'zip',
+                'filename'   => 'backup_db.sql',
+                'add_drop'   => TRUE,
+                'add_insert' => TRUE,
+                'foreign_key_checks' => FALSE,
+                'newline'    => "\n" 
+            ];
+
+            $backup = $this->dbutil->backup($prefs);
+            $current_date = date("d-m-Y-H-i-s");
+            $nombre_archivo = "backup_{$current_date}.zip";
+            $this->load->helper('download');
+            force_download($nombre_archivo, $backup);
+
         }
     }

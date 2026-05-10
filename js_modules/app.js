@@ -58,6 +58,18 @@ class App {
         return form_data;
     }
 
+    deadTime(time_ = 1000){
+        return new Promise(resolve => setTimeout(resolve, time_));
+    }
+
+    // limita la cantidad de caracteres de un texto
+    shortText(string, setting = {}){
+        if (!string) return "No Data";
+        let limite = setting.limite ?? 30;
+        let simbol = setting.simbolo ?? "...";
+        return string.length > limite ?  string.slice(0, limite) + simbol : string;
+    }
+
     // Verifica si un valor es vacio, 
     // funcion equivalente al empty en PHP
     empty(value_){

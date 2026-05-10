@@ -11,7 +11,11 @@
 	<meta charset="UTF-8">
 	<title>Contrato de Credito</title>
 	<link rel="shortcut icon" type="image/png" href="<?= base_url() ?>assets/images/electrocash_favicon.png">
+	<script src="<?= base_url('assets/plugins/html2canvas.min.js') ?>"></script>
+	<script src="<?= base_url('assets/plugins/jspdf.umd.min.js') ?>"></script>
+	<link rel="stylesheet" href="<?= base_url() ?>assets/fonts/Poppins/poppins.css">
 	<link rel="stylesheet" href="<?= base_url() ?>assets/css/contrato.css">
+	<link href="<?= base_url() ?>assets/css/feather.css?v=050625" rel="stylesheet">
 </head>
 <body>
 <div class="flex">
@@ -450,14 +454,15 @@
 									<?php echo $credito->cuenta_numero; ?>
 								</td>
 							</tr>
-							<tr>
-								<td class="text-center" colspan="2">
-									Cualquier medio (Depósito/Transferencia/Pago en agente)
-								</td>
-							</tr>
+							
 						</tbody>
 					</table>
-					<p class="contrato-letras">Se deja constancia de que la prenda ha sido entregada a ELECTROCASH, en el estado descrito en el <br> presente documento, con el fin de avalar el prestamo otorgado. El solicitante, declara conocer <br> plenamente todos los terminos y condiciones que se detallan en el <b>Documento de Contrato</b>.</p>
+					<!-- <p class="contrato-letras">Se deja constancia de que la prenda ha sido entregada a ELECTROCASH, en el estado descrito en el <br> presente documento, con el fin de avalar el prestamo otorgado. El solicitante, declara conocer <br> plenamente todos los terminos y condiciones que se detallan en el <b>Documento de Contrato</b>.</p> -->
+					
+					<p class="contrato-letras">
+						La prenda ha sido entregada a ELECTROCASH en el estado descrito en el presente documento,<br> con el fin de avalar el préstamo otorgado. El solicitante declara bajo juramento ser el único<br> y legítimo propietario del bien entregado en garantía, asimismo, reconoce haber leído y<br> comprendido los términos y condiciones del <b>contrato suscrito</b>.
+					</p>
+
 				</div>
 				<div class="contrato-footer">
 					<div class="firma_empresa">

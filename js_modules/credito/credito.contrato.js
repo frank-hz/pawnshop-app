@@ -22,14 +22,60 @@
     })
     d.getElementById('btnExport')?.addEventListener('click', evt => {
         const target = evt.target;
-        generarPDF();
+        const nombre = target.dataset.nombre || "Contrato";
+        generatePdf("Contrato "+nombre);
 
-    })
+    });
     
 
-    function generarPDF(){
-        const element = d.getElementById('contrato');
-        html2pdf().from(element).save();
+    async function generatePdf(nombre_archivo){
+        try {
+            console.log('generando..');
+            const view = d.getElementById('contrato');
+            const clone = view.cloneNode(true);
+            clone.classList.add('export-style');
+            clone.style.overflow = "visible";
+            clone.style.maxHeight = "none";
+            clone.style.position = "absolute";
+            clone.style.padding = "40px";
+            clone.style.width = "794px";
+            clone.style.height = "1123px";
+            d.body.appendChild(clone);
+
+            const { jsPDF } = window.jspdf; 
+            const canvas = await html2canvas(clone, {
+                scale: 2,
+                useCORS: true
+            });
+            const img = canvas.toDataURL("image/png");
+            const pdf = new jsPDF({
+                orientation: "portrait",
+                unit: "mm",
+                format: "a4",
+                putOnlyUsedFonts:true
+            });
+            const page_width = pdf.internal.pageSize.getWidth();
+            const page_height = pdf.internal.pageSize.getHeight();
+            const img_width = page_width;
+            const img_height = (canvas.height * img_width) / canvas.width;
+
+            const scale = Math.max(page_width / canvas.width, page_height / canvas.height);
+
+            const img_w = canvas.width * scale;
+            const img_h = canvas.height * scale;
+
+            const offSetX = (page_width - img_w) / 2;
+            const offSetY = (page_height - img_h) / 2;
+
+
+
+            pdf.addImage(img, "PNG", offSetX, offSetY, img_w, img_h);
+            pdf.save(`${nombre_archivo}.pdf`);
+            
+            d.body.removeChild(clone);
+        } catch (error) {
+            console.log(error.message);
+        }
     }
 
 })(document, window);

@@ -59,6 +59,12 @@ $route['administrador/usuarios'] = 'admin/users/edgerunners';
 
 
 
+
+// Inicio
+$route["api/v1/inicio/creditos-activos"]['GET'] = "api/Inicio/get_creditos_activos";
+$route['api/v1/inicio/resumen-dia']['POST'] = "api/Inicio/get_resumen_dia";
+
+
 // NotasCredito
 $route['api/v1/credito-notas/getbycredito']['POST'] = 'NotaCredito/get_by_credito';
 $route['api/v1/credito-notas/getdata']['POST'] = 'NotaCredito/get_data';

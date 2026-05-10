@@ -43,11 +43,12 @@
 				'monto_recuperado' => (round($recuperado) * 100) / 100,
 				'monto_prestado' => (round($prestado) * 100) / 100,
 				'balance_total' => $balance,
-				'creditos_activos' => $this->InicioModel->creditosActivos() ?? [],
+				'creditos_activos' => $this->InicioModel->creditos_activos() ?? [],
 				'balance_semanal' => $this->obtenerBalanceSemanal()
 			);
-			$this->load->view("Layout/header-rw.php");
-			$this->load->view("Inicio/inicio.rework.php", $data);
+			$this->load->view("Layout/header.php");
+			// $this->load->view("Inicio/inicio.rework.php", $data);
+			$this->load->view("Inicio/inicio.php", $data);
 			$this->load->view("Layout/footer.php");
 		}
 		

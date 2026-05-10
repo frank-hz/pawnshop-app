@@ -685,6 +685,11 @@
                         </div>
                         `; 
                     }
+                    let prendas_cant = parseInt(e.prendas_cantidad, 10) || 0;
+                    let prendas_cant_format = prendas_cant > 0 && prendas_cant < 10 
+                        ? '0'+prendas_cant 
+                        : prendas_cant;
+
                     html += `
                         <div class="enc2454-icheck">
                             <input type="radio" name="cliente-item" id="chk${e.id}" data-id="${e.id}" data-nombre="${e.nombres} ${e.paterno} ${e.materno}" data-dir="${e.direccion}, ${e.distrito}" data-doc="${e.documento}" ${selected}>
@@ -697,7 +702,7 @@
                                         ${e.nombres} ${e.paterno} ${e.materno} 
                                     </div>
                                     <div class="enc2454-icheck-subtitle">
-                                    [${e.tipo_documento}: ${e.documento}] - ${e.direccion}, ${e.distrito} 
+                                    [${e.tipo_documento}: ${e.documento}] - [Prendas: ${prendas_cant_format}] - [Telf.: ${e.telefono}] 
                                     </div>
                                     ${blocked_label}
                                 </div>
