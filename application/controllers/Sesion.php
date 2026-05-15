@@ -14,23 +14,38 @@
 		}	
 		
 		// V I E W S
-
 		function login_form(){
 			if ($this->session->userdata('pres_ses_sesion')) {
 				redirect(base_url().'Inicio','refresh');
 			}
-			$view = 'login_view_1.php';
-			$config = $this->SystemConfigModel->get();
-			if (!empty($config) && $config->view_login){
-				$view = $config->view_login;
-			}			
-			$this->load->view("Sesion/" . $view);
-			// $this->load->view("Sesion/login_view_2.php");
+			// $view = 'login_view_1.php';
+			// $config = $this->SystemConfigModel->get();
+			// if (!empty($config) && $config->view_login){
+			// 	$view = $config->view_login;
+			// }			
+			// $this->load->view("Sesion/" . $view);
+			$this->load->view("Sesion/login.php");
 
 		}
-
 		function revision_screen(){
 			$this->load->view("system/revision_global.php");
+		}
+		function profile_view(){
+			$user_id = $this->session->userdata('usuario_id');
+			$user = $this->UsuarioModel->get_profile_data($user_id);
+			if (empty($user)) {
+				$data['titulo'] = 'Datos no encontrados';
+				$data['mensaje'] = 'No se encontraron datos personales del usuario';
+				$this->load->view("Layout/header.php");
+				$this->load->view("Error/no_found.php", $data);
+				$this->load->view("Layout/footer.php");
+				return;
+			}
+			$data['usuario'] = $user;
+			$this->load->view("Layout/header.php");
+			// $this->load->view("Usuario/perfil_v2.php", $data);
+			$this->load->view("Usuario/profile.php", $data);
+			$this->load->view("Layout/footer.php");
 		}
 
 
@@ -149,7 +164,8 @@
 				$this->session->unset_userdata('pres_ses_nombre');
 				$this->session->unset_userdata('pres_ses_rol');
 				$this->session->unset_userdata('pres_ses_sesion');
-
+				
+				$this->session->sess_destroy();
 				if ($this->session->userdata('pres_ses_sesion')) {	
 					die(json_encode([
 						'code' => 'ERR',

@@ -2,10 +2,71 @@
 	
 	class UsuarioModel extends CI_Model
 	{
-		public $sucursal_id;
-		function __construct(){
-			$this->sucursal_id = $this->session->userdata('pres_ses_sucursal');
-		}
+
+
+
+		// REWORK 2026
+		function insert(Array $data){
+            $this->db->insert('usuario', $data);
+            return ($this->db->affected_rows() > 0);
+        }
+        function update(int $id, Array $data){
+            $this->db->where('usu_codigo', $id);
+            return $this->db->update('usuario', $data);
+            // return ($this->db->affected_rows());
+        }
+        function delete(int $id){
+            $this->db->where('usu_codigo', $id);
+            $this->db->delete('usuario');
+            return ($this->db->affected_rows() > 0);
+        }
+		function getById($id){			
+			$this->db->where("u.usu_codigo", $id);
+            $this->db->select("u.usu_codigo as id");
+            $this->db->select("u.usu_usuario as usuario");
+            $this->db->select("u.usu_clave as clave");
+            $this->db->select("u.usu_usuario as username");
+            $this->db->select("u.usu_clave as password");
+            $this->db->select("u.usu_dev_work as dev");
+            $this->db->select("DATE_FORMAT(u.usu_creacion, '%d/%m/%Y') as creacion");
+            $this->db->select("DATE_FORMAT(u.create_at, '%d/%m/%Y %H:%i:%s') as create_at");
+
+			$this->db->select("e.emp_codigo as empleado_id");
+			$this->db->select("e.emp_nombres as nombres");
+			$this->db->select("e.emp_paterno as paterno");
+			$this->db->select("e.emp_materno as materno");
+			$this->db->select("e.emp_imagen as imagen");
+            $this->db->select("
+                CONCAT(
+                    e.emp_nombres,' ', 
+                    e.emp_paterno,' ',
+                    e.emp_materno
+                ) as nombre_apellido
+            ");
+			$this->db->select("
+                CONCAT(
+                    e.emp_nombres,' ', 
+                    e.emp_paterno,' ',
+                    e.emp_materno
+                ) as nombre_full
+            ");
+            $this->db->select("r.rol_codigo as rol_id");
+            $this->db->select("r.rol_titulo as rol");
+            $this->db->select("e.emp_sucursal as sucursal_id");
+            $this->db->select("s.suc_nombre as sucursal_nombre");
+            $this->db->select("s.suc_serie as sucursal_serie");
+
+            $this->db->join("empleado e", "e.emp_codigo = u.usu_empleado");
+            $this->db->join("sucursal s", "e.emp_sucursal = s.suc_codigo");
+            $this->db->join("roles r", "r.rol_codigo = u.usu_rol");             
+            $res = $this->db->get("usuario u");
+            return $res->row();
+        }
+
+
+
+
+
 		function Buscar_detalle($id){
 			// $sql = "CALL proc_usuario_detalle(?)";
 			$sql = "
@@ -382,7 +443,8 @@
 				WHERE 
 					e.emp_sucursal = ?
 			";
-			$res = $this->db->query($sql, [$this->sucursal_id]);
+			$sucursal_id = $this->session->userdata('pres_ses_sucursal');
+			$res = $this->db->query($sql, [$sucursal_id]);
 			return $res->result();
 		}
 		function get_all(){
@@ -408,7 +470,8 @@
 				INNER JOIN empleado e ON e.emp_codigo = u.usu_empleado 
 				INNER JOIN sucursal s ON s.suc_codigo = e.emp_sucursal 
 			";
-			$res = $this->db->query($sql, [$this->sucursal_id]);
+			$sucursal_id = $this->session->userdata('pres_ses_sucursal');
+			$res = $this->db->query($sql, [$sucursal_id]);
 			return $res->result();
 		}
 
@@ -438,7 +501,8 @@
 				INNER JOIN sucursal s ON s.suc_codigo = e.emp_sucursal 
 				ORDER BY usu_codigo ASC
 			";
-			$res = $this->db->query($sql, [$this->sucursal_id]);
+			$sucursal_id = $this->session->userdata('pres_ses_sucursal');
+			$res = $this->db->query($sql, [$sucursal_id]);
 			return $res->result();
 		}
 
@@ -468,28 +532,27 @@
 			$res = $this->db->query($sql, array($id));
 			return $res->row();
 		}
-		function getForProfile($id){
-			$sql = "
-				SELECT
-					u.usu_codigo as 'id',
-					e.emp_codigo as 'empleado_id',
-					e.emp_estado as 'empleado_estado',
-					e.emp_sucursal as 'empleado_sucursal',
-					CONCAT(e.emp_nombres,' ',e.emp_paterno) as 'nombre_full',
-					p.sucursal_init as preferencia_sucursal,
-					e.emp_imagen as 'imagen',
-					r.rol_titulo as 'rol',
-					u.usu_dev_work as dev,
-					DATE_FORMAT(u.usu_creacion, '%d/%m/%Y') as create_at,
-					e.emp_estado as estado,
-					u.usu_usuario as username
-				FROM usuario u
-				INNER JOIN empleado e ON u.usu_empleado = e.emp_codigo 
-				INNER JOIN roles r ON r.rol_codigo = u.usu_rol 
-				LEFT JOIN preferencias p ON p.usuario_id = u.usu_codigo  
-				WHERE u.usu_codigo = ? 
-			";
-			$res = $this->db->query($sql, array($id));
+		function get_profile_data($id){
+			$this->db->select("
+				u.usu_codigo as 'id',
+				e.emp_codigo as 'empleado_id',
+				e.emp_estado as 'empleado_estado',
+				e.emp_sucursal as 'empleado_sucursal',
+				CONCAT(e.emp_nombres,' ',e.emp_paterno) as 'nom_ape',
+				CONCAT_WS(' ',e.emp_nombres,e.emp_paterno,e.emp_materno) as 'nombre_full',
+				e.emp_imagen as 'imagen',
+				r.rol_codigo as 'rol_id',
+				r.rol_titulo as 'rol_nombre',
+				u.usu_dev_work as dev,
+				DATE_FORMAT(u.usu_creacion, '%d/%m/%Y') as create_at,
+				e.emp_estado as estado,
+				u.usu_usuario as username
+			");
+			$this->db->where("u.usu_codigo", $id);
+			$this->db->from("usuario u");
+			$this->db->join("empleado e", "e.emp_codigo = u.usu_empleado");
+			$this->db->join("roles r", "u.usu_rol = r.rol_codigo");
+			$res = $this->db->get();
 			return $res->row();
 		}
 
@@ -542,7 +605,8 @@
 				INNER JOIN empleado e ON e.emp_codigo = u.usu_empleado 
 				INNER JOIN sucursal s ON s.suc_codigo = e.emp_sucursal 
 			";
-			$res = $this->db->query($sql, [$this->sucursal_id]);
+			$sucursal_id = $this->session->userdata('pres_ses_sucursal');
+			$res = $this->db->query($sql, [$sucursal_id]);
 			return $res->result();
 		}
 
@@ -580,4 +644,4 @@
 		}
 
 	}
-?>	
+?>

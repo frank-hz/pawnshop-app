@@ -161,9 +161,15 @@ $route['api/v1/public/sucursal-getall']['POST'] = 'PublicAPI/sucursal__get_all';
 // Sesion
 $route['autenticacion']['GET'] = 'Sesion/login_form';
 $route['Acceso']['GET'] = 'Sesion/login_form';
-$route['api/v1/user/auth']['POST'] = 'Sesion/autenticar';
 $route['api/v1/user/logout']['POST'] = 'Sesion/desconectar';
 $route['api/v1/session/sede/change']['POST'] = 'Sesion/service_establecer_sede';
+
+// 2026
+$route['api/v1/user/auth']['POST'] = 'Sesion/autenticar';
+$route['api/v1/auth/login']['POST'] = 'api/Auth/login';
+$route['api/v1/auth/logout']['POST'] = 'api/Auth/logout';
+$route['/logout']['GET'] = 'api/Auth/logout';
+
 
 
 // Revision
@@ -198,8 +204,9 @@ $route['api/v1/sucursal/public/getall']['POST'] = 'Sucursal/get_for_public';
 
 
 
-// Usuario
-$route['perfil']['GET'] = 'Usuario/view_perfil';
+// Profile
+$route['perfil']['GET'] = 'Sesion/profile_view';
+$route['api/v1/profile/update']['POST'] = 'api/Sesion/profile_update';
 
 
 

@@ -41,9 +41,25 @@ class App {
     }
     
     URL(dir = ''){
-        const path = MY_CONFIG.NAME ? `${MY_CONFIG.NAME}/` : '';
-        const base = `${location.protocol}//${MY_CONFIG.HOST}/${path}`;
-        return `${base}${dir}`
+        // const path = MY_CONFIG.NAME ? `${MY_CONFIG.NAME}/` : '';
+        // const base = `${location.protocol}//${MY_CONFIG.HOST}/${path}`;
+        // return `${base}${dir}`
+
+        // return `${location.protocol}//${APP_CONFIG.HOST}/${APP_CONFIG.NAME}/${dir}`;
+        // let part_1 = 
+
+        const host = MY_CONFIG.HOST;
+        const name = MY_CONFIG.NAME;
+        const path = name ? `${host}/${name}` : `${host}`;
+        return `${location.protocol}//${path}/${dir}`;
+    }
+
+    static URL_STATIC(dir = ''){
+        const host = MY_CONFIG.HOST;
+        const name = MY_CONFIG.NAME;
+        const path = name ? `${host}/${name}` : `${host}`;
+        return `${location.protocol}//${path}/${dir}`;
+
         // return `${location.protocol}//${APP_CONFIG.HOST}/${APP_CONFIG.NAME}/${dir}`;
     }
 
@@ -861,52 +877,6 @@ class Notificacion{
     }
 }
 
-class Sesion{
-    async autenticar(data){
-        try {
-            const request = await fetch(srv.url()+'Sesion/autenticar', {
-                method : 'POST',
-                body : data
-            });
-            const res = await request.json();
-            return {
-                status: res.status,
-                mssg: res.message
-            };
-        } catch (error) {
-            return{
-                code: 'Error',
-                mssg: 'Error al enviar solicitud.'
-                // mssg: error.message
-            };
-        }
-    }
-
-    desconectar(){ 
-    }
-    
-    async definir_sucursal(id){
-        try {
-            let data = new FormData();
-            data.append('sucursal', id);
-            const request = await fetch(srv.url()+'api/v1/session/sede/change', {
-                method : 'POST',
-                body : data
-            });
-            const res = await request.json();
-            return {
-                status: res.status,
-                mssg: res.message
-            };
-        } catch (error) {
-            return{
-                code: 'Error',
-                mssg: 'Error al enviar solicitud.'
-                // mssg: error.message
-            };
-        }
-    }
-}
 
 class Sucursal {
     async Listar(tipo){
@@ -3444,6 +3414,37 @@ class CreditoApi {
         }
     }
 }
+
+class Corex {
+    // funcion estandarizada para el manejo de solicitudes HTTP
+    async request(endpoint, { method = 'GET', body = null } = {}){
+        try {
+            console.log(App.URL_STATIC(endpoint))
+            const req = await fetch(App.URL_STATIC(endpoint), { method, body });
+            if (!req.ok){
+                return { ok: false, data: null, error: `Error HTTP ${ req.status }` };
+            }
+
+            const resp = await req.json(); 
+            if (!resp.success && resp.status != 'OK') {
+                return { ok: false, data: null, message: resp.message || 'Respuesta erronea del servidor.', errors: resp.errors || null };
+            }
+
+            return { 
+                ok: true, 
+                data: resp.result || [], 
+                message: resp.message || 'Sin respuesta.', 
+                errors: resp.errors || null,
+                id: resp.id || null,
+                rows_affected: resp.rows_affected || null
+            };
+        } catch (error) {
+            console.error(`[${ endpoint }]`, error);
+            return { ok: false, data: null, error: error.message || 'Error al procesar.'};
+        }
+    }
+} 
+
 
 let srv = new Servidor();
 let not = new Notificacion();

@@ -27,32 +27,29 @@
                 show_ttoast(0)
 
                 const data = new FormData(evt.target)
-                const req = await fetch(app.URL('api/v1/user/auth'), {
-                    method: 'POST',
-                    body: data
-                })
-                const res = await req.json();
+                const {ok, message} = await sesion_api.login(data);
+                // const res = await req.json();
 
                 buttonSend.classList.remove('btn-loading');
-                if (Object.keys(res) && res.status === 'OK') {
-                    vapor.float_loading('open')
-                    show_ttoast(true, {
-                        title: 'Autenticacion Exitosa',
-                        message: res.message,
-                        style: 'primary'
-                    })
-                    setTimeout(()=>{
-                        window.location.href = srv.url()+'revision';
-                    }, 750);
-                } else{
+                if (!ok) {
                     buttonSend.disabled = false;
                     show_ttoast(true, {
                         title: 'Cuidado!',
-                        message: res.message,
+                        message: message || 'Ocurrio un error inesperado.',
                         style: 'warning',
                         time: 2000
-                    })
+                    });
+                    return;
                 }
+                show_ttoast(true, {
+                    title: 'Autenticacion Exitosa',
+                    message: message || 'Verificacion completada.',
+                    style: 'primary'
+                })
+                setTimeout(()=>{
+                    window.location.href = srv.url()+'revision';
+                }, 750);
+                
             } catch (error) {
                 buttonSend.classList.remove('btn-loading');
                 buttonSend.disabled = false;

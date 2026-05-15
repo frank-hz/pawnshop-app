@@ -70,20 +70,7 @@
 				$this->load->view("Layout/footer.php");
 			}
 		}
-		function view_perfil(){
-			$data['usuario'] = $this->UsuarioModel->getForProfile($this->user_id);
-			if (!empty($data['usuario'])) {
-				$this->load->view("Layout/header.php");
-				$this->load->view("Usuario/perfil_v2.php", $data);
-				$this->load->view("Layout/footer.php");
-			}else{
-				$data['titulo'] = 'Datos no encontrados';
-				$data['mensaje'] = 'No se encontraron datos personales del usuario';
-				$this->load->view("Layout/header.php");
-				$this->load->view("Error/no_found.php", $data);
-				$this->load->view("Layout/footer.php");
-			}
-		}
+		
 
 
 
