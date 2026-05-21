@@ -1,16 +1,80 @@
 <?php
 
-	class CreditoModel extends CI_Model
-	{
-        protected $id_suc;
-        function __construct(){
-            $this->id_suc = $this->session->userdata('pres_ses_sucursal');
-        }
-		// function Lista($tipo, $bus, $lim, $suc){
-		// 	$sql = "CALL proc_credito_lista(?,?,?,?)";
-		// 	$res = $this->db->query($sql, array($tipo, $bus, $lim, $suc));
-		// 	return $res->result();
-		// }
+	class CreditoModel extends CI_Model {
+
+		// REV. 2026
+		function getById($id){
+			$this->db->select("
+				c.cred_codigo as id,
+				c.cred_serie as serie,
+				DATE_FORMAT(c.cred_create_at, '%d/%m/%Y - %h:%i %p') as 'fecha_creacion',
+				DATE_FORMAT(c.cred_create_at, '%d/%m/%Y') as 'creacion',
+				DATE_FORMAT(c.cred_create_at, '%d-%m-%Y') as 'creacion_raw',
+				DATE_FORMAT(c.cred_liquidacion, '%d/%m/%Y - %h:%i %p') as 'fecha_liquidacion',
+				DATE_FORMAT(c.cred_liquidacion, '%d/%m/%Y') as 'liquidacion',
+				c.cred_empleado as empleado_id,
+				CONCAT_WS(
+					' ',
+					e.emp_nombres, e.emp_paterno, e.emp_materno
+				) as empleado_nom_ape,
+				 CONCAT_WS(
+					' ',
+					e.emp_nombres, e.emp_paterno, e.emp_materno
+				) as empleado_nombre_full,
+				c.cred_cliente as cliente_id,
+				CONCAT_WS(
+					' ', 
+					cl.cli_nombres, cl.cli_paterno,cl.cli_materno
+				) as cliente_nom_ape,
+				 CONCAT_WS(
+					' ', 
+					cl.cli_nombres, cl.cli_paterno,cl.cli_materno
+				) as cliente_nombre_full,
+				CONCAT_WS(' ', cl.cli_nombres,cl.cli_paterno,cl.cli_materno) as cliente_nom_ape,
+				cl.cli_nombres as cliente_nombres,
+				cl.cli_paterno as cliente_paterno,
+				cl.cli_materno as cliente_materno,
+				cl.cli_documento as cliente_documento,
+				TRIM(cl.cli_direccion) as cliente_direccion,
+				cl.cli_telefono as cliente_telefono,
+				u.ubi_distrito as cliente_distrito,
+				c.cred_prenda as prenda_id,
+				p.pren_descripcion as prenda_descripcion,
+				ct.cat_nombre as prenda_categoria,
+				p.pren_marca as prenda_marca,
+				p.pren_modelo as prenda_modelo,
+				p.pren_serial as prenda_serie,
+				p.pren_quilate as prenda_quilate,
+				p.pren_peso as prenda_peso,
+				p.pren_valoracion as prenda_valoracion,
+				p.pren_observacion as prenda_observacion,
+				p.pren_comentario as prenda_comentario,
+				tp.tpren_nombre as prenda_tipo,
+				c.cred_monto as monto,
+				c.cred_prorroga as 'prorroga',
+				c.cred_cargo as 'cargo',
+				c.cred_tasa as 'tasa',
+				c.cred_tipo_tasa as 'tipo_tasa',
+				c.cred_pago_semanal as 'pago',
+				c.cred_penalidad as 'penalidad',
+				c.cred_aplica_penalidad as 'aplica_penalidad',
+				c.cred_ciclo_pago as 'ciclo_pago',
+				c.cred_ciclo_ref as 'ciclo_ref',
+				c.cred_sucursal as sucursal_id
+			");
+			$this->db->from("credito c");
+			$this->db->where("c.cred_codigo", $id);
+			$this->db->join("cliente cl", "cl.cli_codigo = c.cred_cliente");
+			$this->db->join("empleado e", "e.emp_codigo = c.cred_empleado");
+			$this->db->join("ubigeo u", "u.ubi_codigo = cl.cli_ubigeo");
+			$this->db->join("prenda p", "p.pren_codigo = c.cred_prenda");
+			$this->db->join("categoria ct", "ct.cat_codigo = p.pren_categoria");
+			$this->db->join("tipo_prenda tp", "tp.tpren_codigo = ct.cat_tipo");
+			$res = $this->db->get();
+			return $res->row();
+		}
+
+
 
 		// function Lista_basica($suc, $limite){
 		// 	$sql = "
@@ -684,7 +748,8 @@
 				WHERE
 					cred_sucursal = ?
 			";
-			$pars_db = [$this->id_suc];
+			$id_suc = $this->session->userdata('pres_ses_sucursal');
+			$pars_db = [$id_suc];
 			if (!empty($pars_in->buscar)) {
 				switch ($pars_in->tipo_busqueda) {
 					case 'CODIGO':

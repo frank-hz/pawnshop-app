@@ -93,7 +93,7 @@
 							<?php endif ?>
 							<span class="ml-2 d-none d-lg-block">
 								<span class="text-default">
-									<?php echo $this->session->userdata('pres_ses_nombre'); ?>
+								<?php echo $this->session->userdata('nombre_short'); ?>
 								</span>
 								<small class="text-muted d-block mt-1">
 									<?php echo $this->session->userdata('pres_ses_rol'); ?>

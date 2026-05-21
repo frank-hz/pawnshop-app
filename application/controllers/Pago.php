@@ -19,7 +19,7 @@
 			$this->load->model('ProrrogaModel');
 			$this->load->model('PermisoModel');
 
-			$this->load->model('CreditoAPIModel');
+			$this->load->model('CreditoModel');
 		}
 
 
@@ -383,7 +383,7 @@
 				return;
 			}
 			
-			$credito = $this->CreditoAPIModel->getById($idcredito);
+			$credito = $this->CreditoModel->getById($idcredito);
 			if (empty($credito)){
 				error_render_view("CUIDADO","Credito no encontrado.");
 				return;

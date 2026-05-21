@@ -764,5 +764,104 @@
 		}
 
 
+
+		function generate_anexo($id = null){
+			$this->load->library('Pdf_dompdf');
+			$logo_path  = FCPATH. 'assets/images/electrocash_logo.png';
+			$firma_path = FCPATH. 'assets/images/firma.png';
+
+			$logo_b64 = null; $firma_b64 = null;
+			if (is_file($logo_path) && is_readable($logo_path)) {
+				$type = pathinfo($logo_path, PATHINFO_EXTENSION);
+				$file = file_get_contents($logo_path);
+				if ($file !== false) {
+					$logo_b64 = 'data:image/' .$type. ';base64,'. base64_encode($file);
+				}
+			}
+			if (is_file($firma_path) && is_readable($firma_path)) {
+				$type = pathinfo($firma_path, PATHINFO_EXTENSION);
+				$file = file_get_contents($firma_path);
+				if ($file !== false) {
+					$firma_b64 = 'data:image/' .$type. ';base64,'. base64_encode($file);
+				}
+			}
+			
+
+			$credito  = $this->CreditoModel->getById($id);
+			$sucursal = $this->SucursalModel->get_by_id($credito->sucursal_id);
+			$week_html = $this->week_simulation($credito->ciclo_pago, $credito->creacion_raw);
+
+			$data = [
+			'nombres'      => $credito->cliente_nombres,
+			'apellidos'    => $credito->cliente_paterno. ' ' .$credito->cliente_materno,
+			'nom_ape'      => $credito->cliente_nom_ape,
+			'documento'    => $credito->cliente_documento,
+			'direccion'    => $credito->cliente_direccion,
+			'distrito'     => $credito->cliente_distrito,
+			'dir_dist' => $credito->cliente_direccion. ', ' .$credito->cliente_distrito,
+			'telefono'     => $credito->cliente_telefono,
+			'serie' 	   => $credito->serie,
+			'monto'      => $credito->monto,
+			'cuota'        => $credito->pago,
+			'penalidad'    => $credito->penalidad,
+			'creacion'	   => $credito->creacion,
+			'creacion_raw' => $credito->creacion_raw,
+			'liquidacion'  => $credito->liquidacion,
+			'categoria'    => $credito->prenda_categoria,
+			'prenda_tipo'  => $credito->prenda_tipo,
+			'marca'        => $credito->prenda_marca,
+			'modelo'       => $credito->prenda_modelo,
+			'serial'       => $credito->prenda_serie,
+			'quilate'       => $credito->prenda_quilate,
+			'peso'       => $credito->prenda_peso,
+			'valoracion'   => $credito->prenda_valoracion,
+			'observacion'=> $credito->prenda_observacion,
+			'comentario'   => $credito->prenda_comentario,
+			'logo' 		   => $logo_b64,
+			'firma' 	   => $firma_b64,
+			'sede' 		   => $sucursal,
+			'ciclo'		   => $credito->ciclo_pago,
+			'week_html'    => $week_html,
+			'fecha_desc'   => $this->FechaDescriptiva()
+			];
+
+			$html = $this->load->view('pdf/anexo.php', $data, TRUE);
+			$filename = "ANEXO_CREDITO_$credito->serie.pdf";
+			$this->pdf_dompdf->generate($html, $filename, false);
+		}
+		function week_simulation($ciclo, $creacion){
+			$cant = 15;
+			$html = "";
+			for ($i=1; $i<=15; $i++){
+				$dias_ciclo = $ciclo === 'MENSUAL' ? 30 : 7;
+				$dias_total = $dias_ciclo * $i;
+				$fecha_str  = " + $dias_total days";
+				$vencimiento = date("d-m-Y", strtotime(
+					$creacion. $fecha_str
+				));
+				$orden = $i > 9 ? $i : '0'.$i;
+				$html .= "
+					<tr>
+						<td style='text-align:center;font-weight:bold;'>$orden</td>
+						<td style='text-align:center;'>$vencimiento</td>
+					</tr>
+				";
+			}
+			return $html;
+		}
+		function FechaDescriptiva(){
+			$meses = [
+				1 => 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+				'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+			];
+
+			$dia = date('j');  
+			$numMes = date('n'); 
+			$anio = date('Y');
+			$mesTexto = $meses[$numMes];
+			return "{$dia} de {$mesTexto} del {$anio}";
+		}
+
+		
 	}
 ?>

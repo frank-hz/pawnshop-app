@@ -34,7 +34,8 @@
                     e.emp_paterno,' ',
                     e.emp_materno
                 ) as nombre_apellido
-            ");               
+            ");
+            $this->db->select("r.rol_titulo as nombre");
             $this->db->from("usuario u");
             $this->db->join("empleado e", "e.emp_codigo = u.usu_empleado");     
             $this->db->join("sucursal s", "e.emp_sucursal = s.suc_codigo");     

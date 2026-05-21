@@ -19,19 +19,17 @@
 </head>
 <body>
 <div class="flex">
-	<div class="nav">
-		<div class="nav-header">
-			<h3>Contrato de Credito</h3>
-			<div class="">
-				<a class="link" href="<?= base_url() ?>Credito">Volver al Sistema</a>
-				<a class="link" href="<?= base_url() ?>Credito/detalle/<?= $credito->id; ?>">Ver Credito</a>
-			<button id="btnPrint" class="btn">Imprimir</button>	
-			<button id="btnExport" class="btn">Exportar PDF</button>	
+	<div class="my-file">
+		<div class="header">
+			<p class="header-title">Contrato de Credito</p>
+			<div class="controls">
+				<button id="btn_print" class="btnz">Imprimir</button>	
+				<button id="btn_export" class="btnz">Exportar PDF</button>
 			</div>
 		</div>
-		<div class="nav-body">
-			<div id="contrato" class="documento">
-				<div class="contrato">
+		<div id="anexo_file" class="overlay">
+			<div class="page-a4 contrato">
+				<div class="page-content">
 					<div class="contrato-header">
 						<div class="logo">
 							<img src="<?= base_url()?>assets/images/electrocash_logo.png" alt="">
@@ -480,15 +478,15 @@
 							</p>
 						</div>
 					</div>
-	
-				</div>
-				<div class="declaracion">
-					<div class="dec-top">
-						<span><b>Fecha:</b>---/----------/-----</span>
-						<span><b>N° Contrato:</b>___________</span>
-					</div>
+
+
+
 				</div>
 			</div>
+			<div class="page-a4 declaracion">
+				DECLARACION
+			</div>
+
 		</div>
 	</div>
 </div>
@@ -496,20 +494,6 @@
 <script src="<?= base_url() ?>assets/js/vendors/jquery-3.2.1.min.js"></script>
 <script src="<?= base_url() ?>js_modules/app.js"></script>
 <script src="<?= base_url() ?>assets/js/jQuery.print.js"></script>
-<script src="<?= base_url()?>js_modules/credito/credito.contrato.js?v=34221"></script> 
-<script>
-	document.addEventListener('DOMContentLoaded', function(){
-		var app = new App();
-		var mitems = document.getElementsByName('money_item');
-		if (mitems.length > 0) {
-			mitems.forEach(element => {
-				if (element.dataset.value) {
-					element.textContent = `S/ ${ app.priceFormat(element.dataset.value) }`;
-					// console.log(element)
-				}
-			})
-		}
-	})
-</script>
+<script src="<?= base_url()?>js_modules/credito/contrato.js?v=32221"></script> 
 </body>
 </html>

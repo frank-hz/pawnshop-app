@@ -96,6 +96,7 @@ $route['api/v1/credito/getbycliente']['POST'] = 'CreditoAPI/get_by_cliente';
 $route['api/v1/credito/getall']['POST'] = 'CreditoAPI/get_data_list';
 
 $route['api/v1/credito/get-all']['POST'] = 'CreditoAPI/get_all';
+$route['credito/anexo/(:num)']['GET'] = 'App/generate_anexo/$1';
 
 
 

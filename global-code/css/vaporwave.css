@@ -293,6 +293,10 @@
     border-right-color: transparent;
     animation: spinnerv1 .8s infinite linear;
 }
+.spinner-black {
+    border-color: #0f1f31;
+    border-right-color: transparent;
+}
 @keyframes spinnerv1 {
     100% {
         transform: rotate(360deg);

@@ -38,7 +38,7 @@
 						<span class="icon mr-3"><i class="fe fe-shuffle text-primary"></i></span>
 						Ver movimientos
 					</a> -->
-					<a href="<?= base_url() ?>Credito/contrato/<?= $credito->id; ?>" class="list-group-item list-group-item-action d-flex align-items-center text-primary">
+					<a href="<?= base_url() ?>credito/anexo/<?= $credito->id; ?>" class="list-group-item list-group-item-action d-flex align-items-center text-primary" target="_blank">
 						<span class="icon mr-3"><i class="fe fe-alert-circle text-primary"></i></span>
 						Contrato
 					</a>					

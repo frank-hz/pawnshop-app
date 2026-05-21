@@ -1,7 +1,37 @@
 <?php  
 	
-	class SucursalModel extends CI_Model
-	{
+	class SucursalModel extends CI_Model {
+
+
+		// REWORK 2026
+		function get_by_id($id){
+			$this->db->where("s.suc_codigo", $id);
+			$this->db->select("
+				s.suc_codigo as id, 
+				s.suc_nombre as nombre,
+				CONCAT(u.ubi_distrito,', ',u.ubi_departamento) as ciudad, 
+				s.suc_direccion as direccion,
+				s.suc_telefono as telefono,
+				s.suc_estado as estado,
+				s.suc_sigla as sigla,
+				s.suc_serie as serie,
+				s.suc_pago_serie as serie_pago,
+				u.ubi_codigo as ubigeo,
+				u.ubi_distrito as distrito,
+				u.ubi_departamento as departamento,
+				u.ubi_provincia as provincia,
+				DATE_FORMAT(s.suc_creacion, '%d/%m/%Y') as creacion,
+				s.suc_cuenta_tipo as cuenta_tipo,
+				s.suc_banco as banco,
+				s.suc_cuenta_numero as cuenta_numero
+			");
+			$this->db->from("sucursal s");
+			$this->db->join("ubigeo u", "u.ubi_codigo = s.suc_ubigeo");
+			$this->db->order_by("nombre", "ASC");
+			$res = $this->db->get();
+			return $res->row();
+		}
+
 
 		// Lista de empleados asociados
 		function Buscar_empleados($id){

@@ -28,8 +28,6 @@
 
                 const data = new FormData(evt.target)
                 const {ok, message} = await sesion_api.login(data);
-                // const res = await req.json();
-
                 buttonSend.classList.remove('btn-loading');
                 if (!ok) {
                     buttonSend.disabled = false;

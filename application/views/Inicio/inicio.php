@@ -129,10 +129,6 @@
               <input type="radio" class="custom-control-input" name="REPORTE_FILTROS" value="VENCE_HOY">
               <span class="custom-control-label">Vencen Hoy</span>
             </label>
-            <!-- <label class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" class="custom-control-input" name="REPORTE_FILTROS" value="option3">
-                        <span class="custom-control-label">Option 3</span>
-                        </label> -->
           </div>
         </div>
 
@@ -157,35 +153,6 @@
             <tr>
               <td colspan="10" class="text-center">Sin Datos</td>
             </tr>
-            <!-- <?php if (!empty($creditos_activos)): ?>
-                        <?php foreach ($creditos_activos as $index => $credito): ?>
-                        <tr>
-                            <td><?= $index + 1; ?></td>
-                            <td>
-                                <a href="<?= base_url("credito/detalle/" . $credito->id) ?>">
-                                    <?= $credito->serie; ?>
-                                </a>
-                            </td>
-                            <td>
-                                <a href="<?= base_url("cliente/detalle/" . $credito->cliente_id); ?>">
-                                    <?= $credito->cliente_nombre; ?>
-                                </a>
-                            </td>
-                            <td class="text-center">
-                                <span class="enc1217-conducta-sm-tag enc1212-conducta-tag-<?= $credito->cliente_puntuacion; ?>">
-                                    <?= $credito->cliente_puntuacion; ?>
-                                </span>
-                            </td>
-                            <td>S/ <?= $credito->monto; ?></td>
-                            <td class="text-center"><?= $credito->cuotas_vencidas; ?></td>
-                            <td><?= $credito->prenda_descripcion; ?></td>
-                        </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="8" class="text-center">Sin Datos</td>
-                        </tr>
-                    <?php endif; ?> -->
           </tbody>
         </table>
       </div>
@@ -202,7 +169,7 @@
     <div class="resumen-title">
       <div class="">
         <h1 id="RESUMEN_TITLE">RESUMEN [00/00/0000]</h1>
-        <small id="SEDE_NAME">SEDE STORE 01</small>
+        <small id="SEDE_NAME">SEDE --</small>
       </div>
       <div class="">
         <button id="btn_resumen_download">
@@ -226,29 +193,29 @@
     <div class="list-widget" style="flex-">
       <div class="wsublist">
         <div class="resumen-widget">
-          <h1 id="CREDITOS_CREADOS">00</h1>
+          <h1 id="CREDITOS_CREADOS"><span class="spinner-v1-mini spinner-black"></span></h1>
           <p>Creditos Creados</p>
         </div>
         <div class="resumen-widget">
-          <h1 id="PAGOS_RECIBIDOS">00</h1>
+          <h1 id="PAGOS_RECIBIDOS"><span class="spinner-v1-mini spinner-black"></span></h1>
           <p>Pagos Recibidos</p>
         </div>
         <div class="resumen-widget">
-          <h1 id="RECUPERACIONES">00</h1>
+          <h1 id="RECUPERACIONES"><span class="spinner-v1-mini spinner-black"></span></h1>
           <p>Recuperaciones</p>
         </div>
       </div>
       <div class="wsublist">
         <div class="resumen-widget">
-          <h1 id="TOTAL_INGRESO">S/ 0.00</h1>
+          <h1 id="TOTAL_INGRESO">S/ <span class="spinner-v1-mini spinner-black"></span></h1>
           <p>Total Ingreso</p>
         </div>
         <div class="resumen-widget">
-          <h1 id="TOTAL_EGRESO">S/ 0.00</h1>
+          <h1 id="TOTAL_EGRESO">S/ <span class="spinner-v1-mini spinner-black"></span></h1>
           <p>Total Egreso</p>
         </div>
         <div class="resumen-widget">
-          <h1 id="TOTAL_BALANCE">S/ 0.00</h1>
+          <h1 id="TOTAL_BALANCE">S/ <span class="spinner-v1-mini spinner-black"></span></h1>
           <p>Balance</p>
         </div>
       </div>
@@ -271,6 +238,11 @@
         </thead>
         <tbody id="TABLE_PAGOS">
           <tr>
+            <td colspan="6" class="text-center">
+              <span class="spinner-v1-mini spinner-black"></span>
+            </td>
+          </tr>
+          <!-- <tr>
             <td>C0-4547</td>
             <td>ELMER PEÑA CORDOVA</td>
             <td>LAPTOP GAMER ACER COREI5</td>
@@ -278,22 +250,7 @@
             <td>VIRTUAL</td>
             <td>RECUPERACION</td>
           </tr>
-          <tr>
-            <td>C0-4547</td>
-            <td>ELMER PEÑA CORDOVA</td>
-            <td>LAPTOP GAMER ACER COREI5</td>
-            <td>S/ 125.60</td>
-            <td>VIRTUAL</td>
-            <td>RECUPERACION</td>
-          </tr>
-          <tr>
-            <td>C0-4547</td>
-            <td>ELMER PEÑA CORDOVA</td>
-            <td>LAPTOP GAMER ACER COREI5</td>
-            <td>S/ 125.60</td>
-            <td>VIRTUAL</td>
-            <td>RECUPERACION</td>
-          </tr>
+          <tr> -->
         </tbody>
       </table>
     </div>
@@ -313,12 +270,17 @@
           </tr>
         </thead>
         <tbody id="TABLE_CREDITOS">
-          <tr>
+          <!-- <tr>
             <td>C0-6957</td>
             <td>ELMER PEÑA CORDOVA</td>
             <td>LAPTOP GAMER ACER COREI5</td>
             <td>S/ 125.60</td>
             <td>VIRTUAL</td>
+          </tr> -->
+          <tr>
+            <td colspan="6" class="text-center">
+              <span class="spinner-v1-mini spinner-black"></span>
+            </td>
           </tr>
         </tbody>
       </table>

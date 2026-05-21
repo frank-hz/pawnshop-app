@@ -2,73 +2,130 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
-  font-family: Calibri;
+}
+:root {
+  --green: #29BD98; 
+  --blue: #2497f9; 
+  --gray: #466e8a;
+  --font: #131415;
 }
 body{
+  font-family: 'Poppins', Calibri, sans-serif;
+  width: 100vw;
+  height: 100vh;
+  color: var(--font);
+}
+
+.my-file {
+  border: 1px solid red;
+  width: 100%;
+  height: 100%;
 
 }
-.flex {
+.header {
   display: flex;
-  justify-content: center;
+  align-items: center;
+  padding: 1rem 3rem;
+  justify-content: space-between;
+  border-bottom: 1px solid blue;
+  height: 60px;
 }
-.btn {
-  padding: 10px 18px;
-  letter-spacing: .8px;
-  cursor: pointer;
+.header-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+/* .btnx {
+  border: none;
   outline: none;
-  border: 1px solid;
-  border-radius: 3px;
   text-align: center;
-  font-size: 14px;
-  background: #467fcf;
-  border-color: #467fcf;
-  color: #fff;
-  text-transform: uppercase;
-}
-.link {
-  cursor: pointer;
-  display: inline-block;
-  font-weight: 400;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  border: 1px solid transparent;
-  padding: 0.375rem 0.75rem;
-  font-size: 0.9375rem;
-  line-height: 1.84615385;
-  border-radius: 3px;
-  color: #495057;
-  background-color: #fff;
-  border-color: rgba(0, 40, 100, 0.12);
-  text-decoration: none;
-}
-.nav {
-  width: 60%;
-  padding: 4px 12px;
-}
-.nav-header {
-  width: 100%;
-  padding: 6px 14px;
-  margin-top: 10px; 
+
+} */
+
+/* 1f4fff */
+.controls {
   display: flex;
-  justify-content: space-between; 
+  align-items: center;
+  gap: 2px;
 }
-.nav-header h3{
-  font-weight: 400;
-  font-size: 24px;
-  border-bottom: 1px solid gray;
+.btnz {
+  font-family: 'Poppins', sans-serif;
+  background: #fff;
+  color: #000;
+  border: none;
+  border: 1px solid rgba(208, 219, 241, .8);
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnz:hover {
+  background: #1f4fff;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.overlay {
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto;          /* Activa el scroll vertical */
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 0;
+  box-sizing: border-box;
+  gap: 30px;
+  background: #9babc0;
 }
 
 .documento {
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  border: 1px solid purple;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #9babc0;
   overflow-y: auto;
 }
-.contrato {
+.page-a4 {
+  background-color: #fff;
+  width: 90%;
+  max-width: 650px;
+  aspect-ratio: 210 / 297;
+  
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border-radius: 2px;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+
+  border-radius: 2px;
+  
+  /* Hace que esta hoja sea el punto de anclaje del scroll-snap */
+  scroll-snap-align: start;  
+  scroll-snap-stop: always;
+  
+  /* Evita que la página se encoja dentro del contenedor flex */
+  flex-shrink: 0;
+}
+.page-content {
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;  
+}
+
+
+.contrato .content {
   font-size: 14px;
   font-family: 'Segoe ui' !important;
   padding: 0;
@@ -76,8 +133,7 @@ body{
   display: grid;
   color: #242F3A;
   width: 100%;
-  min-height: 100vh;
-  height: 100%;
+  height: 100vh;
   grid-gap: 1px;
   grid-template-rows: 60px 50px 45px 172px 172px 1fr 155px 130px;
   grid-template-columns: 1cm 20% 20% 20% 1fr;
@@ -91,6 +147,7 @@ body{
   '. met met met met'
   '. foot foot foot foot';
 }
+/* CONTRATO: HEADER */
 .contrato-header {
   grid-area: head;
   width: 100%;
@@ -139,6 +196,8 @@ body{
   font-weight: 700;
   display: inline-block;
 }
+
+/* CONTRATO: CLIENTE */
 .contrato-cliente {
   grid-area: cli;
   padding: 3px 4px; 
@@ -157,6 +216,7 @@ body{
   padding: 2px 1px;
 }
 
+/* CONTRATO: PRINCIPAL */
 .contrato-principal {
   grid-area: princ;
   padding: 0 4px;
@@ -165,7 +225,6 @@ body{
   grid-area: lat;
   padding: 3px 4px;
 }
-
 .section-title {
   font-size: 16px;
   font-weight: bold;
@@ -192,10 +251,11 @@ body{
   grid-area: inte;
   padding: 2px 4px 10px 40px;
 }
+
+
 .contrato-prenda{
   grid-area: pren;
   padding: 0 4px;
-  /*border: 1px solid red;*/
 }
 .contrato-cuota{
   grid-area: cuo;
@@ -210,8 +270,7 @@ body{
   width: 425px;
   border-collapse: collapse;
   margin: 4px 1px;
-  font-size: 13px;
-  
+  font-size: 13px;  
 }
 .tablaMetodo td, .tablaMetodo th {
   border: 1px solid black;
@@ -256,7 +315,6 @@ body{
 }
 .firma_empresa img {
   width: 80px;
-
 }
 .firma_cliente {
   height: 90px;
@@ -272,139 +330,4 @@ body{
 .firma_cliente .fc_titulo {
   border-top: 1px solid black; 
   margin-top: 50px; 
-}
-
-.cusTable {
-  width: 100%;
-  display: table;
-  border-collapse: collapse;
-}
-.cusTable-row {
-  display: table-row;
-  width: 100%;
-}
-.cusTable-tcell {
-  display: table-cell;
-  border-collapse: collapse;
-  border: 1px solid black;
-  background: #dadddf;
-  font-weight: 600;
-}
-.cusTable-cell {
-  display: table-cell;
-  border-collapse: collapse;
-  border: 1px solid black;
-}
-
-.fake__table {
-  display: table;
-  border-collapse:collapse;
-  width: 100%;
-}
-.fake__column {
-  display:table-row;
-}
-.fake__cell {
-  display: table-cell;
-  padding: 3px 0;
-  border: 1px solid #242F3A;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-.fake__cell__hd {
-  display: table-cell;
-  padding: 3px 0;
-  background: #dadddf;
-  font-weight: 600;
-  border: 1px solid #242F3A;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-
-.fake__rowspan {
-  width: 100%;
-  border-color: transparent;
-  outline: none; 
-  resize: none; 
-  overflow:hidden;
-  white-space: pre-line;
-  font-size: 11px;
-}
-.font-bold {
-  font-weight: bold;
-}
-.text-right{
-  text-align: right;
-}
-.text-left{
-  text-align: left;
-}
-.text-center{
-  text-align: center;
-}
-
-
-.declaracion {
-  display: block;
-  background: red;
-}
-.dec-top {
-  display: block;
-  height: 150px;
-  border-bottom:1px solid red;
-  display: flex;
-  justify-content: space-between;
-}
-
-
-
-@keyframes lds-rolling {
-  0% {
-    -webkit-transform: translate(-50%, -50%) rotate(0deg);
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  100% {
-    -webkit-transform: translate(-50%, -50%) rotate(360deg);
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
-@-webkit-keyframes lds-rolling {
-  0% {
-    -webkit-tragitnsform: translate(-50%, -50%) rotate(0deg);
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  100% {
-    -webkit-transform: translate(-50%, -50%) rotate(360deg);
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
-.lds-rolling {
-  position: relative;
-}
-.lds-rolling div,
-.lds-rolling div:after {
-  position: absolute;
-  width: 160px;
-  height: 160px;
-  border: 20px solid #e90c59;
-  border-top-color: transparent;
-  border-radius: 50%;
-}
-.lds-rolling div {
-  -webkit-animation: lds-rolling 1s linear infinite;
-  animation: lds-rolling 1s linear infinite;
-  top: 100px;
-  left: 100px;
-}
-.lds-rolling div:after {
-  -webkit-transform: rotate(90deg);
-  transform: rotate(90deg);
-}
-.lds-rolling {
-  width: 200px !important;
-  height: 200px !important;
-  -webkit-transform: translate(-100px, -100px) scale(1) translate(100px, 100px);
-  transform: translate(-100px, -100px) scale(1) translate(100px, 100px);
 }

@@ -3419,7 +3419,6 @@ class Corex {
     // funcion estandarizada para el manejo de solicitudes HTTP
     async request(endpoint, { method = 'GET', body = null } = {}){
         try {
-            console.log(App.URL_STATIC(endpoint))
             const req = await fetch(App.URL_STATIC(endpoint), { method, body });
             if (!req.ok){
                 return { ok: false, data: null, error: `Error HTTP ${ req.status }` };

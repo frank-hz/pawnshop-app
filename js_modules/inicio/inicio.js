@@ -1,7 +1,4 @@
-// $route["api/v1/inicio/creditos-activos"]['GET'] = "api/Inicio/get_creditos_activos";
-// $route['api/v1/inicio/resumen-dia']['POST'] = "api/Inicio/get_resumen_dia";
-
-
+"use strict";
 (function(d,w){
   let app;
   const ROUTES = {
@@ -243,7 +240,7 @@
       console.log('success');
       return;
     }
-
+    console.log(data_request.result)
     const {
       fecha,
       total_ingreso,
@@ -271,7 +268,13 @@
       `;
     }
 
+    let recuperados = pagos.filter(pago => pago.concepto === 'REC').length;
     setData('RESUMEN_TITLE', `RESUMEN [${fecha}]`);
+    setData('CREDITOS_CREADOS', creditos.length ?? '--');
+    setData('PAGOS_RECIBIDOS', pagos.length ?? '--');
+    setData('RECUPERACIONES', recuperados ?? '--');
+
+
     setData('TOTAL_INGRESO', `S/ ${total_ingreso}`);
     setData('TOTAL_EGRESO', `S/ ${total_egreso}`);
     setData('TOTAL_BALANCE', `S/ ${balance}`);
