@@ -122,7 +122,8 @@
 				'E' => "<span class='etag etag-cred-E'>Activo</span>",
 				'R' => "<span class='etag etag-cred-R'>Recuperado</span>",
 				'A' => "<span class='etag etag-cred-A'>Remate</span>",
-				'CC' => "<span class='etag etag-cred-CC'>Congelado</span>"
+				'CC' => "<span class='etag etag-cred-CC'>Congelado</span>",
+				'HIDE' => "<span class='etag etag-cred-HIDE'>Restrigido</span>",
 			];
 			$credito->ciclo_pago_display = $ciclos[$credito->ciclo_pago];
 			$credito->tasa_display = ($credito->tipo_tasa=='P') ? $credito->tasa.'%' : 'S/ '.$credito->tasa;

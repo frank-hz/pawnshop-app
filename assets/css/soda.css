@@ -1705,10 +1705,10 @@ tr.file-congelado td {
 
 
 .etag {
-  padding: 3px 4px;
+  padding: 5px 4px;
   text-align: center;
   border: 1px solid #4A5568;
-  border-radius: 2px;
+  border-radius: 4px;
   background: #EDF2F7;
   color: #4A5568;
   width: 100%;
@@ -1743,6 +1743,12 @@ tr.file-congelado td {
 .etag-cred-V {
   background: #FBC531;
   color: #35495E;
+}
+.etag-cred-HIDE {
+  background: #0f162e;
+  /* border-color: #fa3f00; */
+  border-color: #c6cdff;
+  color: #c6cdff;
 }
 
 
@@ -2428,4 +2434,270 @@ input.dcard_form_control {
 @keyframes spinner {
   0% {transform: rotate(0deg);}
   100% {transform: rotate(360deg);}
+}
+
+
+/* MODAL Z */
+.modalz {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modalz.is-visible {
+  display: flex;
+  opacity: 1;
+}
+
+.modalz-content {
+  background: white;
+  padding: 30px;
+  border-radius: 5px;
+  width: 90%;
+  /* min-width: 460px; */
+  /* box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); */
+  max-width: 450px;
+  position: relative;
+  transform: scale(0.7);
+  opacity: 0;
+}
+.modalz.size-sm .modalz-content {
+  max-width: 420px;
+}
+.modalz.size-md .modalz-content {
+  max-width: 720px;
+}
+.modalz.size-lg .modalz-content {
+  max-width: 1080px;
+}
+
+.modalz.is-visible .modalz-content {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* ==================== ANIMACIONES ==================== */
+
+/* 1. Fade + Scale (predeterminado) */
+.modalz.fade .modalz-content {
+  animation: mzFadeScale 0.4s ease forwards;
+}
+
+/* 2. Slide desde arriba */
+.modalz.slide-top .modalz-content {
+  animation: mzSlideTop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* 3. Slide desde abajo */
+.modalz.slide-bottom .modalz-content {
+  animation: mzSlideBottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* 4. Slide desde la izquierda */
+.modalz.slide-left .modalz-content {
+  animation: mzSlideLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* 5. Slide desde la derecha */
+.modalz.slide-right .modalz-content {
+  animation: mzSlideRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* 6. Zoom In */
+.modalz.zoomIn .modalz-content {
+  animation: mZoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  
+}
+
+/* 7. mzBounce */
+.modalz.mzBounce .modalz-content {
+  animation: mzBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* Animaciones Keyframes */
+@keyframes mzFadeScale {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+@keyframes mzSlideTop {
+  from { transform: translateY(-150px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes mzSlideBottom {
+  from { transform: translateY(150px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes mzSlideLeft {
+  from { transform: translateX(-150px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes mzSlideRight {
+  from { transform: translateX(150px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes mZoomIn {
+  from { transform: scale(0.3); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+  
+}
+
+@keyframes mzBounce {
+  0%   { transform: scale(0.3); }
+  50%  { transform: scale(1.15); }
+  70%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+
+/* Animaciones de cierre */
+.modalz.closing {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modalz.closing .modalz-content {
+  animation: none !important; /* Evita conflicto con animación de entrada */
+  opacity: 0;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(0.8) !important;
+}
+
+/* Animaciones específicas de salida (opcional - más pulidas) */
+
+.modalz.slide-top.closing .modalz-content {
+    transform: translateY(-120px) !important;
+}
+
+.modalz.slide-bottom.closing .modalz-content {
+    transform: translateY(120px) !important;
+}
+
+.modalz.slide-left.closing .modalz-content {
+    transform: translateX(-120px) !important;
+}
+
+.modalz.slide-right.closing .modalz-content {
+    transform: translateX(120px) !important;
+}
+
+.modalz.zoomIn.closing .modalz-content,
+.modalz.bounce.closing .modalz-content {
+    transform: scale(0.6) !important;
+}
+
+.modalz.fade.closing .modalz-content {
+    transform: scale(0.85) !important;
+}
+
+/* Mejora de rendimiento */
+.modalz .modalz-content {
+    will-change: transform, opacity;
+}
+
+.mzClose {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 35px;
+  cursor: pointer;
+  color: #666;
+}
+
+
+/* ==================== DISEÑO RESPONSIVO ==================== */
+@media (max-width: 480px) {
+  .modalz {
+    padding: 10px;
+  }
+  
+  .modalz-content {
+    padding: 24px 20px;
+    border-radius: 14px;
+    max-width: 100%;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+
+  .btn {
+    padding: 12px 24px;
+    font-size: 15px;
+    margin: 6px;
+  }
+}
+
+@media (max-width: 360px) {
+  .modalz-content {
+    padding: 20px 16px;
+  }
+}
+
+/* Mejor experiencia en tablets */
+@media (min-width: 481px) and (max-width: 768px) {
+  .modalz-content {
+    max-width: 460px;
+    padding: 32px;
+  }
+}
+
+
+
+.cotizador-grid {
+  display: block;
+  color: #0f1f31;
+}
+.cotiz-header {
+  padding: .6rem .8rem;
+}
+.cotiz-header h3 {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+.cotiz-content {
+  width: 100%;
+  padding: 1.2rem .6rem;
+}
+.cotiz-results {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.cotiz-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.cotiz-item h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2px;
+}
+.cotiz-item span {
+  display: block;
+  text-align: center;
+  font-weight: 800;
+  color: #0f1f31;
+  font-size: .9rem;
+}
+.cotiz-input {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #0f1f31 !important;
+  text-align: center;
 }

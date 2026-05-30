@@ -1,4 +1,5 @@
 <?php ini_set('display_errors', 0); ?>
+<link rel="stylesheet" href="<?= base_url('assets/css/views/credito.create.css') ?>">
 <input type="hidden" id="idcliente_base" value="<?= $cliente->id; ?>">
 <div class="container">
     <div id="modal_view_rendalert" class="p-2">
@@ -43,25 +44,40 @@
                         <div class="enc2454-subtitle">2. Seleccionar Prenda</div>
                         <button id="btn_prenda_nuevo" class="enc2454-btn-option">Nueva Prenda</button>
                     </div>
-                    <div id="prenda_dataset" class="enc2454-checklist">
-                        <div class="spinner-v1"></div> Cargando
-                        <!-- <div class="enc2454-checklist-item">
-                            <input id="prenda_3" type="radio" name="prenda-item">
-                            <label for="prenda_3">
-                                <span class="enc2454-checklist-icon"></span>
-                                <div class="enc2454-checklist-data">
-                                    <div class="enc2454-checklist-title">
-                                        LAPTOP HP I5 10MA
-                                    </div>
-                                    <div class="enc2454-checklist-subtitle">
-                                        MODELO: I5-DW106OLA,
-                                        SERIE: 	SNCID11F22D
-                                    </div>
+                    <!-- <div class="text-right px-1 py-3">
+                        <small class="text-muted">Tiempo: <span id="prenda_timer">00:00 s</span></small>
+                    </div> -->
+                    <div id="prenda_dataset" class="prendas-gallery">
+                        <!-- <div class="prenda-item">
+                            <input id="prenda_1" type="radio" name="prenda-item">
+                            <label for="prenda_1">
+                                <div class="pheader">
+                                    <h4 class="ptitle">LAPTOP GAMER ACER CORE I5</h4>
+                                    <span class="tagger tagger-prenda-D">Disponible</span>
+                                </div>
+                                <div class="pcontent">
+                                    Categoria: LAPTOP | Valoracion: 6 | Serie: APPLE | Marca: C1MLC6PXDTY3 | Modelo: A1278
                                 </div>
                             </label>
-                        </div>-->
-
+                        </div> -->
+                        <!-- <div class="prenda-item">
+                            <input id="NG" type="radio" name="prenda-item" value="0" data-type="NO_GARANTIA">
+                            <label for="NG" data-valoracion="" data-descripcion="" class="no-garantia-item text-primary">
+                                Sin Garantia 
+                                <i class="fe fe-maximize"></i>
+                            </label>
+                        </div> -->
+                        
                     </div>
+
+                    <!-- <div id="section_prenda" class="prenda-content">
+                        <tr class="skeleton-row">
+                            <div class="prenda-skeleton" style="height:20px; width:80%"></div>
+                            <div class="prenda-skeleton" style="height:20px; width:80%"></div>
+                            <div class="prenda-skeleton" style="height:20px; width:80%"></div>
+                            <div class="prenda-skeleton" style="height:20px; width:80%"></div>
+                        </tr>
+                    </div> -->
                 </div>
                 <div id="wiz-prestamo" class="modulo-body enc2454-trans-1 d-none">
                     <div class="enc2454-header">
@@ -366,4 +382,4 @@
 	}
 </style>
 
-<script src="<?= base_url() ?>js_modules/credito/credito.insert.js?v=05022025"></script>
+<script src="<?= base_url() ?>js_modules/credito/credito.insert.js?v=3435"></script>

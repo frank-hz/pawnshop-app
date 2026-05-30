@@ -1,0 +1,192 @@
+
+.prendas-gallery {
+    padding: .6rem .2rem;
+    max-height: 500px;
+    overflow: auto;
+}
+.prenda-item {
+    color: #2a3d65;
+}
+.prenda-item label {
+    outline: 1px solid transparent;
+    border: 1px solid rgba(208, 219, 241, .8);
+    border-radius: 4px;
+    width: 100%;
+    transition: all .1s linear;
+    cursor: pointer;
+}
+.pheader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .5rem .8rem;
+    padding-bottom: 0;
+    flex-wrap: wrap;
+}
+.pheader h4 {
+    font-size: .95rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+}
+.pcontent {
+    padding: .3rem .6rem;
+    font-size: .85rem;
+}
+.pcontent p {
+    padding: 2px 0;
+    margin: 0;
+}
+.prenda-item input {
+    display: none;
+}
+.prenda-item input[type="radio"]:checked + label {
+    border-color: #3372fe;
+    background: rgba(51, 114, 254, .1);
+}
+.prenda-item .no-garantia-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 1rem .5rem;
+    gap: 2px 4px;
+}
+.prenda-item .no-garantia-item .fe {
+    font-size: 20px;
+}
+@media only screen and (max-width: 460px) {
+    .pheader {
+        flex-direction: column;
+        align-items: baseline;
+        gap: 5px;
+    }
+}
+
+
+
+.credito_create__prenda_list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+}
+.prenda_item {
+    padding: 0;
+    margin: 0;
+}
+.prenda_item input[type="radio"] {
+    display: none;
+}
+.prenda_item label {
+    height: 100%;
+    border: 1px solid rgba(171, 182, 217, .8);
+    border-radius: 5px;
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: .3rem 1rem;
+    transition: all .2s;
+    cursor: pointer;
+}
+.prenda_item label .prenda_item_top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .4rem 0;
+    grid-column: 1/2;
+    grid-row: 1/2;
+}
+.prenda_item label .prenda_item_title {
+    grid-column: 1/2;
+    grid-row: 2/3;
+    font-size: .9rem;
+    font-weight: 700;
+    color: #195eff;
+}
+.prenda_item label .prenda_item_subtitle {
+    grid-row: 3/4;
+    font-size: .85rem;
+    font-weight: 500;
+}
+
+.zcontrol-prenda {
+  width: 28px;
+  height: 28px;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  background-color: #f1f1f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  border: 2px dashed #b9c7db;
+}
+.zcontrol-prenda .check-icon {
+  width: 50%;
+  height: 50%;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.zcontrol-prenda.animated:hover {
+  animation: rotateAndGrow 1s ease;
+}
+.zcontrol-prenda::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #3498db;
+  z-index: -1;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+.prenda_item input[type="radio"]:checked + label {
+    background: rgba(52, 113, 254, .13);
+    border-color: #2364fe;
+    outline: 1px solid #2364fe;
+}
+.prenda_item input[type="radio"]:checked + label .zcontrol-prenda {
+    background: #2364fe;
+    border-style: solid;
+    border-color: #2364fe;
+}
+.prenda_item input[type="radio"]:checked + label .zcontrol-prenda .check-icon {
+    opacity: 1;
+    transform: scale(1.1);
+    color: #fff;
+}
+
+
+.prenda_content_blank {
+    position: absolute;
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    z-index: 0;
+    top: -100vh;
+    opacity: 0;
+    transition: all .2s;
+}
+.prenda_content_blank.in-message {
+    top: 0;
+    opacity: 1;
+    z-index: 1;
+}
+
+
+.prenda-skeleton {
+    background: linear-gradient(90deg, #e3eaf3 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+}
+@keyframes loading {
+  to { background-position: 200% 0; }
+}

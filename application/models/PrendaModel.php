@@ -1,7 +1,25 @@
 <?php  
-	
-	class PrendaModel extends CI_Model
-	{
+
+	class PrendaModel extends CI_Model {
+
+		// REWORK 2026
+		function insert(array $data){
+			$this->db->insert('prenda', $data);
+			return ($this->db->affected_rows() > 0);
+		}
+		function update($id, $data){
+			$this->db->where('pren_codigo', $id);
+			return $this->db->update('prenda', $data);
+		}
+		function delete(int $id){
+			$this->db->where('pren_codigo', $id);
+			$this->db->delete('prenda');
+			return ($this->db->affected_rows() > 0);
+		}
+
+
+
+
 
 		function Lista($tipo, $buscar, $limite = 10){
 			switch ($_POST['tipo']) {
@@ -178,11 +196,6 @@
 			$this->db->from('propiedad');
 			$res = $this->db->get();
 			return $res->result();	
-		}
-
-		function Update($id, $data){
-			$this->db->where('pren_codigo', $id);
-			$this->db->update('prenda', $data);
 		}
 
 		function SelectAll($limite = 20){

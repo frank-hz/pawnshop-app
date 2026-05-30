@@ -95,7 +95,7 @@
                     imageUrl: srv.url()+'assets/images/app_icon/pause.svg',
                     imageWidth: 200,
                     imageHeight: 100,
-                    html: '���<b>Congelar</b> credito?',
+                    html: '<b>Congelar</b> credito?',
                     showCancelButton: true,
                     confirmButtonColor: '#3fd0d4',
                     confirmButtonText: `Si, congelar` ,
@@ -204,6 +204,42 @@
                     }
                 }
             });
+        }
+        if (ev.id === 'btn_restringir') {
+            if (id_base){
+                const aswer = Swal.fire({
+                    imageUrl: srv.url()+'assets/images/app_icon/spy.svg',
+                    imageWidth: 200,
+                    imageHeight: 100,
+                    html: '¿<b>Restrigir</b> credito?',
+                    showCancelButton: true,
+                    confirmButtonColor: '#0f162e',
+                    confirmButtonText: `Si, Restrigir` ,
+                    cancelButtonColor: '#abb8ce',
+                    cancelButtonText: 'Cancelar'
+                }).then(async(result) => {
+                    if (result.value) {
+                        try {
+                            app.preload('open', 'Procesando..');
+                            const request = await fetch(app.URL(`dev/credito_restrigir/${id_base}`));
+                            const resp = await request.json();
+                            app.preload('close');
+                            if (resp.status === 'OK') {
+                                not.Ok(resp.message || 'Proceso completo.', '', 2000);
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 350);
+                            }else{
+                                not.Aviso(resp.message || 'Ocurrio un error inesperado.', '', 3000);
+                            }
+                        } catch (error) {
+                            console.log(error)
+                            app.preload('close');
+                            not.Aviso('Error al procesar', '', 2200);
+                        }
+                    }
+                });
+            }
         }
     });
     d.addEventListener('submit', async event => {

@@ -65,6 +65,10 @@
 						</button>
 					<?php endif; ?>						
 				</div>
+				<button id="layout_btn_cotizador" class="btn btn-indigo">
+					COTIZA. 
+					<i class="fe fe-clipboard"></i>
+				</button>
 				<div class="dropdown d-none d-md-flex">
 					<a class="nav-link icon" data-toggle="dropdown">
 						<i class="fe fe-bell"></i>
@@ -80,7 +84,7 @@
 						<div class="dropdown-divider"></div>
 						<a href="#" class="dropdown-item text-center text-muted-dark">Marcar todo como leido.</a>
 					</div>
-				</div>
+				</div>				
 				<div class="dropdown">
 					<a href="#" class="nav-link pr-0 leading-none user-link" data-toggle="dropdown">
 						<?php if ($this->session->userdata('pres_ses_sesion')): ?>

@@ -1,9 +1,9 @@
 (function(d){
     let app;
-
+    const cotizacion_url = 'app/cuota_simulation';
     d.addEventListener('DOMContentLoaded', async event => {
         app = new App();
-        enviromentDesign();
+        set_enviroment_style();
         menu_dashboard_active();
     })
     d.addEventListener('click', async event => {
@@ -83,13 +83,90 @@
             });
         })
     }  
-    if (d.getElementById('toggle-switch-btn')) {
-        d.getElementById('toggle-switch-btn').addEventListener('click', event => {
+    if (d.getElementById('toggle-btn')) {
+        d.getElementById('toggle-btn').addEventListener('click', event => {
             console.log(event.target)
             event.target.classList.toggle('toggle-active')
         })
     }
+
+
+    function cotizador_set_values(reset = false, values = {}){
+        const cuota     = d.getElementById('cotiz_cuota_value');
+        const penalidad = d.getElementById('cotiz_penalidad_value');
+        const tasa      = d.getElementById('cotiz_tasa_value');
+
+        if (reset) {
+            cuota.textContent = 'S/ 0.00';
+            penalidad.textContent = 'S/ 0.00';
+            tasa.textContent = '--';
+            return;
+        }
+        cuota.textContent = values.cuota;
+        penalidad.textContent = values.penalidad;
+        tasa.textContent = values.tasa === 'P' ? 'Porcentual' : 'Fijo';
+    }
+    d.getElementById('layout_btn_cotizador')?.addEventListener('click', evt => {
+        const modal = d.getElementById('layout_modal_cotizador');
+        const form  = d.getElementById('layout_form_cotizador');
+        
+        if (!modal) {
+            console.warning('Modal cotizador no encontrado.');
+            return;
+        }
+        if (form && form instanceof HTMLFormElement) form.reset();
+        cotizador_set_values(true);
+        modal.classList.add('is-visible');
+    });
+    d.getElementById('layout_modal_close')?.addEventListener('click', evt => {
+        const modal = d.getElementById('layout_modal_cotizador');
+        if (!modal) {
+            console.warning('Modal cotizador no encontrado.');
+            return;
+        }
+        modal.classList.add('closing');
+        
+        setTimeout(() => {
+            modal.classList.remove('is-visible');
+            modal.classList.remove('closing');
+        }, 300);
+    });
+    d.getElementById('layout_form_cotizador')?.addEventListener('submit', async evt => {
+        evt.preventDefault();
+        try {
+            const log = d.getElementById('cotiza_log');
+            log.textContent = '';
+            log.className = 'text-center';
+            const form_data = new FormData(evt.target); 
+            const request = await fetch(app.URL(cotizacion_url), {
+                method: 'POST',
+                body: form_data
+            });
+            const resp = await request.json();
+            console.log(resp)
+            if (!resp.success) {
+                log.classList.add('text-danger');
+                log.textContent = 'Ocurrio un error inesperado.';
+                return;
+            }
+            if (!resp.result) {
+                log.classList.add('text-danger');
+                log.textContent = 'Ocurrio un error al obtener datos.';
+                return;
+            }
+            const data = resp.result;
+            cotizador_set_values(false, {
+                cuota: `S/ ${data.cuota}`,
+                penalidad: `S/ ${data.penalidad}`,
+                tasa: data.tipo_tasa
+            });
+
+        } catch (error) {
+            
+        }
+    });
     
+
     async function establecer_sucursal(id){
         try {
             app.preload('open','Cambiando..');
@@ -117,7 +194,7 @@
         }
     }
 
-    function enviromentDesign(){
+    function set_enviroment_style(){
         let dash = document.getElementById('dashboard-app');
         let tag = document.getElementById('testing-tag');
         if (!dash || !tag) return;

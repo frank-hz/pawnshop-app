@@ -3,6 +3,49 @@
 	class TarifaModel extends CI_Model
 	{
 		
+		// Rework 2026
+		function get_by_id($id){
+			$this->db->select("
+				tar_codigo as id,
+				tar_tipo as tipo, 
+				tar_interes as interes, 
+				tar_mora as mora,
+				tar_sucursal as sucursal_id
+			");
+			$this->db->from("tarifa");
+			$this->db->where("tar_codigo", $id);
+			$res = $this->db->get();
+			return $res->row();
+		}
+		function search_by_monto($sede, $monto){
+			$this->db->select("
+				tar_codigo as id,
+				tar_tipo as tipo, 
+				tar_interes as interes, 
+				tar_mora as mora,
+				tar_sucursal as sucursal_id
+			");
+			$this->db->from("tarifa");
+			$this->db->where("tar_sucursal", $sede);
+			$this->db->where("tar_minimo <=", $monto);
+			$this->db->where("tar_maximo >=", $monto);
+			$res = $this->db->get();
+			return $res->row();
+		}
+		function insert(array $data){
+			$this->db->insert('tarifa', $data);
+			return ($this->db->affected_rows() > 0);
+		}
+		function update($id, $data){
+			$this->db->where('tar_codigo', $id);
+			return $this->db->update('tarifa', $data);
+		}
+		function delete(int $id){
+			$this->db->where('tar_codigo', $id);
+			$this->db->delete('tarifa');
+			return ($this->db->affected_rows() > 0);
+		}
+
 		function Buscar_tarifa_aplicable($monto, $sucursal){
 			$sql = "SELECT 
 				tar_codigo as 'id',

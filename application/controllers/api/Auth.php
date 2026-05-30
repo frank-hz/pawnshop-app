@@ -57,7 +57,7 @@ class Auth extends CI_Controller {
                 'usuario_id'        => $user->id,
                 'empleado_id'       => $user->empleado_id,
                 'nombre_full'       => $user->nombre_apellido,
-                'nombre_short'      => $user->nombre.' '.$user->paterno,
+                'nombre_short'      => $user->nombres.' '.$user->paterno,
                 'rol_id'            => $user->id,
                 'rol_nombre'        => $user->rol_nombre,
                 'dev'               => (bool) $user->dev,

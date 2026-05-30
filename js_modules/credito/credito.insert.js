@@ -106,7 +106,6 @@
         penalidad: 0
     }
 
-
     d.addEventListener('DOMContentLoaded', async function(){
         app = new App();
         mdl_credito = new Credito();
@@ -870,6 +869,8 @@
     // P R E N D A
     async function prenda_get_all_disponibles(setts = {}){
         try {
+            // let time_inicio = await performance.now();
+            // console.time();
             loader.prenda_card.open();
             let req = await mdl_prenda.get_by_cliente(cliente_data.id, {
                 search_estado: ['R','D'],
@@ -885,15 +886,11 @@
                     <div class="d-flex justify-center">
                         [ Sin Datos de Prendas ] 
                     </div>
-                    <div class="enc2454-checklist-item">
+                    <div class="prenda-item">
                     <input id="NG" type="radio" name="prenda-item" value="0" data-type="NO_GARANTIA">
-                        <label for="NG" data-valoracion="" data-descripcion="">
-                            <span class="enc2454-checklist-icon"></span>
-                            <div class="enc2454-checklist-data">
-                                <div class="enc2454-checklist-title">
-                                    SIN GARANTIA
-                                </div>
-                            </div>
+                        <label for="NG" data-valoracion="" data-descripcion="" class="no-garantia-item text-primary">
+                            Sin Garantia 
+                            <i class="fe fe-maximize"></i>
                         </label>
                     </div>
                 `);
@@ -913,39 +910,51 @@
                     prenda_data.categoria = e.categoria_nombre;
                     prenda_data.garantia = true;
                 }
+                let ult_credito_id    = e.ultimo_credito_id;
+                let ult_credito_serie = e.ultimo_credito_serie;
+                let ult_credito_monto = e.ultimo_credito_monto;
+                // let ult_credito_link  = ult_credito_id 
+                //     ? `<a href="${app.URL('credito/detalle'+ult_credito_id)}">
+                //             ${ult_credito_serie}
+                //         </a>
+                //     ` : 'Sin datos.'; 
+                let ult_credito_link  = ult_credito_id 
+                    ?  `<span class="font-weight-bold">${ult_credito_serie} [S/ ${ult_credito_monto}]</span>
+                    ` : 'Sin datos.'; 
     
                 html += `
-                    <div class="enc2454-checklist-item">
+                    <div class="prenda-item">
                         <input id="${e.id}" type="radio" name="prenda-item" value="${e.id}" data-descripcion="${e.descripcion}" data-categoria="${e.categoria_nombre}" data-valoracion="${e.valoracion}" ${marked_attr}>
                         <label for="${e.id}">
-                            <span class="enc2454-checklist-icon"></span>
-                            <div class="enc2454-checklist-data">
-                                <div class="enc2454-checklist-title">
-                                    ${e.descripcion} ${e.estado_tag}
-                                </div>
-                                <div class="enc2454-checklist-subtitle">
-                                    Categoria: ${e.categoria_nombre} | Valoracion: ${e.valoracion} | ${ prenda_process_subdata (e,'|')}
-                                </div>
+                            <div class="pheader">
+                                <h4 class="ptitle">${e.descripcion}</h4>
+                                ${e.estado_tag}
+                            </div>
+                            <div class="pcontent">
+                                <p>Categoria: ${e.categoria_nombre} | Valoracion: ${e.valoracion} | ${ prenda_process_subdata (e,'|')}</p>
+                                <p>
+                                    Ultimo Credito: ${ult_credito_link}
+                                </p>
                             </div>
                         </label>
                     </div>
                 `;
             });
             html += `
-                <div class="enc2454-checklist-item">
+                <div class="prenda-item">
                     <input id="NG" type="radio" name="prenda-item" value="0" data-type="NO_GARANTIA">
-                    <label for="NG" data-valoracion="" data-descripcion="" ${(prenda_data.id > 0) ? 'checked' : ''}>
-                        <span class="enc2454-checklist-icon"></span>
-                        <div class="enc2454-checklist-data">
-                            <div class="enc2454-checklist-title">
-                                SIN GARANTIA
-                            </div>
-                        </div>
+                    <label for="NG" data-valoracion="" data-descripcion="" class="no-garantia-item text-primary">
+                        Sin Garantia 
+                        <i class="fe fe-maximize"></i>
                     </label>
                 </div>
             `;
             loader.prenda_card.close();
             app.render('prenda_dataset', html);
+            // let time_final = await performance.now();
+            // let time_result = time_final - time_inicio;
+            // d.getElementById('prenda_timer').textContent = time_result.toFixed(4);
+            // console.timeEnd();
         } catch (error) {
             loader.prenda_card.close();
             console.log('[prenda][consulta] '+error.message)

@@ -1,7 +1,133 @@
 <?php  
 	
-	class ClienteModel extends CI_Model
-	{
+	class ClienteModel extends CI_Model{
+		
+		// REWORK 2026
+		function get_by_id(int $id){
+			$this->db->where("c.cli_codigo", $id);
+			$this->db->select("c.cli_codigo as id");
+			$this->db->select("c.cli_documento as documento");
+			$this->db->select("c.cli_tipo_documento as tipo_documento");
+			$this->db->select("c.cli_nombres as nombres");
+			$this->db->select("c.cli_paterno as paterno");
+			$this->db->select("c.cli_materno as materno");
+			$this->db->select("CONCAT_WS(' ',cli_nombres,cli_paterno,cli_materno) as nom_ape");
+			$this->db->select("CONCAT_WS(' ',cli_nombres,cli_paterno,cli_materno) as nombre_full");
+			$this->db->select("u.ubi_distrito as distrito");
+			$this->db->select("u.ubi_distrito as ciudad");
+			$this->db->select("u.ubi_departamento as departamento");
+			$this->db->select("u.ubi_provincia as provincia");
+			$this->db->select("c.cli_direccion as direccion");
+			$this->db->select("c.cli_telefono as telefono");
+			$this->db->select("c.cli_email as email");
+			$this->db->select('u.ubi_codigo as ubigeo_id');
+			$this->db->select("cli_codigo as id");
+			$this->db->join("ubigeo u", "u.ubi_codigo = c.cli_ubigeo");
+			$res = $this->db->get("cliente c");
+			return $res->row();
+		}
+		function get_all($filters = [], $config = []){
+			if (!empty($filters['nom_ape'])) {
+			$nom_ape = $filters['nom_ape'];
+			$this->db->where("
+				MATCH (cli_nombres, cli_paterno, cli_materno) 
+				AGAINST('+$nom_ape' IN BOOLEAN MODE)
+			");
+			}
+			if (!empty($filters['nom_ape_doc'])) {
+			$nom_ape_doc = $filters['nom_ape_doc'];
+			$this->db->like('cli_documento', $nom_ape_doc);
+			$this->db->or_like('cli_nombres', $nom_ape_doc);
+			$this->db->or_like('cli_paterno', $nom_ape_doc);
+			$this->db->or_like('cli_materno', $nom_ape_doc);
+			}
+			if (!empty($filters['documento'])) {
+			$this->db->like('cli_documento', $filters['documento']);
+			}
+			if (!empty($filters['cantidad_prendas'])) {
+			$this->db->where('cantidad_prendas', $filters['cantidad_prendas']);
+			}
+			if (!empty($filters['cantidad_creditos'])) {
+			$this->db->where('cantidad_creditos', $filters['cantidad_creditos']);
+			}
+
+			// Ordenamiento
+			if (!empty($settings['order_type'])) {
+			$tipo = strtoupper($settings['order_type']) === 'DESC' ? 'DESC' : 'ASC';
+			$campos = [
+				'CODIGO' => 'cli_codigo',
+				'DOCUMENTO' => 'cli_documento',
+				'NOMBRE' => 'cli_nombres',
+				'PATERNO' => 'cli_paterno',
+				'MATERNO' => 'cli_materno',
+				'CREACION' => 'create_at'
+			];
+			$campo_orden = $settings['order_by'] ?? 'cli_codigo';
+			$objetivo = $campos[$campo_orden] ?? 'cli_codigo';
+			$this->db->order_by($objetivo, $tipo);
+			}
+
+			if (!empty($settings['limit'])) {
+			$this->db->limit($settings['limit']);
+			}
+
+
+			$this->db->select('c.cli_codigo as id');
+			$this->db->select('c.cli_documento as documento');
+			$this->db->select('c.cli_tipo_documento as tipo_documento');
+			$this->db->select('c.cli_nombres as nombres');
+			$this->db->select('c.cli_paterno as paterno');
+			$this->db->select('c.cli_materno as materno');
+			$this->db->select('CONCAT_WS(
+			" ",c.cli_nombres,c.cli_paterno,c.cli_materno
+			) as nombre_full');
+			$this->db->select('CONCAT_WS(
+			" ",c.cli_nombres,c.cli_paterno,c.cli_materno
+			) as nom_ape');
+			$this->db->select('c.cli_direccion as direccion');
+			$this->db->select('c.cli_telefono as telefono');
+			$this->db->select('c.cli_email as email');
+			$this->db->select('IFNULL(DATE_FORMAT(c.create_at, "%d/%m/%Y"), "[Sin Datos]") as fecha_creacion');
+			$this->db->select('IFNULL(DATE_FORMAT(c.create_at, "%H:%i:%s"), "[Sin Datos]") as hora_creacion');
+			$this->db->select('DATE_FORMAT(c.create_at, "%d/%m/%Y") as create_at');
+			$this->db->select('DATE_FORMAT(c.update_at, "%d/%m/%Y") as update_at');
+			$this->db->select('u.ubi_codigo as ubigeo_id');
+			$this->db->select('u.ubi_distrito as ciudad');
+			$this->db->select("
+			(select count(*) from prenda where pren_cliente = c.cli_codigo) as cantidad_prendas
+			");
+			$this->db->select("
+			(select count(*) from credito where cred_cliente = c.cli_codigo) as cantidad_creditos
+			");
+			$this->db->select("c.conducta");
+			$this->db->select("c.recurrencia");
+			$this->db->select("c.en_blacklist");
+			$this->db->select("c.blacklist_motivo");
+			$this->db->from('cliente c');
+			$this->db->join('ubigeo u', 'u.ubi_codigo = c.cli_ubigeo');
+			$res = $this->db->get();
+			return $res->result();
+		}
+		function insert(array $data){
+			$this->db->insert('cliente', $data);
+			return ($this->db->affected_rows() > 0);
+		}
+		function update($id, $data){
+			$this->db->where('cli_codigo', $id);
+			return $this->db->update('cliente', $data);
+		}
+		function delete(int $id){
+			$this->db->where('cli_codigo', $id);
+			$this->db->delete('cliente');
+			return ($this->db->affected_rows() > 0);
+		}
+
+
+
+
+
+
+
 
 		// Lista de registros
 		// function Lista($tipo, $buscar, $limite){
@@ -46,10 +172,10 @@
 			// return $aff;
 		}		
 		// Eliminando registros
-		function delete(){
-			$this->db->where('cli_codigo', $id);
-			$this->db->delete('cliente');
-		}
+		// function delete(){
+		// 	$this->db->where('cli_codigo', $id);
+		// 	$this->db->delete('cliente');
+		// }
 
 
 		// obtener registros segun el documento 

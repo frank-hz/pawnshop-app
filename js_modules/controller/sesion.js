@@ -18,7 +18,6 @@ class Sesion extends Corex {
     return this.request(routes_sesion.set_sede, { method: 'POST', body: formData });
   }
   async profile_update(data) {
-    console.log("update")
     return this.request(routes_sesion.profile_update, { method: 'POST', body: data });
   }
 }

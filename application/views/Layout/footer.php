@@ -15,34 +15,52 @@
       </div>
     </div>
 
-    <div id="accesoRapido" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mdPrendaAgregarLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" id="mdCiudadLabel">
-              <i class="fe fe-grid text-blue"></i>
-              Acceso Rapido
-            </h4>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true"></span>
-            </button>
+    <div id="layout_modal_cotizador" class="modalz size-md zoomIn">
+      <div class="modalz-content">
+        <span id="layout_modal_close" class="mzClose" onclick="closeModal()">&#215;</span>
+        <div class="cotizador-grid">
+          <div class="cotiz-header">
+            <h3>Cotizador</h3>
           </div>
-          <div class="modal-body">
-              <div class="row">
-                <div class="col-md-4 text-center">
-                  <div class="card">
-                    <i class="d-block text-center fe fe-file text-blue"></i>
-                  <a href="">Registrar Credito</a>
+          <div class="cotiz-form">
+            <form id="layout_form_cotizador" class="d-flex justify-center">
+              <div class="row mb-2">
+                <div class="col-md-6 col-sm-12">
+                  <label class="form-label">Monto (S/):</label>
+                  <input type="number" name="monto" step="any" class="form-control form-control-lg cotiz-input">
+                </div>
+                <div class="col-md-6 col-sm-12">
+                  <div class="pt-1">
+                    <p style="padding:0;margin:0;">&nbsp;</p>
+                    <button class="btn btn-lg btn-indigo">Calcular</button>
                   </div>
                 </div>
-                <div class="col-md-4">
-                  <a href="">Registrar Credito</a>
-                </div>
-                <div class="col-md-4">
-                  <a href="">Registrar Credito</a>
+                <div class="col-md-12 py-2">
+                  <div id="cotiza_log" class="text-center"></div>
                 </div>
               </div>
+              
+            </form>
           </div>
+          <div class="cotiz-content">
+            <h5>Resultado:</h5>
+            <div class="cotiz-results">
+              <div class="cotiz-item">
+                <h3 id="cotiz_cuota_value">S/ 0.00</h3>
+                <span>Cuota</span>
+              </div>
+              <div class="cotiz-item">
+                <h3 id="cotiz_penalidad_value">S/ 0.00</h3>
+                <span>Penalidad</span>
+              </div>
+              <div class="cotiz-item">
+                <h3 id="cotiz_tasa_value">--</h3>
+                <span>Tipo de Tasa</span>
+              </div>
+
+            </div>
+          </div>
+          
         </div>
       </div>
     </div>
@@ -86,6 +104,7 @@
         </div>
       </div>
     </div>
+
     <style>
       .tablax {
         width: 100%;
@@ -97,14 +116,8 @@
         text-align: left;
         padding: 4px 8px;
       }
-
-      /*.tablax tr:nth-child(even) {
-        background-color: #dddddd;
-      }*/
-    </style>
-    <!-- <script src="<?= base_url() ?>node_modules/vue/dist/vue.min.js"></script> -->
-    
+    </style>    
 	  <script src="<?= base_url() ?>js_modules/app.js?v=19012025"></script>
-    <script src="<?= base_url() ?>js_modules/dashboard.js?v=19012025"></script>
+    <script src="<?= base_url() ?>js_modules/dashboard.js?v=87467898"></script>
   </body>
 </html>

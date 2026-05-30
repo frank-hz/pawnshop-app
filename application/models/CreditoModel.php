@@ -3,65 +3,61 @@
 	class CreditoModel extends CI_Model {
 
 		// REV. 2026
-		function getById($id){
-			$this->db->select("
-				c.cred_codigo as id,
-				c.cred_serie as serie,
-				DATE_FORMAT(c.cred_create_at, '%d/%m/%Y - %h:%i %p') as 'fecha_creacion',
-				DATE_FORMAT(c.cred_create_at, '%d/%m/%Y') as 'creacion',
-				DATE_FORMAT(c.cred_create_at, '%d-%m-%Y') as 'creacion_raw',
-				DATE_FORMAT(c.cred_liquidacion, '%d/%m/%Y - %h:%i %p') as 'fecha_liquidacion',
-				DATE_FORMAT(c.cred_liquidacion, '%d/%m/%Y') as 'liquidacion',
-				c.cred_empleado as empleado_id,
-				CONCAT_WS(
-					' ',
-					e.emp_nombres, e.emp_paterno, e.emp_materno
-				) as empleado_nom_ape,
-				 CONCAT_WS(
-					' ',
-					e.emp_nombres, e.emp_paterno, e.emp_materno
-				) as empleado_nombre_full,
-				c.cred_cliente as cliente_id,
-				CONCAT_WS(
-					' ', 
-					cl.cli_nombres, cl.cli_paterno,cl.cli_materno
-				) as cliente_nom_ape,
-				 CONCAT_WS(
-					' ', 
-					cl.cli_nombres, cl.cli_paterno,cl.cli_materno
-				) as cliente_nombre_full,
-				CONCAT_WS(' ', cl.cli_nombres,cl.cli_paterno,cl.cli_materno) as cliente_nom_ape,
-				cl.cli_nombres as cliente_nombres,
-				cl.cli_paterno as cliente_paterno,
-				cl.cli_materno as cliente_materno,
-				cl.cli_documento as cliente_documento,
-				TRIM(cl.cli_direccion) as cliente_direccion,
-				cl.cli_telefono as cliente_telefono,
-				u.ubi_distrito as cliente_distrito,
-				c.cred_prenda as prenda_id,
-				p.pren_descripcion as prenda_descripcion,
-				ct.cat_nombre as prenda_categoria,
-				p.pren_marca as prenda_marca,
-				p.pren_modelo as prenda_modelo,
-				p.pren_serial as prenda_serie,
-				p.pren_quilate as prenda_quilate,
-				p.pren_peso as prenda_peso,
-				p.pren_valoracion as prenda_valoracion,
-				p.pren_observacion as prenda_observacion,
-				p.pren_comentario as prenda_comentario,
-				tp.tpren_nombre as prenda_tipo,
-				c.cred_monto as monto,
-				c.cred_prorroga as 'prorroga',
-				c.cred_cargo as 'cargo',
-				c.cred_tasa as 'tasa',
-				c.cred_tipo_tasa as 'tipo_tasa',
-				c.cred_pago_semanal as 'pago',
-				c.cred_penalidad as 'penalidad',
-				c.cred_aplica_penalidad as 'aplica_penalidad',
-				c.cred_ciclo_pago as 'ciclo_pago',
-				c.cred_ciclo_ref as 'ciclo_ref',
-				c.cred_sucursal as sucursal_id
-			");
+		function getById($id, $mode = 'basic'){
+			$campos = [
+				'c.cred_codigo as id',
+				'c.cred_serie as serie',
+				'DATE_FORMAT(c.cred_create_at, "%d/%m/%Y - %h:%i %p") as fecha_creacion',
+				'DATE_FORMAT(c.cred_create_at, "%d/%m/%Y") as creacion',
+				'DATE_FORMAT(c.cred_create_at, "%d-%m-%Y") as creacion_raw',
+				'DATE_FORMAT(c.cred_liquidacion, "%d/%m/%Y - %h:%i %p") as fecha_liquidacion',
+				'DATE_FORMAT(c.cred_liquidacion, "%d/%m/%Y") as liquidacion',
+				'c.cred_empleado as empleado_id',
+				'c.cred_cliente as cliente_id',
+				'c.cred_prenda as prenda_id',
+				'c.cred_monto as monto',
+				'c.cred_sucursal as sucursal_id',
+				'CONCAT_WS(" ", e.emp_nombres, e.emp_paterno, e.emp_materno) as empleado_nombre_full',
+				'CONCAT_WS(" ", cl.cli_nombres, cl.cli_paterno, cl.cli_materno) as cliente_nombre_full',
+				'c.cred_estado as estado'
+			];
+			if ($mode === 'full') {
+				$campos = array_merge($campos, [
+					'CONCAT_WS(" ", e.emp_nombres, e.emp_paterno, e.emp_materno) as empleado_nom_ape',
+					'CONCAT_WS(" ", cl.cli_nombres, cl.cli_paterno, cl.cli_materno) as cliente_nom_ape',
+					'cl.cli_nombres as cliente_nombres',
+					'cl.cli_paterno as cliente_paterno',
+					'cl.cli_materno as cliente_materno',
+					'cl.cli_documento as cliente_documento',
+					'TRIM(cl.cli_direccion) as cliente_direccion',
+					'cl.cli_telefono as cliente_telefono',
+					'u.ubi_distrito as cliente_distrito',
+					
+					// prenda
+					'p.pren_descripcion as prenda_descripcion',
+					'ct.cat_nombre as prenda_categoria',
+					'tp.tpren_nombre as prenda_tipo',
+					'p.pren_marca as prenda_marca',
+					'p.pren_modelo as prenda_modelo',
+					'p.pren_serial as prenda_serie',
+					'p.pren_quilate as prenda_quilate',
+					'p.pren_peso as prenda_peso',
+					'p.pren_valoracion as prenda_valoracion',
+					'p.pren_observacion as prenda_observacion',
+					'p.pren_comentario as prenda_comentario',
+					
+					'c.cred_prorroga as prorroga',
+					'c.cred_cargo as cargo',
+					'c.cred_tasa as tasa',
+					'c.cred_tipo_tasa as tipo_tasa',
+					'c.cred_pago_semanal as pago',
+					'c.cred_penalidad as penalidad',
+					'c.cred_aplica_penalidad as aplica_penalidad',
+					'c.cred_ciclo_pago as ciclo_pago',
+					'c.cred_ciclo_ref as ciclo_ref'
+				]);
+			}
+			$this->db->select( $campos );
 			$this->db->from("credito c");
 			$this->db->where("c.cred_codigo", $id);
 			$this->db->join("cliente cl", "cl.cli_codigo = c.cred_cliente");
@@ -73,7 +69,52 @@
 			$res = $this->db->get();
 			return $res->row();
 		}
-
+		function insert(array $data){
+			$this->db->insert('credito', $data);
+			return ($this->db->affected_rows() > 0);
+		}
+		function update($id, $data){
+			$this->db->where('cred_codigo', $id);
+			return $this->db->update('credito', $data);
+		}
+		function delete(int $id){
+			$this->db->where('cred_codigo', $id);
+			$this->db->delete('credito');
+			return ($this->db->affected_rows() > 0);
+		}
+		function get_all_by_cliente($cliente, $restrigir = TRUE){
+			$this->db->select("
+				c.cred_codigo as id,
+				c.cred_serie as serie,
+				c.cred_monto as monto,
+				DATE_FORMAT(c.cred_creacion, '%d/%m/%Y') as fecha_creacion,
+				DATE_FORMAT(c.cred_creacion, '%H:%i:%s') as hora,
+				DATE_FORMAT(c.cred_liquidacion, '%d/%m/%Y') as fecha_liquidacion,
+				c.cred_estado as estado,
+				e.emp_codigo as empleado_id,
+				CONCAT(
+					e.emp_nombres,' ',
+					e.emp_paterno,' ',
+					e.emp_materno
+				) as empleado_nombre_full,
+				cl.cli_codigo as cliente_id,
+				CONCAT(
+					cl.cli_nombres,' ',
+					cl.cli_paterno,' ',
+					cl.cli_materno
+				) as cliente_nombre_full
+			");
+			$this->db->from("credito c");
+			$this->db->join("cliente cl", "cl.cli_codigo = c.cred_cliente");
+			$this->db->join("empleado e", "e.emp_codigo = c.cred_empleado");
+			$this->db->where("c.cred_cliente", $cliente);
+			if ($restrigir) {
+				$this->db->where("c.cred_estado != 'HIDE'");
+			}
+			$this->db->order_by("c.cred_creacion", 'DESC');
+			$res = $this->db->get();
+			return $res->result();
+		}
 
 
 		// function Lista_basica($suc, $limite){

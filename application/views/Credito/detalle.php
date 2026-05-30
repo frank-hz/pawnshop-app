@@ -96,6 +96,7 @@
 							</a>
 						<?php endif ?>            	
 					<?php endif ?>
+					
 	
 					<?php if ($delete_action): ?>
 						<a id="btn_delete" href="javascript:void(0)" data-id="<?= $credito->id; ?>" class="list-group-item list-group-item-action bg-scarlet text-light py-2">
@@ -118,6 +119,12 @@
 							Notificacion por Correo
 						</a>
 					<?php endif ?>
+					<?php if ($this->session->userdata('dev')): ?>
+					<a id="btn_restringir" href="javascript:void(0)" :data-id="<?= $credito->id; ?>" class="list-group-item list-group-item-action d-flex align-items-center text-primary">
+						<span class="icon mr-3"><i class="fe fe-slash text-primary"></i></span>
+						Restrigir
+					</a>
+					<?php endif; ?>
 					<div class="mt-2">
 						<div class="form-label mb-1">Empleado Registrador</div>
 						<span><?= $credito->empleado_nombre; ?></span>
@@ -125,6 +132,7 @@
 							<?= $credito->empleado_nombre; ?>
 						</a> -->
 					</div>
+					
 				</div>	          	
 			</div>
 		</div>
@@ -485,4 +493,4 @@
 </div>
 
 
-<script src="<?= base_url() ?>js_modules/credito/credito.detalle.js?v=22042025"></script>
+<script src="<?= base_url() ?>js_modules/credito/credito.detalle.js?v=99744"></script>

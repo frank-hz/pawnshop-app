@@ -93,20 +93,6 @@
 			return $res->result();
 		}		
 		function getAllByCliente($idcliente, $setting = []){
-			// $query_order = "ORDER BY pren_codigo ASC";
-			// $query_limit = " LIMIT 20";
-			// if (!empty($setting['order'])) {
-			// 	$query_order = $setting['order'];
-			// } 
-			// if (!empty($setting['limit'])) {
-			// 	$query_limit = $setting['limit'];
-			// }
-			// $query_search = "";
-			// $search_data = [$idcliente];
-			// if (!empty($setting['search']) && !empty($setting['search_params'])){
-			// 	$query_search = " AND ".$setting['search'];
-			// 	array_merge($search_data,$setting['search_params']);
-			// }
 			$params = [$idcliente];
 			$query_order = "ORDER BY pren_codigo ASC";
 			$query_search = "";
@@ -142,11 +128,30 @@
 					p.pren_comentario as 'comentario',
 					p.pren_valoracion as 'valoracion',
 					p.pren_reutilizacion as 'reutilizacion',
-					p.pren_estado as 'estado'	
+					p.pren_estado as 'estado',
+					ult.ultimo_credito_id,
+					ult.ultimo_credito_serie,
+					ult.ultimo_credito_monto
 				FROM prenda p
-				INNER JOIN cliente c ON c.cli_codigo = p.pren_cliente
 				INNER JOIN categoria ct ON ct.cat_codigo = p.pren_categoria
-				INNER JOIN tipo_prenda tp ON tp.tpren_codigo = ct.cat_tipo
+				INNER JOIN tipo_prenda tp ON tp.tpren_codigo = ct.cat_tipo 
+				LEFT JOIN (
+					SELECT 
+						cred_prenda,
+						cred_codigo AS ultimo_credito_id,
+						cred_serie  AS ultimo_credito_serie,
+						cred_monto  AS ultimo_credito_monto
+					FROM (
+						SELECT 
+							cred_prenda,
+							cred_codigo,
+							cred_serie,
+							cred_monto,
+							ROW_NUMBER() OVER (PARTITION BY cred_prenda ORDER BY cred_codigo DESC) as rn
+						FROM credito
+					) c
+					WHERE rn = 1
+				) ult ON ult.cred_prenda = p.pren_codigo 
 				WHERE 
                     p.pren_cliente = ? 
 					$query_search 

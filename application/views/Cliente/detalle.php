@@ -4,7 +4,7 @@
 <input id="id_cliente" type="hidden" value="<?= $cliente->id; ?>">
 <div class="containers px-3 py-1">
   <div class="row">
-    <div class="col-xs-12 col-lg-3 p-0">
+    <div class="col-xs-12 col-lg-3 p-0 pl-1">
       <div class="card p-0 mb-3">
         <div id="cond-puntuacion" class="py-2 d-flex justify-center">
           <!-- <div class="spinner-v1"></div> -->
@@ -18,6 +18,7 @@
         <div class="card-header">
           <h3 class="card-title text-blue form-label">Opciones</h3>
         </div>
+        <!-- <?= base_url() ?>Credito/nuevo?cliente=<?= $cliente->id; ?> -->
         <div class="list-group">
           <a id="btn-cliente-edit" href="javascript:void(0)" class="list-group-item list-group-item-action text-blue py-2" data-idcliente="<?= $cliente->id; ?>">
             <span class="icon mr-3"><i class="fe fe-edit-2 text-blue"></i></span>
@@ -26,6 +27,10 @@
           <a id="btn-conducta-edit" href="javascript:void(0)" class="list-group-item list-group-item-action text-blue py-2" data-idcliente="<?= $cliente->id; ?>">
             <span class="icon mr-3"><i class="fe fe-edit text-blue"></i></span>
             Editar Conducta
+          </a>
+          <a href="<?= base_url() ?>Credito/nuevo?cliente=<?= $cliente->id; ?>" class="list-group-item list-group-item-action text-blue py-2">
+            <span class="icon mr-3"><i class="fe fe-file text-blue"></i></span>
+            Nuevo Credito
           </a>
         </div>
       </div>

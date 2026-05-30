@@ -1,7 +1,6 @@
 <?php
 
-function current_date_display()
-{
+function current_date_display(){
   try {
     date_default_timezone_set('America/Lima');
     $days = array(
@@ -39,8 +38,7 @@ function current_date_display()
   }
 }
 
-function get_input($keyname)
-{
+function get_input($keyname){
   if (isset($_POST[$keyname])) {
     return $_POST[$keyname];
   }
@@ -57,8 +55,7 @@ function get_input($keyname)
 
 
 // Imprime errores codificado en json
-function response_json($message, $config = [])
-{
+function response_json($message, $config = []){
   echo json_encode([
     'status' => $config['status'] ?? 'ERR',
     'message' => $message,
@@ -68,8 +65,7 @@ function response_json($message, $config = [])
 }
 
 // Obtiene y formatea valores POST
-function catchPostValue($target, $isInt = false)
-{
+function catchPostValue($target, $isInt = false){
   $CI =& get_instance();
   $value = $CI->input->post($target, TRUE);
   if ($value === null)
@@ -79,8 +75,7 @@ function catchPostValue($target, $isInt = false)
   return $resp;
 }
 
-function response_api($message, $config = [])
-{
+function response_api($message, $config = []){
   $CI =& get_instance();
   $CI->output
     ->set_status_header($config['code'] ?? 400)
@@ -94,8 +89,7 @@ function response_api($message, $config = [])
 }
 
 // Obtener y validar datos POST (JSON o form-data)
-function get_post_data()
-{
+function get_post_data(){
   // Obtener como JSON
   $CI =& get_instance();
   $input_raw = $CI->input->raw_input_stream;
@@ -111,10 +105,18 @@ function get_post_data()
 }
 
 // Sanitizar datos 
-function sanitize_input($value)
-{
+function sanitize_input($value){
   $value = trim($value);
   $value = stripslashes($value);
   $value = htmlspecialchars($value);
   return $value;
+}
+
+// Redondear un monto de dinero
+function round_money($value, $addFormat = true){
+  $monto_roundx = round($value, 1, PHP_ROUND_HALF_DOWN);
+  if ($addFormat) {
+    $monto_roundx = number_format($monto_roundx, 2, '.', '');
+  }
+  return $monto_roundx;
 }

@@ -18,6 +18,9 @@
             case 'AN':
                 $resp = "<span class='stag stag-cred-AN'>Anulado</span>";
                 break;
+            case 'HIDE':
+                $resp = "<span class='stag stag-cred-HIDE'>Restrigido</span>";
+                break;
         }
         return $resp;
     }

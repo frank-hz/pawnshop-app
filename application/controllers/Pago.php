@@ -383,7 +383,7 @@
 				return;
 			}
 			
-			$credito = $this->CreditoModel->getById($idcredito);
+			$credito = $this->CreditoModel->getById($idcredito, 'full');
 			if (empty($credito)){
 				error_render_view("CUIDADO","Credito no encontrado.");
 				return;
@@ -453,10 +453,24 @@
 
 		function detalle($id = null){
 			if ($id != null) {
-				$data['pago'] = $this->PagoModel->getPagoDetail($id);
-				$data['detalle'] = $this->PagoModel->obtener_detalle($id);
-
-				if (!empty($data['pago'])) {
+				$pago 	 = $this->PagoModel->getPagoDetail($id);
+				$detalle = $this->PagoModel->obtener_detalle($id);
+				
+				// $total_rnx = round_money($pago->total);
+				// print_r(['total' => $pago->total, 'total_formt' => $total_rnx]);
+				// return;
+				$pago->total = round_money($pago->total);
+				$pago->subtotal = round_money($pago->subtotal);
+				$pago->recibido = round_money($pago->recibido);
+				$pago->devuelto = round_money($pago->devuelto);
+				foreach ($detalle as $item) {
+					$item->monto = round_money($item->monto);
+				}
+				$data = [
+					'pago' => $pago,
+					'detalle' => $detalle
+				];
+				if (!empty($pago) && !empty($detalle)) {
 					$this->load->view("Layout/header.php");
 					$this->load->view("Pago/detalle.php", $data);
 					$this->load->view("Layout/footer.php");

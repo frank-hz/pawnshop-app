@@ -50,7 +50,8 @@
                         JOIN cuota cu ON cr.cred_codigo = cu.cuo_credito
                         WHERE 
                             DATE(cu.cuo_vencimiento) < ? AND 
-                            cu.cuo_estado = 'V' AND cr.cred_sucursal = ?
+                            cu.cuo_estado = 'V' AND cr.cred_sucursal = ? 
+                            AND cr.cred_estado = 'E'
                     ) as vencidos,
                     (
                         select 

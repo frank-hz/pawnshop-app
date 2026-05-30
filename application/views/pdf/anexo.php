@@ -744,8 +744,8 @@
         <table class="p2-goods-table">
         <?php if ($prenda_tipo === 'JOYA'): ?>
             <tr>
-                <td class="label">Categoría:</td>
-                <td class="value-field"><?= $categoria ?? 'no_data'; ?></td>
+                <td class="label">Descripcion:</td>
+                <td class="value-field"><?= $descripcion ?? 'no_data'; ?></td>
                 <td class="label">Peso (g.):</td>
                 <td class="value-field"><?= $peso ?? 'no_data'; ?></td>
             </tr>
@@ -755,8 +755,8 @@
             </tr>
         <?php else: ?>
             <tr>
-                <td class="label">Categoría:</td>
-                <td class="value-field"><?= $categoria ?? 'no_data'; ?></td>
+                <td class="label">Descripcion:</td>
+                <td class="value-field"><?= $descripcion ?? 'no_data'; ?></td>
                 <td class="label">Marca:</td>
                 <td class="value-field"><?= $marca ?? 'no_data'; ?></td>
             </tr>
@@ -788,7 +788,7 @@
                 <b>1. PROPIEDAD Y CARGAS:</b> Declaro que el bien descrito es de mi exclusiva y legítima propiedad, y que sobre él no recae ningún tipo de gravamen, embargo, carga, ni medida judicial o administrativa que limite o impida su libre disposición para fines de empeño o transferencia.
             </div>
             <div class="p2-clause-item">
-                <b>2. DACIÓN EN PAGO:</b> En caso de incumplimiento de las obligaciones pactadas en el contrato de préstamo, o por voluntad propia expresada en este acto, <b>ENTREGO EL BIEN EN DACIÓN EN PAGO</b> a favor de ELECTROCASH, conforme al Art. 1265 del Código Civil, para extinguir la totalidad de la deuda acumulada (capital, intereses y gastos). A partir de la firma, ELECTROCASH adquiere la plena propiedad y facultad de disposición del bien.
+                <b>2. DACIÓN EN PAGO:</b> En caso de incumplimiento de las obligaciones pactadas en el contrato de préstamo, o por voluntad propia expresada en este acto, <b>ENTREGO EL BIEN EN DACIÓN EN PAGO</b> a favor de ELECTROCASH, conforme al Art. 1265 del Código Civil, para extinguir la totalidad de la deuda acumulada. A partir de la firma, ELECTROCASH adquiere la plena propiedad y facultad de disposición del bien.
             </div>
             <div class="p2-clause-item">
                 <b>3. INDEMNIDAD:</b> Me comprometo a mantener indemne a ELECTROCASH frente a cualquier reclamo de terceros que aleguen derechos sobre el bien, asumiendo toda responsabilidad civil o penal derivada.
@@ -810,12 +810,14 @@
                     Chimbote, <?= $fecha_style; ?>
                     <!-- Chimbote, ...... de .........................de 20.... -->
                 </td>
-                <td style="width: 50%;padding-top: 20px;">
+                <td style="width: 50%;padding-top: 45px;">
                     <div class="p2-signature-container">
                         <div class="p2-signature-line">
                             <div style="text-align: center; font-weight: bold; margin-bottom: 5px;">SOLICITANTE</div>
-                            <p style="text-align:center;"><?= $nom_ape ?? ''; ?></p>
-                            <p style="text-align:center;">DNI: <?= $documento ?? ''; ?></p>
+                            <div style="text-align:center;">
+                                <span style="font-size:8pt;"><?= $nom_ape ?? ''; ?></span>
+                                <span>DNI: <?= $documento ?? ''; ?></span>
+                            </div>
                         </div>
                     </div>
                 </td>

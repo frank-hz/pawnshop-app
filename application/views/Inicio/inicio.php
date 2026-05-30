@@ -21,9 +21,9 @@
       <a class="btn btn-indigo text-light" href="<?= base_url('cliente/nuevo') ?>">
         <i class="fe fe-user"></i> Nuevo Cliente
       </a>
-      <button id="btn_resumen_open" class="btn btn-dark">
+      <!-- <button id="btn_resumen_open" class="btn btn-dark">
         <i class="fe fe-sunset"></i> Resumen MOV
-      </button>
+      </button> -->
     </div>
   </div>
   <div class="inicioContent">
@@ -301,7 +301,6 @@
   top: 0;
   left: 0;
   position: fixed;
-
   opacity: 0;
   visibility: hidden;
   transform: scale(1.1);
@@ -323,23 +322,17 @@
   max-height: 100vh;
   overflow-y: auto;
 }
-.resumen-card {
-  /* border-top: 1px solid rgba(188, 199, 213, .6); */
-}
-
 .resumen-card-header {
   font-size: 1rem;
   font-weight: 800;
   padding: .6rem .4rem;
   color: #1d2534;
 }
-
 .resumen-card table {
   width: 100%;
   border: none;
   border-collapse: collapse;
 }
-
 .resumen-card table td,
 .resumen-card table th {
   border: none;
@@ -348,33 +341,28 @@
   border-left: none;
   border-right: none;
 }
-
 .resumen-card table tr:last-child td,
 .resumen-card table tr:last-child th {
   border: none;
 }
-
 .resumen-title {
   padding: .4rem .5rem;
   display: flex;
   justify-content: space-between;
   margin-bottom: 7px;
 }
-
 .resumen-title h1 {
   font-size: 1.2rem;
   font-weight: 800;
   margin: 0;
   color: #1d2534;
 }
-
 .resumen-title small {
   line-height: 1.1rem;
   font-weight: 600;
   color: #1d2534;
   display: block;
 }
-
 .resumen-title button {
   display: inline-flex;
   min-width: 40px;
@@ -391,7 +379,6 @@
   cursor: pointer;
   opacity: .2;
 }
-
 .resumen-title button svg {
   stroke: #1d2534;
   transition: all .2s;
@@ -399,13 +386,11 @@
   height: 24px;
   pointer-events: none;
 }
-
 .resumen-title button:hover {
   background: #1d2534;
   color: #fff;
   opacity: 1;
 }
-
 .resumen-title button:hover svg {
   stroke: #fff;
 }
@@ -416,13 +401,11 @@
   flex-basis: auto;
   gap: 4px 2px;
 }
-
 .list-widget .wsublist {
   display: flex;
   align-items: center;
   gap: 0 4px;
 }
-
 .resumen-widget {
   width: auto;
   display: flex;
@@ -432,14 +415,12 @@
   margin: 1px 2px;
   color: #1d2534;
 }
-
 .resumen-widget h1 {
   margin: 0;
   font-size: 1.6rem;
   font-weight: 800;
   text-align: center !important;
 }
-
 .resumen-widget p {
   display: inline-block;
   font-size: .8rem;
@@ -448,6 +429,11 @@
   margin: 0;
   text-align: right;
 }
+@media only screen and (max-width: 640px){
+
+}
+
+
 </style>
 
 <!-- <script src="<?= base_url("assets/js/ag-charts-community.js"); ?>"></script> -->

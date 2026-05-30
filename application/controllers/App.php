@@ -809,6 +809,7 @@
 			'liquidacion'  => $credito->liquidacion,
 			'categoria'    => $credito->prenda_categoria,
 			'prenda_tipo'  => $credito->prenda_tipo,
+			'descripcion'  => $credito->prenda_descripcion,
 			'marca'        => $credito->prenda_marca,
 			'modelo'       => $credito->prenda_modelo,
 			'serial'       => $credito->prenda_serie,
@@ -829,10 +830,9 @@
 			$filename = "ANEXO_CREDITO_$credito->serie.pdf";
 			$this->pdf_dompdf->generate($html, $filename, false);
 		}
-		function week_simulation($ciclo, $creacion){
-			$cant = 15;
+		function week_simulation($ciclo, $creacion, $cantidad = 15){
 			$html = "";
-			for ($i=1; $i<=15; $i++){
+			for ($i=1; $i<=$cantidad; $i++){
 				$dias_ciclo = $ciclo === 'MENSUAL' ? 30 : 7;
 				$dias_total = $dias_ciclo * $i;
 				$fecha_str  = " + $dias_total days";
@@ -860,6 +860,59 @@
 			$anio = date('Y');
 			$mesTexto = $meses[$numMes];
 			return "{$dia} de {$mesTexto} del {$anio}";
+		}
+		function cuota_simulation(){
+			try {
+				$this->load->model('TarifaModel');
+				$monto 	 = $this->input->post("monto");
+				$ciclo	 = $this->input->post("ciclo", TRUE) ?? 'SEMANAL';
+				// $semanas = $this->input->post("semanas", TRUE);
+				$cargo	 = $this->input->post("cargo") ?? 0;
+				// $cargo = 0;
+				// $ciclo = 'SEMANAL';
+				$sede_id = $this->session->userdata('sucursal_id');				
+				if ($monto <= 0) {
+					response_json("Monto invalido.");
+					return;
+				}
+				if (!in_array($ciclo, ['SEMANAL','MENSUAL'])){
+					response_json("Ciclo invalido.");
+					return;
+				}
+
+				$dias = 7;
+				$tarifa = $this->TarifaModel->search_by_monto($sede_id, $monto);
+				if (empty($tarifa)) {
+					response_json("Tarifario no encontrado");
+					return;
+				}
+				$tipo = $tarifa->tipo;
+				$interes = floatval($tarifa->interes) + $cargo;
+				$penalidad = round($tarifa->mora, 2);
+				$mora = round($tarifa->mora, 2);
+				$cuota = ($tipo === 'P') ? (($monto * $interes) /100 ) : $interes;
+				$fecha = date("d-m-Y");
+				$simulacion = $this->week_simulation($ciclo, $fecha, 4);
+
+				echo json_encode([
+					'success' => TRUE,
+					'result' => [
+						'monto' => round_money($monto),
+						'tipo_tasa' => $tipo,
+						'interes' => $interes,
+						'penalidad' => round_money($penalidad),
+						'cuota' => round_money($cuota),
+						'mora' => $mora,
+					]
+				]);				
+			} catch (Exception $e) {
+				$this->session->sess_destroy();
+				http_response_code(500);
+				echo json_encode([
+					'status' => 'ERR',
+					'message' => $e->getMessage()
+				], JSON_UNESCAPED_UNICODE);
+			}
 		}
 
 		
