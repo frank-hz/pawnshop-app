@@ -24,26 +24,22 @@
           </div>
           <div class="cotiz-form">
             <form id="layout_form_cotizador" class="d-flex justify-center">
-              <div class="row mb-2">
-                <div class="col-md-6 col-sm-12">
-                  <label class="form-label">Monto (S/):</label>
+              <div class="form-group">
+                <label class="form-label">Monto (S/):</label>
+                <div class="cotiz-input-button">
                   <input type="number" name="monto" step="any" class="form-control form-control-lg cotiz-input">
+                  <button class="btn btn-lg btn-indigo">
+                    <i class="fe fe-search"></i>
+                  </button>
                 </div>
-                <div class="col-md-6 col-sm-12">
-                  <div class="pt-1">
-                    <p style="padding:0;margin:0;">&nbsp;</p>
-                    <button class="btn btn-lg btn-indigo">Calcular</button>
-                  </div>
-                </div>
-                <div class="col-md-12 py-2">
-                  <div id="cotiza_log" class="text-center"></div>
-                </div>
-              </div>
-              
+              </div>  
             </form>
+            <div class="d-block">
+              <div id="cotiza_log" class="text-center"></div>
+            </div>
           </div>
           <div class="cotiz-content">
-            <h5>Resultado:</h5>
+            <h5>Resultado: <span id="cotiz_loader" class="spinner-v1-mini d-none"></span> </h5>
             <div class="cotiz-results">
               <div class="cotiz-item">
                 <h3 id="cotiz_cuota_value">S/ 0.00</h3>
@@ -55,7 +51,7 @@
               </div>
               <div class="cotiz-item">
                 <h3 id="cotiz_tasa_value">--</h3>
-                <span>Tipo de Tasa</span>
+                <span>Tasa</span>
               </div>
 
             </div>
@@ -118,6 +114,6 @@
       }
     </style>    
 	  <script src="<?= base_url() ?>js_modules/app.js?v=19012025"></script>
-    <script src="<?= base_url() ?>js_modules/dashboard.js?v=87467898"></script>
+    <script src="<?= base_url() ?>js_modules/dashboard.js?v=31052026"></script>
   </body>
 </html>

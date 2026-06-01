@@ -99,12 +99,13 @@
         if (reset) {
             cuota.textContent = 'S/ 0.00';
             penalidad.textContent = 'S/ 0.00';
-            tasa.textContent = '--';
+            tasa.innerHTML = '--';
             return;
         }
         cuota.textContent = values.cuota;
         penalidad.textContent = values.penalidad;
-        tasa.textContent = values.tasa === 'P' ? 'Porcentual' : 'Fijo';
+        // tasa.textContent = values.tasa === 'P' ? 'Porcentual' : 'Fijo';
+        tasa.innerHTML = values.tasa;
     }
     d.getElementById('layout_btn_cotizador')?.addEventListener('click', evt => {
         const modal = d.getElementById('layout_modal_cotizador');
@@ -133,10 +134,12 @@
     });
     d.getElementById('layout_form_cotizador')?.addEventListener('submit', async evt => {
         evt.preventDefault();
+        const log = d.getElementById('cotiza_log');
+        const loader = d.getElementById('cotiz_loader');
         try {
-            const log = d.getElementById('cotiza_log');
             log.textContent = '';
             log.className = 'text-center';
+            if (loader) loader.classList.remove('d-none');
             const form_data = new FormData(evt.target); 
             const request = await fetch(app.URL(cotizacion_url), {
                 method: 'POST',
@@ -158,11 +161,20 @@
             cotizador_set_values(false, {
                 cuota: `S/ ${data.cuota}`,
                 penalidad: `S/ ${data.penalidad}`,
-                tasa: data.tipo_tasa
+                tasa: data.tasa,
+                // tasa: `
+                //     ${data.tasa} 
+                //     <small style="font-size:10px;font-weight:bold;">
+                //         (${data.tipo_tasa_label})
+                //     </small>
+                // `
             });
 
         } catch (error) {
-            
+            if (log) log.textContent = 'Ocurrio un error inesperado.';
+            console.log(error.message);
+        } finally {
+            if (loader) loader.classList.add('d-none');
         }
     });
     

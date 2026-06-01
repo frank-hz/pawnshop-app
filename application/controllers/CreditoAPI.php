@@ -366,7 +366,9 @@ class CreditoAPI extends CI_Controller
 				throw new Exception('Cliente no identificado',99);
 			}
 			$idcliente = $this->input->post('idcliente');
-			$creditos = $this->CreditoModel->get_all_by_cliente($idcliente); 
+			$rol = $this->session->userdata('rol_nombre');
+			$restrict = ($rol === 'Administrador') ? FALSE : TRUE;
+			$creditos = $this->CreditoModel->get_all_by_cliente($idcliente, $restrict); 
 			if (!empty($creditos)){
 				foreach ($creditos as $credito) {
 					$credito->url = base_url().'Credito/detalle/'.$credito->id;

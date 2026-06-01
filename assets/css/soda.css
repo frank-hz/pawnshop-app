@@ -2463,8 +2463,6 @@ input.dcard_form_control {
   padding: 30px;
   border-radius: 5px;
   width: 90%;
-  /* min-width: 460px; */
-  /* box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); */
   max-width: 450px;
   position: relative;
   transform: scale(0.7);
@@ -2605,12 +2603,12 @@ input.dcard_form_control {
 
 /* Mejora de rendimiento */
 .modalz .modalz-content {
-    will-change: transform, opacity;
+  will-change: transform, opacity;
 }
 
 .mzClose {
   position: absolute;
-  top: 15px;
+  top: 10px;
   right: 20px;
   font-size: 35px;
   cursor: pointer;
@@ -2621,29 +2619,26 @@ input.dcard_form_control {
 /* ==================== DISEÑO RESPONSIVO ==================== */
 @media (max-width: 480px) {
   .modalz {
-    padding: 10px;
+    padding: 0px;
   }
   
   .modalz-content {
-    padding: 24px 20px;
+    padding: 5px 10px;
     border-radius: 14px;
-    max-width: 100%;
+    width: 97%;
   }
-
-  h2 {
-    font-size: 1.4rem;
+  .cotiz-results {
+    flex-wrap: wrap;
+    gap: 18px;
   }
-
-  .btn {
-    padding: 12px 24px;
-    font-size: 15px;
-    margin: 6px;
+  .cotiz-item {
+    margin: 0 16px;
   }
 }
 
 @media (max-width: 360px) {
   .modalz-content {
-    padding: 20px 16px;
+    padding: 5px 10px;
   }
 }
 
@@ -2652,6 +2647,9 @@ input.dcard_form_control {
   .modalz-content {
     max-width: 460px;
     padding: 32px;
+  }
+  .mzClose {
+    top:10px;
   }
 }
 
@@ -2700,4 +2698,48 @@ input.dcard_form_control {
   font-size: 1.1rem;
   color: #0f1f31 !important;
   text-align: center;
+}
+.cotiz-input-button {
+  position: relative;
+  max-width: 420px;
+  width: 350px;
+  display: flex;
+  align-items: center;
+}
+.cotiz-input-button input {
+  width: 100%;
+  padding-right: 40px;
+}
+.cotiz-input-button input::-webkit-outer-spin-button,
+.cotiz-input-button input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.cotiz-input-button button {
+  position: absolute;
+  right: 0;
+  display: inline-flex;
+  align-items: center !important;
+  justify-content: center;
+  height: 100%;
+}
+
+
+@media (max-width: 480px) {
+  .cotiz-results {
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+  .cotiz-item {
+    margin: 0 16px;
+  }
+  .cotiz-input-button {
+    width: 95%;
+  }
+  .cotiz-item h3 {
+    font-size: 1rem;
+  }
+  .cotiz-item span {
+    font-size: .75rem;
+  }
 }

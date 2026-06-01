@@ -43,8 +43,8 @@ class Auth extends CI_Controller {
                 $this->UsuarioModel->update($user->id, ['usu_clave' => $new_hash]);
             }
 
-            $is_dev = $user->dev;
-            $menu = ($is_dev == 1) 
+            $is_dev = (bool) $user->dev;
+            $menu = ($is_dev || $user->rol_nombre === 'Administrador') 
                 ? $this->MenuModel->get_data_modules_admin()
                 : $this->MenuModel->get_data_modules($user->id);
 

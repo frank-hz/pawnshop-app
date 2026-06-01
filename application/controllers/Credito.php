@@ -260,7 +260,6 @@
 				$this->load->view("Layout/footer.php");
 			}
 		}
-
 		function regularizar($id = null){
 			if ($id != null) {
 				/*$credito = $this->CreditoModel->Buscar_libre(
@@ -278,12 +277,21 @@
 					: null;
 
 				if (!empty($credito) AND $credito->estado === 'E' AND $permiso->codigo == 'P') {
-					$data['credito'] = $credito;
-					$data['cuotas'] = $this->CuotaModel->Lista_regularizacion($id, date("Y-m-d"));
-					$data['mora'] = $this->MoraModel->Buscar_pendiente($id);
-					$data['pospuesto'] = $this->MoraModel->Buscar_pospuesto($id);
+					$fecha = date("Y-m-d");
+					$cuotas = $this->CuotaModel->Lista_regularizacion($id, $fecha);
+					if (!empty($cuotas)) {
+						foreach($cuotas as $cuota) {
+							$cuota->monto = round_money($cuota->monto, FALSE);
+						}
+					}
+					$mora = $this->MoraModel->Buscar_pendiente($id);
+					$pospuesto = $this->MoraModel->Buscar_pospuesto($id);
 
-					if (!empty($data['cuotas']) || !empty($data['mora']) || !empty($data['pospuesto'])) {
+					if (!empty($cuotas) || !empty($mora) || !empty($pospuesto)) {
+						$data['credito'] = $credito;
+						$data['cuotas'] = $cuotas;
+						$data['mora'] = $mora;
+						$data['pospuesto'] = $pospuesto;
 						$data['banco'] = $this->BancoModel->activos();
 						$this->load->view("Layout/header.php");
 						$this->load->view("PPago/regularizar.php", $data);

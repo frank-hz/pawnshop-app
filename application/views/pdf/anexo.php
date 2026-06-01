@@ -816,7 +816,7 @@
                             <div style="text-align: center; font-weight: bold; margin-bottom: 5px;">SOLICITANTE</div>
                             <div style="text-align:center;">
                                 <span style="font-size:8pt;"><?= $nom_ape ?? ''; ?></span>
-                                <span>DNI: <?= $documento ?? ''; ?></span>
+                                <p style="margin-top:0;padding-top:0;">DNI: <?= $documento ?? ''; ?></p>
                             </div>
                         </div>
                     </div>

@@ -787,7 +787,7 @@
 			}
 			
 
-			$credito  = $this->CreditoModel->getById($id);
+			$credito  = $this->CreditoModel->getById($id, 'full');
 			$sucursal = $this->SucursalModel->get_by_id($credito->sucursal_id);
 			$week_html = $this->week_simulation($credito->ciclo_pago, $credito->creacion_raw);
 
@@ -886,11 +886,13 @@
 					response_json("Tarifario no encontrado");
 					return;
 				}
-				$tipo = $tarifa->tipo;
+				
 				$interes = floatval($tarifa->interes) + $cargo;
+				$tipo_tasa = $tarifa->tipo;
+				$tasa = $tarifa->tipo === 'P' ? "%$interes" : "S/ $interes"; 
 				$penalidad = round($tarifa->mora, 2);
 				$mora = round($tarifa->mora, 2);
-				$cuota = ($tipo === 'P') ? (($monto * $interes) /100 ) : $interes;
+				$cuota = ($tipo_tasa === 'P') ? (($monto * $interes) /100 ) : $interes;
 				$fecha = date("d-m-Y");
 				$simulacion = $this->week_simulation($ciclo, $fecha, 4);
 
@@ -898,7 +900,9 @@
 					'success' => TRUE,
 					'result' => [
 						'monto' => round_money($monto),
-						'tipo_tasa' => $tipo,
+						'tipo_tasa' => $tipo_tasa,
+						'tipo_tasa_label' => $tipo_tasa === 'P' ? 'Porcentual' : 'Fija',
+						'tasa' => $tasa,
 						'interes' => $interes,
 						'penalidad' => round_money($penalidad),
 						'cuota' => round_money($cuota),

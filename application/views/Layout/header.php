@@ -66,7 +66,7 @@
 					<?php endif; ?>						
 				</div>
 				<button id="layout_btn_cotizador" class="btn btn-indigo">
-					COTIZA. 
+					COTIZADOR
 					<i class="fe fe-clipboard"></i>
 				</button>
 				<div class="dropdown d-none d-md-flex">
