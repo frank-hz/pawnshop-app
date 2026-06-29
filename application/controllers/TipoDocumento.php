@@ -14,10 +14,7 @@
 		}
 
 		public function index(){
-			// $data['info'] = $this->CategoriaModel->consulta('informacion');
-			// $this->load->view("Layout/header.php");
-			// $this->load->view("Categoria/lista.php", $data);
-			// $this->load->view("Layout/footer.php");
+			
 		}
 
 		public function rest(){

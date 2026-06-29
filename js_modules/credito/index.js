@@ -923,7 +923,7 @@
     // obtener y mostrar categorias
     async function renderCategorias(){
         try {
-            let req = await fetch(app.URL('Categoria/ServiceConsulta'));
+            let req = await fetch(app.URL('api/Categoria/get_all'));
             let resp = await req.json();
             if (!resp){
                 throw "Problema al obtener categorias";

@@ -74,34 +74,6 @@
 			$this->load->view('Layout/footer.php');
 		}
 
-		function editar($id){
-			$permiso = $this->PermisoModel->verificar_permiso(
-				$this->session->userdata('pres_ses_usuario'),
-				'prenda_editar'
-			);
-			if ($id != null) {
-				if ( $permiso && $permiso->codigo == 'P' ) {
-					$this->load->model('CategoriaModel');
-					$data['categoria'] = $this->CategoriaModel->consulta('lista', $id);
-					$data['prenda'] = $this->PrendaModel->SelectDetalle($id);
-					$this->load->view('Layout/header.php');
-					$this->load->view('Prenda/editar.php', $data);
-					$this->load->view('Layout/footer.php');
-				}else{
-					$data['titulo'] = 'Permisos insuficientes';
-					$data['mensaje'] = 'El usuario actual no tiene los privilegios suficientes para editar los datos de la prenda.';
-					$this->load->view("Layout/header.php");
-					$this->load->view("Error/no_access.php", $data);
-					$this->load->view("Layout/footer.php");
-				}
-			}else{
-				$data['titulo'] = 'Prenda desconocida';
-				$data['mensaje'] = 'No se encontraron datos para el seguimiento de la prenda';
-				$this->load->view("Layout/header.php");
-				$this->load->view("Error/no_found.php", $data);
-				$this->load->view("Layout/footer.php");
-			}
-		}
 
 
 

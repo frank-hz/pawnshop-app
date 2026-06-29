@@ -27,12 +27,11 @@
 	<link href="<?= base_url() ?>assets/css/encode-design.css?v=020425" rel="stylesheet">
 	<link rel="stylesheet" href="<?= base_url() ?>assets/plugins/iziToast/iziToast.min.css">
 	<link href="<?= base_url() ?>global-code/css/vaporwave.css" rel="stylesheet">
-	
-
 	<script src="<?= base_url() ?>assets/js/vendors/jquery-3.2.1.min.js"></script>
 	<script src="<?= base_url() ?>assets/js/vendors/bootstrap.bundle.min.js"></script>
 	<script src="<?= base_url() ?>assets/plugins/iziToast/iziToast.min.js"></script>
   	<script src="<?= base_url() ?>assets/plugins/sweetalert2/sweetalert2.min.js"></script>
+	<script src="<?= base_url() ?>js_modules/app.js?v=19012025"></script>
 	<script src="<?= base_url() ?>assets/js/retrocash.js"></script>		
 	<link href="<?= base_url() ?>assets/css/data-module.css" rel="stylesheet">
 	<script src="<?= base_url() ?>global-code/js/vaporwave.js"></script>

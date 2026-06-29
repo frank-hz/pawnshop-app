@@ -113,7 +113,7 @@
         padding: 4px 8px;
       }
     </style>    
-	  <script src="<?= base_url() ?>js_modules/app.js?v=19012025"></script>
+	  
     <script src="<?= base_url() ?>js_modules/dashboard.js?v=31052026"></script>
   </body>
 </html>

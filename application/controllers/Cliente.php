@@ -17,7 +17,7 @@
 
 		// Views
 		function index(){
-			$this->load->view("Layout/header-rw.php");
+			$this->load->view("Layout/header.php");
 			$this->load->view("Cliente/lista.php");
 			$this->load->view("Layout/footer.php");
 		}

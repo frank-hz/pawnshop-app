@@ -338,4 +338,4 @@
 	}
 </style>
 
-<script src="<?= base_url() ?>js_modules/ppago/ppago.regularizar.js?v=23012025"></script>
+<script src="<?= base_url() ?>js_modules/ppago/ppago.regularizar.js?v=02062026"></script>

@@ -228,8 +228,42 @@ $route['api/v1/ubigeo']['GET'] = 'api/UbigeoAPI/read_all';
 $route['api/v1/sedes']['GET'] = 'api/SedeAPI/bs_read_all';
 
 
-// PAGO API
-// $route['api/v1/pagos']['GET'] = 'api/EmpleadoAPI/read_all';
+
+
+
+
+
+// REWORK 2026
+
+// CATEGORIAS API
+$route['api/v2/categorias']['GET'] = 'api/Categoria/get_all';
+$route['api/v2/categoria/(:num)']['GET'] = 'api/Categoria/get_by_id/$1';
+$route['api/v2/categoria/create']['POST'] = 'api/Categoria/create';
+$route['api/v2/categoria/update']['POST'] = 'api/Categoria/update';
+$route['api/v2/categoria/delete']['POST'] = 'api/Categoria/delete';
+
+// TIPO_PRENDA API
+$route['api/v2/tipos_prenda']['GET'] = 'api/TipoPrenda/get_all';
+$route['api/v2/tipos_prenda/(:num)']['GET'] = 'api/TipoPrenda/get_by_id/$1';
+$route['api/v2/tipos_prenda/create']['POST'] = 'api/TipoPrenda/create';
+$route['api/v2/tipos_prenda/update']['POST'] = 'api/TipoPrenda/update';
+$route['api/v2/tipos_prenda/delete']['POST'] = 'api/TipoPrenda/delete';
+
+
+
+// CREDITO API
+$route['api/v2/creditos/search_all/']['POST'] = 'api/Credito/get_all';
+$route['api/v2/creditos/search_all/cliente']['POST'] = 'api/Credito/get_all_by_credito';
+$route['api/v2/creditos/search_all/prenda']['POST'] = 'api/Credito/get_all_by_prenda';
+$route['api/v2/credito/(:num)']['GET'] = 'api/Credito/get_by_id/$1';
+$route['api/v2/credito/create']['POST'] = 'api/Credito/create';
+$route['api/v2/credito/update']['POST'] = 'api/Credito/update';
+$route['api/v2/credito/delete']['POST'] = 'api/Credito/delete';
+$route['api/v2/credito/(:num)/pausa']['PUT'] = 'api/Credito/set_pausa';
+$route['api/v2/credito/(:num)/remate']['PUT'] = 'api/Credito/set_remate';
+
+
+
 // $route['api/v1/pagos/(:num)']['GET'] = 'api/EmpleadoAPI/read/$1';
 // $route['api/v1/pagos/crear']['POST'] = 'api/EmpleadoAPI/create';
 // $route['api/v1/pagos/editar']['POST'] = 'api/EmpleadoAPI/update';

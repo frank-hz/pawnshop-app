@@ -38,8 +38,7 @@ class Servidor{
 class App {
     ENV(){
         return MY_CONFIG.ENV;
-    }
-    
+    }    
     URL(dir = ''){
         // const path = MY_CONFIG.NAME ? `${MY_CONFIG.NAME}/` : '';
         // const base = `${location.protocol}//${MY_CONFIG.HOST}/${path}`;
@@ -53,7 +52,6 @@ class App {
         const path = name ? `${host}/${name}` : `${host}`;
         return `${location.protocol}//${path}/${dir}`;
     }
-
     static URL_STATIC(dir = ''){
         const host = MY_CONFIG.HOST;
         const name = MY_CONFIG.NAME;
@@ -62,6 +60,21 @@ class App {
 
         // return `${location.protocol}//${APP_CONFIG.HOST}/${APP_CONFIG.NAME}/${dir}`;
     }
+
+    getID = (id) => {
+        const el = d.getElementById(id);
+        if (!el){
+            console.log(`Elemento ${id} no encontrado.`);
+        }
+        return el;
+    }
+    getElements = (ids) => {
+        return ids.reduce((acum, id) => {
+            acum[id] = this.getID(id);
+            return acum;
+        }, {});
+    }
+
 
     // Convertir json a FormData
     jsonToFormData(json_object){
@@ -202,6 +215,15 @@ class App {
         return signo + (j ? i.substr(0, j) + separador : "") 
             + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + separador) 
             + (contadorDec ? dec + Math.abs(monto - i).toFixed(contadorDec).slice(2) : "");   
+    }
+    round_money(monto, format = false) {
+        // Redondeo a 1 decimal con HALF_DOWN
+        const redondeado = Math.round((monto * 10) - 0.0000001) / 10;        
+        // Retornar con 2 decimales (siempre con cero)
+        if (format) {
+            redondeado.toFixed(2);
+        }
+        return redondeado;
     }
     rowPreload(id, content, colspan = 5){
         let tb = document.getElementById(id)
@@ -612,18 +634,6 @@ class App {
             console.log('[rendalert] '+data.message);
         }
     }
-    
-    // tableSortable(id){
-    //     let table = document.getElementById(id);
-    //     let rows = table.querySelectorAll('tbody tr');
-    //     let heads = table.querySelectorAll('thead th');
-
-    //     rows.forEach((e,i) => {
-    //         let table_data = e.textContent.toLowerCase();
-            
-    //     });
-    // }
-
 }
 class Tools {
 	popup(text, type = '', time = 0,icon = 'fi-br-info') {
@@ -781,10 +791,6 @@ class Tools {
 	}
 
 }
-
-
-
-// 
 class Notificacion{
     Ok( titulo, mensaje, tiempo = 3000, posicion = 'topCenter'){
         iziToast.show({
@@ -876,6 +882,10 @@ class Notificacion{
         });
     }
 }
+
+
+
+
 
 
 class Sucursal {
@@ -1011,7 +1021,6 @@ class Sucursal {
         }
     }
 }
-
 class Revision {
     async revision_unitaria(id){
         try {
@@ -1092,7 +1101,6 @@ class Revision {
         }
     }
 }
-
 class Ubigeo{
     async ListarCiudad(t = '', b = ''){
         try {
@@ -1118,16 +1126,6 @@ class Ubigeo{
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
 class Empleado {
 
     async Listar(tipo, buscar, limite){
@@ -1258,7 +1256,6 @@ class Empleado {
         }
     }
 }
-
 class Usuario {
 
     async Autenticar(data){
@@ -1489,10 +1486,6 @@ class Usuario {
 
     
 }
-
-
-
-
 class Mora{
     async Detalle(id){
         try {
@@ -1557,7 +1550,6 @@ class Mora{
         }
     }
 }
-
 class Debitacion{
 
     async Buscar(id){
@@ -1628,73 +1620,6 @@ class Debitacion{
         }
     }
 }
-
-class NotaCredito{
-    async obtenerNotas(id){
-        try {
-            let data = new FormData();
-            data.append('id', id);
-            const request = await fetch(srv.url()+'Credito/consulta_notas', {
-                method : 'POST',
-                body : data
-            });
-            const res = await request.json();
-            return {
-                status: 'OK',
-                result: res,
-                mssg: 'correcto'
-            };
-        } catch (error) {
-            return{
-                status: 'ERROR',
-                result: [],
-                mssg: error.message
-            };       
-        }
-    }
-
-    async Agregar(data){
-        try {
-            const request = await fetch(srv.url()+'NotaCredito/agregar', {
-                method : 'POST',
-                body : data
-            });
-            const res = await request.json();
-            return {
-                status: res.status,
-                mssg: res.message,
-                id: res.id
-            };
-        } catch (error) {
-            return{
-                status: 'ERROR',
-                mssg: 'Error al enviar solicitud.'
-            };
-        }
-    }
-
-    async Eliminar(id){
-        try {
-            let data = new FormData();
-            data.append('id', id);
-            const request = await fetch(srv.url()+'NotaCredito/eliminar', {
-                method : 'POST',
-                body : data
-            });
-            const res = await request.json();
-            return {
-                status: res.status,
-                mssg: res.message
-            };
-        } catch (error) {
-            return{
-                status: 'ERROR',
-                mssg: 'Error al enviar solicitud.'
-            };
-        }
-    }
-}
-
 class Tarifa{
 
     async Listar(t, b){
@@ -1829,194 +1754,6 @@ class Tarifa{
             };       
         }
     }
-}
-
-class Analisis{
-
-    async utilidad_dia(fecha){
-        try {
-            let data = new FormData();
-            data.append('fecha', fecha);
-            const request = await fetch(srv.url()+'Analisis/utilidad_dia', {
-                method : 'POST',
-                body : data
-            });
-            const res = await request.json();
-            return {
-                status: 'OK',
-                result: res,
-                mssg: 'correcto'
-            };
-        } catch (error) {
-            return{
-                status: 'ERROR',
-                result: [],
-                mssg: error.message
-            };       
-        }
-    }
-}
-
-class Coffee{
-    async Evaluar_prestamo(monto, cargo){
-        try {
-            let data = new FormData();
-            data.append('monto', monto);
-            data.append('cargo', cargo);
-            let request = await fetch(srv.url()+'Coffee/prestamo_calculo', {
-                method: 'POST',
-                body: data
-            });
-            let res = await request.json();
-            return {
-                status: res.status,
-                mssg: res.message,
-                result: res.result
-            }
-        } catch (error) {
-            return {
-                status: 'ERROR',
-                mssg: 'Error al procesar',
-                result: []
-            }
-        } 
-    }
-}
-
-class Solicitud{
-    async Listar(limit){
-        try {
-            let data = new FormData();
-            data.append('limite', limit);
-            const request = await fetch(srv.url()+'Solicitud/consulta', {
-                method: 'POST',
-                body: data
-            });
-            const res = await request.json();
-            return {
-                status: 'OK',
-                result: res,
-                mssg: 'correcto'
-            };
-        } catch (error) {
-            return{
-                status: 'ERROR',
-                result: [],
-                mssg: 'Error al procesar. ['+error.message+']'
-            };       
-        }
-    }
-
-    async Detalle(id){
-        try {
-            let data = new FormData();
-            data.append('id', id);
-            const request = await fetch(srv.url()+'Solicitud/detalle', {
-                method: 'POST',
-                body: data
-            });
-            const res = await request.json();
-            return {
-                status: res.status,
-                data: res.data,
-                mssg: res.message
-            };
-        } catch (error) {
-            return{
-                status: 'ERROR',
-                data: [],
-                mssg: 'Error al procesar. ['+error.message+']'
-            };       
-        }
-    }
-
-    async Modificar(data){
-        try {
-            const request = await fetch(srv.url()+'Mora/modificar', {
-                method : 'POST',
-                body : data
-            });
-            const res = await request.json();
-            return {
-                status: res.status,
-                mssg: res.message
-            };
-        } catch (error) {
-            return{
-                status: 'ERROR',
-                mssg: 'Error al enviar solicitud.'
-            };
-        }
-    }
-}
-
-
-class NotaCliente{
-    async obtenerNotas(id){
-        try {
-            let data = new FormData();
-            data.append('id', id);
-            const request = await fetch(srv.url()+'NotaCliente/consulta', {
-                method : 'POST',
-                body : data
-            });
-            const res = await request.json();
-            return {
-                status: 'OK',
-                result: res,
-                mssg: 'correcto'
-            };
-        } catch (error) {
-            return{
-                status: 'ERROR',
-                result: [],
-                mssg: error.message
-            };       
-        }
-    }
-    async Agregar(data){
-        try {
-            const request = await fetch(srv.url()+'NotaCliente/agregar', {
-                method : 'POST',
-                body : data
-            });
-            const res = await request.json();
-            return {
-                status: res.status,
-                mssg: res.message,
-                id: res.id
-            };
-        } catch (error) {
-            return{
-                status: 'ERROR',
-                mssg: 'Error al enviar solicitud.'
-                // mssg: error.message()
-            };
-        }
-    }
-    async Eliminar(id){
-        try {
-            let data = new FormData();
-            data.append('id', id);
-            const request = await fetch(srv.url()+'NotaCliente/eliminar', {
-                method : 'POST',
-                body : data
-            });
-            const res = await request.json();
-            return {
-                status: res.status,
-                mssg: res.message
-            };
-        } catch (error) {
-            return{
-                status: 'ERROR',
-                mssg: 'Error al enviar solicitud.'
-            };
-        }
-    }
-
-
-
 }
 class NotasCredito {
     async get_by_credito(id,settings = {}){
@@ -2196,7 +1933,6 @@ class NotasCliente {
         }
     }
 }
-
 class Cuota{
     async get_by_credito(idcredito, settings = {}){
         try {
@@ -2301,7 +2037,6 @@ class Pago{
         }
     }
 }
-
 class Credito{
     async Listar(tipo, buscar, limite){
         try {
@@ -2840,7 +2575,6 @@ class Prenda{
         }
     }
 }
-
 class Categoria{
     async Listar(tipo = 'todo', buscar = ''){
         try {
@@ -2966,7 +2700,6 @@ class Categoria{
         }
     }
 }
-
 class TipoPrenda{
     async Listar(){
         try {
@@ -3025,72 +2758,6 @@ class TipoPrenda{
             };
         }
     }
-    async ListarFormulario(id){
-        try {
-            let data = new FormData();
-            data.append('id', id);
-            const request = await fetch(srv.url()+'TipoPrenda/consulta_formulario', {
-                method: 'POST',
-                body: data
-            });
-            const res = await request.json();
-            return {
-                status: 'OK',
-                result: res,
-                mssg: 'correcto'
-            };
-        } catch (error) {
-            return{
-                status: 'ERROR',
-                result: [],
-                mssg: error.message
-            };       
-        }
-    }
-    async ModificarAtributo(data){
-        try {
-            const request = await fetch(srv.url()+'TipoPrenda/modifica_atributo', {
-                method : 'POST',
-                body : data
-            });
-            const res = await request.json();
-            return {
-                status: res.status,
-                mssg: res.message,
-                id: res.id,
-                error: res.error
-            };
-        } catch (error) {
-            return{
-                status: 'ERROR',
-                mssg: 'Error al enviar solicitud.'
-            };
-        }
-    }
-    async PreFormulario(id){
-        try {
-            let data = new FormData();
-            data.append('id', id);
-            const request = await fetch(srv.url()+'TipoPrenda/form_pre_procesado', {
-                method : 'POST',
-                body : data
-            });
-            const res = await request.json();
-            return {
-                status: res.status,
-                html: res.html,
-                control: res.controls,
-                mssg: res.message
-            };
-        } catch (error) {
-            return{
-                status: 'Error',
-                html: '',
-                mssg: error.message
-            };       
-        }
-    }
-
 
     async get_all(){
         try {
@@ -3102,7 +2769,6 @@ class TipoPrenda{
         }
     }
 }
-
 class Conducta{
     async getbycliente(idcliente){
         try {
@@ -3134,7 +2800,6 @@ class Conducta{
         }
     } 
 }
-
 class Cliente {
     async Listar(t = 'TODO', b = '', l = 10){
         try {
@@ -3398,7 +3063,6 @@ class Cliente {
     }
 
 }
-
 class CreditoApi {
     async save(data){
         try {
@@ -3414,6 +3078,7 @@ class CreditoApi {
         }
     }
 }
+
 
 class Corex {
     // funcion estandarizada para el manejo de solicitudes HTTP

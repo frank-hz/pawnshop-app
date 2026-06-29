@@ -117,36 +117,111 @@
 		}
 
 
-		// function Lista_basica($suc, $limite){
-		// 	$sql = "
-		// 		SELECT
-		// 			c.cred_codigo as 'id',
-		// 			c.cred_serie as 'codigo',
-		// 			DATE_FORMAT(c.cred_creacion, '%d/%m/%Y') as 'creacion',
-		// 			c.cred_monto as 'monto',
-		// 			CONCAT(cl.cli_nombres,' ',cl.cli_paterno,' ',cl.cli_materno) as 'cliente',
-		// 			c.cred_estado as 'estado',
-		// 			IF(
-		// 				c.cred_estado='E',
-		// 				(SELECT COUNT(*) FROM cuota WHERE cuo_estado='V' AND cuo_credito=c.cred_codigo),
-		// 				'---'
-		// 			) as 'cuotas_vencidas'
-		// 		FROM credito c
-		// 		INNER JOIN cliente cl ON cl.cli_codigo = c.cred_cliente
-		// 		WHERE
-		// 			c.cred_sucursal = ?
-		// 		ORDER BY
-		// 			CASE
-		// 				WHEN c.cred_estado = 'E' then 1
-		// 				WHEN c.cred_estado = 'CC' then 2
-		// 				ELSE 3
-		// 			END,
-		// 			c.cred_codigo DESC
-		// 		LIMIT ?;
-		// 	";
-		// 	$res = $this->db->query($sql, array($suc, $limite));
-		// 	return $res->result();
-		// }
+		function getAll($filters = []){
+			if (!empty($filters['cliente_id'])) {
+			$this->db->where("cred_cliente", $filters["cliente_id"]);
+			}
+			if (!empty($filters['prenda_id'])) {
+			$this->db->where("cred_prenda", $filters["prenda_id"]);
+			}
+			if (!empty($filters["limite"])) {
+			$this->db->limit($filters["limite"]);
+			}
+			if (!empty($filters["descripcion"])) {
+			$this->db->like("c.cred_serie", $filters["descripcion"], "both");
+			// $this->db->or_like("p.pren_descripcion", $filters["descripcion"],"both");
+			}
+			if (!empty($filters["prenda_categoria"])) {
+			$this->db->where("p.pren_categoria", $filters["prenda_categoria"]);
+			}
+			if (!empty($filters["prenda_descripcion"])) {
+			$this->db->like("p.pren_descripcion", $filters["prenda_descripcion"], "both");
+			}
+			if (!empty($filters["serie"])) {
+			$this->db->like("c.cred_serie", $filters["serie"], "both");
+			}
+			if (!empty($filters["estado"])) {
+			$this->db->where("cred_estado", $filters["estado"]);
+			}
+			if (!empty($filters['orden_tipo'])) {
+			$tipo = strtoupper($filters['orden_tipo'] === 'DESC') ? 'DESC' : 'ASC';
+			$campos = [
+				'CODIGO' => 'cred_codigo',
+				'MONTO' => 'cred_monto',
+				'CREACION' => 'cred_creacion',
+				'ATRASO' => 'cuotas_vencidas',
+				'LIQUIDACION' => 'cred_liquidacion',
+				'ESTADO' => 'cred_estado'
+			];
+
+			$objetivo = $campos[$filters['orden_campo']] ?? 'cred_codigo';
+			$this->db->order_by($objetivo, $tipo);
+			}
+
+			$this->db->select("c.cred_codigo as id");
+			$this->db->select("c.cred_serie as serie");
+			$this->db->select("c.cred_monto as monto");
+			$this->db->select("c.cred_estado as estado");
+			$this->db->select("c.cred_sucursal as sucursal_id");
+			$this->db->select("s.suc_nombre as sucursal_nombre");
+			$this->db->select("DATE_FORMAT(c.cred_creacion, '%d/%m/%Y') as creacion");
+			$this->db->select("DATE_FORMAT(c.cred_create_At, '%d/%m/%Y') as fecha_creacion");
+			$this->db->select("DATE_FORMAT(c.cred_create_At, '%d/%m/%Y H:i:s') as fecha_hora_creacion");
+			$this->db->select("p.pren_codigo as prenda_id");
+			$this->db->select("p.pren_descripcion as prenda_descripcion");
+			$this->db->select("p.pren_serial as prenda_serial");
+			$this->db->select("p.pren_marca as prenda_marca");
+			$this->db->select("p.pren_modelo as prenda_modelo");
+			$this->db->select("p.pren_valoracion as prenda_valoracion");
+			$this->db->select("p.pren_comentario as prenda_comentario");
+			$this->db->select("p.pren_observacion as prenda_observacion");
+			$this->db->select("p.pren_estado as prenda_estado");
+			$this->db->select("c.cred_cliente as cliente_id");
+			$this->db->select("
+						CONCAT_WS(' ', cl.cli_nombres, cl.cli_paterno,cl.cli_materno) as 'cliente_nom_ape'
+					");
+			$this->db->select("
+						CASE 
+							WHEN c.cred_estado = 'E' 
+								THEN (select count(*) from cuota where (cuo_estado='V' OR cuo_estado='E') AND cuo_credito=c.cred_codigo and cuo_vencimiento <= now()) 
+							WHEN c.cred_estado = 'A' OR c.cred_estado = 'CC' 
+								THEN (select count(*) from cuota where (cuo_estado='CC' OR cuo_estado='V') AND cuo_credito=c.cred_codigo)
+							ELSE 0 
+						END as cuotas_vencidas
+					");
+			$this->db->select("
+						CASE 
+							WHEN c.cred_estado = 'E' 
+								THEN (select count(*) from cuota where cuo_credito=c.cred_codigo)
+							WHEN c.cred_estado = 'A' OR c.cred_estado = 'CC' 
+								THEN (select count(*) from cuota where (cuo_estado='CC' OR cuo_estado='V') AND cuo_credito=c.cred_codigo)
+							ELSE 0 
+						END as cuotas_totales
+					");
+			$this->db->select("
+						(
+							SELECT COUNT(*) FROM cuota WHERE cuo_vencimiento = CURDATE() and cuo_credito = c.cred_codigo
+						) as cuotas_cumplidas
+					");
+			$this->db->select("
+						(
+							SELECT COUNT(*) FROM cuota WHERE cuo_estado = 'P' and cuo_credito = c.cred_codigo
+						) as cuotas_pagadas
+					");
+			$this->db->select("
+						( SELECT COUNT(*) FROM notas_credito WHERE ncred_credito = c.cred_codigo ) as notas_cantidad
+					");
+			$this->db->join("sucursal s", "s.suc_codigo = c.cred_sucursal");
+			$this->db->join("cliente cl", "cl.cli_codigo = c.cred_cliente");
+			$this->db->join("prenda p", "p.pren_codigo = c.cred_prenda", "left");
+			$this->db->join("categoria ct", "ct.cat_codigo = p.pren_categoria");
+			$res = $this->db->get("credito c");
+			return $res->result();
+		}
+
+
+
+		
 
 		function Lista_por_codigo($buscar, $suc, $limite){
 			$sql = "

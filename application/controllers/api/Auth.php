@@ -15,6 +15,7 @@ class Auth extends CI_Controller {
 
     function login(){
         try {
+            // echo "hi";
             if ($this->session->userdata('logged_in')) {
                 response_json("Ya hay una sesion activa.");
                 return;
@@ -51,7 +52,9 @@ class Auth extends CI_Controller {
             $nombres = $user->nombres;
             $paterno = $user->paterno;
             $acronimo = strtoupper(substr($nombres, 0, 1). substr($paterno, 0, 1));
-            
+            $this->load->model('SucursalModel');
+            $sucursal_default = 1;
+            $sucursal = $this->SucursalModel->get_by_id($sucursal_default);
             
             $sesion = [
                 'usuario_id'        => $user->id,
@@ -62,15 +65,15 @@ class Auth extends CI_Controller {
                 'rol_nombre'        => $user->rol_nombre,
                 'dev'               => (bool) $user->dev,
 
-                'sucursal_id'       => $user->sucursal_id,
-                'sucursal_nombre'   => $user->sucursal_nombre,
-                'sucursal_serie'    => $user->sucursal_serie,
+                'sucursal_id'       => $sucursal->id,
+                'sucursal_nombre'   => $sucursal->nombre,
+                'sucursal_serie'    => $sucursal->serie,
 
                 'pres_ses_usuario'  => $user->id,
                 'pres_ses_empleado' => $user->empleado_id,
                 'pres_ses_rol'      => $user->rol_nombre,
-                'pres_ses_sucursal' => $user->sucursal_id,
-                'pres_ses_sede'     => $user->sucursal_nombre,
+                'pres_ses_sucursal' => $sucursal->id,
+                'pres_ses_sede'     => $sucursal->nombre,
                 'pres_ses_acronimo' => $acronimo,
                 'pres_ses_imagen'   => $user->imagen,
                 'pres_acceso_fecha' => date("Y-m-d"),

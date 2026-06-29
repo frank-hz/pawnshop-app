@@ -279,11 +279,11 @@
 				if (!empty($credito) AND $credito->estado === 'E' AND $permiso->codigo == 'P') {
 					$fecha = date("Y-m-d");
 					$cuotas = $this->CuotaModel->Lista_regularizacion($id, $fecha);
-					if (!empty($cuotas)) {
-						foreach($cuotas as $cuota) {
-							$cuota->monto = round_money($cuota->monto, FALSE);
-						}
-					}
+					// if (!empty($cuotas)) {
+					// 	foreach($cuotas as $cuota) {
+					// 		$cuota->monto = round_money($cuota->monto, FALSE);
+					// 	}
+					// }
 					$mora = $this->MoraModel->Buscar_pendiente($id);
 					$pospuesto = $this->MoraModel->Buscar_pospuesto($id);
 
@@ -515,43 +515,6 @@
 
 
 		// Services
-		function lista(){
-			try {
-				$suc = $this->session->userdata('pres_ses_sucursal');
-				$data = [];
-				if (!$_POST) throw new Exception('Parametros no recibidos');
-				switch ($_POST['tipo']) {
-					case 'codigo':
-						$data = $this->CreditoModel->Lista_por_codigo($_POST['buscar'], $suc, intval($_POST['limite']));
-						break;
-
-					case 'cliente':
-						$data = $this->CreditoModel->Lista_por_cliente($_POST['buscar'], $suc, intval($_POST['limite']));
-						break;
-
-					case 'estado':
-						$data = $this->CreditoModel->Lista_por_estado($_POST['buscar'], $suc, intval($_POST['limite']));
-						break;
-
-					case 'atraso':
-						$parms = explode(" ", $_POST['buscar']);
-						$math_symbol = ["=", "<=", ">=", ">", "<"];
-						// die(json_encode(count($parms)));
-						if (count($parms) != 2) throw new Exception('Formula no valida');
-						if (!in_array($parms[0], $math_symbol)) throw new Exception('Formula incompleta');
-						// if (!is_int($parms[1])) throw new Exception('Formula no validax');
-						$data = $this->CreditoModel->Lista_por_atraso($parms[0], intval($parms[1]), $suc, intval($_POST['limite']));
-						break;
-
-					default:
-						$data = $this->CreditoModel->Lista_basica($suc, intval($_POST['limite']));
-						break;
-				}
-				echo json_encode($data);
-			} catch (Exception $e) {
-				echo json_encode([]);
-			}
-		}
 
 		function consulta_cuotas(){
 			$res = $this->CreditoModel->Buscar_cuotas($_POST['id']);

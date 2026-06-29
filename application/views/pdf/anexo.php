@@ -7,7 +7,7 @@
         @page {
             size: A4;
             margin: 12mm 15mm;
-            margin-left: 80px;
+            margin-left: 70px;
         }
         * {
             box-sizing: border-box;
@@ -350,10 +350,6 @@
             font-size: 11px;
             font-weight: normal;
         }
-        /* .pagina-1 {
-            display: none;
-        } */
-
 
 
         /* ==========================================================================
@@ -363,12 +359,11 @@
             page-break-before: always;
             padding-top: 2rem;
             padding-bottom: 1rem;
-            padding-left: .8rem;
+            padding-left: 0rem;
+            padding-right: 2rem;
             color: #0e141c;
-            /* border: 1px solid red; */
         }
         .p2-mini-header {
-            /* background: aqua; */
             /* font-size: 7.5pt; */
             text-align: center;
             font-size: 13px;
@@ -585,6 +580,20 @@
                                 <?= $categoria ?? 'Sin datos'; ?>
                             </td>
                         </tr>
+                        <?php if ($prenda_tipo === 'JOYA'): ?>
+                        <tr>
+                            <td class="label">PESO</td>
+                            <td class="value">
+                                <?= $peso ?? 'Sin datos'; ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">QUILATE</td>
+                            <td class="value">
+                                <?= $quilate ?? 'Sin datos'; ?>
+                            </td>
+                        </tr>
+                        <?php else: ?>
                         <tr>
                             <td class="label">MARCA</td>
                             <td class="value">
@@ -603,6 +612,8 @@
                                 <?= $serial ?? 'Sin datos'; ?>
                             </td>
                         </tr>
+                        <?php endif; ?>
+                        
                         <tr>
                             <td class="label">ESTADO</td>
                             <td class="value">
@@ -769,7 +780,7 @@
         <?php endif; ?>
 
 
-            <tr>
+            <!-- <tr>
                 <td class="label">Estado (1-10):</td>
                 <td class="value-field"><?= $valoracion ?? 'no_data'; ?></td>
                 <td class="label">Observaciones:</td>
@@ -778,7 +789,7 @@
             <tr>
                 <td class="label">Comentarios:</td>
                 <td colspan="3"><?= $comentario ?? 'no_data'; ?></td>
-            </tr>
+            </tr> -->
         </table>
 
         <div class="p2-section-bar">III. DECLARACIÓN JURADA Y DACIÓN EN PAGO</div>
@@ -810,7 +821,7 @@
                     Chimbote, <?= $fecha_style; ?>
                     <!-- Chimbote, ...... de .........................de 20.... -->
                 </td>
-                <td style="width: 50%;padding-top: 45px;">
+                <td style="width: 50%;padding-top: 5px;">
                     <div class="p2-signature-container">
                         <div class="p2-signature-line">
                             <div style="text-align: center; font-weight: bold; margin-bottom: 5px;">SOLICITANTE</div>

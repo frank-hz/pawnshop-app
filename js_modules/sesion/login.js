@@ -7,6 +7,7 @@
         buttonSend = document.getElementById('_btn_send');
         FORM_LOGIN = document.getElementById('_LOGIN_FORM');
         
+        console.log(app.URL())
         
 
         if (document.getElementById('password_button')){
