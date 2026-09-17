@@ -19,8 +19,8 @@
         mdl_notascliente = new NotasCliente();
         mdl_prenda = new Prenda();
         mdl_credito = new Credito();
-        mdl_tprenda = new TipoPrenda();
-        mdl_categoria = new Categoria();
+        mdl_tprenda = new TipoPrendax();
+        mdl_categoria = new Categoriax();
         mdl_conducta = new Conducta();
 
         id_base = parseInt(d.getElementById('id_cliente').value);

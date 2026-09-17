@@ -62,7 +62,7 @@ class App {
     }
 
     getID = (id) => {
-        const el = d.getElementById(id);
+        const el = document.getElementById(id);
         if (!el){
             console.log(`Elemento ${id} no encontrado.`);
         }
@@ -75,6 +75,15 @@ class App {
         }, {});
     }
 
+    // Sanitiza datos para renderizado html
+    safe_esc(str, setts = {}){
+        const span = document.createElement('div');
+        if (setts.css) span.className = setts.css;
+        span.textContent = str ?? '';
+        return span.innerHTML;
+        // return (str) => {
+        // }
+    }
 
     // Convertir json a FormData
     jsonToFormData(json_object){
@@ -119,6 +128,10 @@ class App {
         }
         return false
     }
+    // Genera un numero random
+    createRandomId = (length = 9) => {
+        return Math.random().toString(36).substring(2, 2 + length);
+    };
     // Campo que solo permite numeros y los convierte a formato de moneda
     inputMoney(id,  callback){
         try {
@@ -559,7 +572,6 @@ class App {
 			console.log('elemento objetivo no encontrado.');
 		}
 	}
-
 	css_remove(id, class_value){
 		if (document.getElementById(id)){
 			document.getElementById(id).classList.remove(class_value);
@@ -567,7 +579,6 @@ class App {
 			console.log('elemento objetivo no encontrado.');
 		}
 	}
-
     stringval(val){
         if (val === null || val.trim() === "") {
             return false;
@@ -2575,7 +2586,7 @@ class Prenda{
         }
     }
 }
-class Categoria{
+class Categoriax{
     async Listar(tipo = 'todo', buscar = ''){
         try {
             let data = new FormData();
@@ -2700,7 +2711,7 @@ class Categoria{
         }
     }
 }
-class TipoPrenda{
+class TipoPrendax{
     async Listar(){
         try {
             const request = await fetch(srv.url()+'TipoPrenda/consulta');
@@ -3109,6 +3120,146 @@ class Corex {
     }
 } 
 
+class UI {
+    /**
+     * Genera elemento HTML <select>
+     * @param {Array} data - arreglo de datos
+     * @param {Object} config - datos de personalizacion
+     * @returns {String} 
+     */
+    createSelect(data = [], config = {}){
+        // Formato de data: value - text
+        // Obtener config
+        const {
+            id = `select_${Math.random().toString(36).substr(2,9)}`,
+            className = 'form-control', // clase css
+            selectedValue = '' // item o valor seleccionado
+        } = config;
+
+        // Mapeo de datos
+        const optionsHTML = data && data.length > 0
+            ? data.map(item => {
+                const isSelected = String(item['value']) === String(selectedValue)
+                    ? 'selected' : '';
+                return `
+                    <option value="${item['value']}" ${isSelected}>
+                        ${item['text']}
+                    </option>
+                `
+            }).join('') : '';        
+        
+        return `
+            <select id="${id}" class="${className}">
+                <option value="">-ELEGIR-</option>
+                ${optionsHTML}
+            </select>
+        `;
+    }
+    /**
+     * Genera una fila como respuesta de tabla
+     * @param {message} mensaje a personalizado
+     * @param {colspan} indica la cantida de columnas
+     */
+    getRowResponse({message = '', colspan = ''}){
+        // let message = message ?? ''
+    }
+    createTableButton(config = {}){
+        const {
+            id= `select_${Math.random().toString(36).substr(2,9)}`,
+            text = 'Click Me',
+            
+        } = config;
+    }
+}
+class Skeletonx {
+    constructor(container, { count = 3, height = '.6rem' } = {}) {
+        this.container = container;
+        this.count = count;
+        this.height = height;
+
+        this.templates = {
+            list: (count, opts) => Array.from({ length: count })
+                .map(() => `<div class="skeletonx" style="height:${opts.height}"></div>`)
+                .join(''),
+            table: (count, opts) => Array.from({ length: count })
+                .map(() => `
+                <tr>
+                    ${Array.from({ length: opts.columns || 3 })
+                    .map(() => `<td><div class="skeletonx" style="height:${opts.height}"></div></td>`)
+                    .join('')}
+                </tr>
+                `).join(''),
+            form: (count, opts) => Array.from({ length: count })
+                .map(() => `
+                    <div class="skeletonx-field">
+                        <div class="skeletonx skeletonx-label" style="height:0.8rem"></div>
+                        <div class="skeletonx skeletonx-input" style="height:${opts.height}"></div>
+                    </div>
+                `).join(''),
+            card: (count, opts) => Array.from({ length: count })
+                .map(() => `
+                    <div class="skeletonx-card">
+                        <div class="skeletonx" style="height:120px"></div>
+                        <div class="skeletonx" style="height:0.8rem; width:60%"></div>
+                        <div class="skeletonx" style="height:0.8rem; width:40%"></div>
+                    </div>
+                `).join(''),
+        };
+    }
+
+
+    /**
+     * Muestra un skeleton de carga dentro de un contenedor.
+     *
+     * @param {HTMLElement} container - Elemento donde se mostrará el skeleton.
+     * @param {Object} options
+     * @param {number} [options.count=3] - Cantidad de elementos skeleton a mostrar.
+     * @param {string} [options.height='1rem'] - Alto de cada línea del skeleton.
+     */
+    show(type = 'list', opts = {}){
+        const template = this.templates[type];
+        // console.log('show',template);
+        // return;
+        if (!template) {
+            console.warn(`Skeleton: tipo "${type}" no existe.`);
+            return this.show('list', opts);
+        }
+        const count = opts.count ?? this.count;
+        const merge_options = {height: this.height, ...opts};
+        this.container.innerHTML = template(count, merge_options);
+    }
+
+    /**
+     * Limpia el skeleton y muestra el contenido real.
+     * @param {string} html - Contenido real ya renderizado.
+    */
+    hide(html){
+        this.container.innerHTML = html;
+    }
+
+    /**
+     * Oculta el skeleton y renderiza datos
+     * @param {html} datos a renderizar
+     */
+    render(html){
+        this.container.innerHTML = html;
+    }
+
+    /**
+     * Procesa el renderizado de skeleton y la carga de datos
+     * @param {string} fnc - funcion de obtencion de datos.
+     * @param {string} opts - opciones para el skeleton de carga.
+    */
+    async run(fnc, { type = 'list', empty_message = 'Sin datos', ...opts} = {}){
+        this.show(type, opts);
+        try {
+            const html = await fnc();
+            this.hide(html || empty_message);
+        } catch (error) {
+            this.hide('Error al cargar los datos.');
+        }
+    }
+}
 
 let srv = new Servidor();
 let not = new Notificacion();

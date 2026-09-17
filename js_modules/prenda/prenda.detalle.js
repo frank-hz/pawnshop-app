@@ -10,8 +10,8 @@
     d.addEventListener('DOMContentLoaded', () => {
         app = new App();
         mdl_prenda = new Prenda();
-        mdl_tprenda = new TipoPrenda();
-        mdl_categoria = new Categoria();
+        mdl_tprenda = new TipoPrendax();
+        mdl_categoria = new Categoriax();
         id_base = d.getElementById('idbase').value;
     })
 

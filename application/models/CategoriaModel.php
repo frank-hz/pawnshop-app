@@ -10,6 +10,15 @@
 			if (!empty($params['tipo'])){
 				$this->db->where("c.cat_tipo", $params['tipo']);
 			}
+			if (!empty($params['tipos_group'])){
+				$this->db->where_in('c.cat_tipo', $params['tipos_group']);
+				$group = $params['tipos_group'];
+				// $this->db->group_start();
+				// foreach ($group as $tipo) {
+				// 	$this->db->or_where("c.cat_tipo", $tipo);	
+				// }
+				// $this->db->group_end();
+			}
 			if (!empty($params['nombre'])){
 				$this->db->like("c.cat_nombre", $params['nombre']);
 			}
@@ -66,6 +75,11 @@
 			}
 			$this->db->from('categoria');
 			return $this->db->count_all_results() > 0;
+		}
+		function countPrendasByCategoria($id){
+			$this->db->from("prenda");
+			$this->db->where("pren_categoria", $id);
+			return $this->db->count_all_results();
 		}
 
 

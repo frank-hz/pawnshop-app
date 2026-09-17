@@ -244,10 +244,10 @@ $route['api/v2/categoria/delete']['POST'] = 'api/Categoria/delete';
 
 // TIPO_PRENDA API
 $route['api/v2/tipos_prenda']['GET'] = 'api/TipoPrenda/get_all';
-$route['api/v2/tipos_prenda/(:num)']['GET'] = 'api/TipoPrenda/get_by_id/$1';
-$route['api/v2/tipos_prenda/create']['POST'] = 'api/TipoPrenda/create';
-$route['api/v2/tipos_prenda/update']['POST'] = 'api/TipoPrenda/update';
-$route['api/v2/tipos_prenda/delete']['POST'] = 'api/TipoPrenda/delete';
+$route['api/v2/tipo_prenda/(:num)']['GET'] = 'api/TipoPrenda/get_by_id/$1';
+$route['api/v2/tipo_prenda/create']['POST'] = 'api/TipoPrenda/create';
+$route['api/v2/tipo_prenda/update']['POST'] = 'api/TipoPrenda/update';
+$route['api/v2/tipo_prenda/delete']['POST'] = 'api/TipoPrenda/delete';
 
 
 

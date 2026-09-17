@@ -18,6 +18,7 @@ class Categoria extends CI_Controller {
                 'nombre' => $this->input->get('nombre'),
                 'tipo' => (int) $this->input->get('tipo'),
                 'tipo_nombre' => $this->input->get('tipo_nombre'),
+                'tipos_group' => $this->input->get('tipos_group'),
                 'orden' => $this->input->get('orden'),
             ];
             $params = array_filter($params, function($val){
@@ -207,10 +208,10 @@ class Categoria extends CI_Controller {
     }
     function delete(){
         try {
-            if (!verificar_permiso('CATEGORIA_ELIMINAR')) {
-				response_json('Acceso Denegado!.');
-				return;
-			}
+            // if (!verificar_permiso('CATEGORIA_ELIMINAR')) {
+			// 	response_json('Acceso Denegado!.');
+			// 	return;
+			// }
             if ($this->input->method() !== 'post'){
                 response_json('Metodo no permitido!.', ['status' => 'ERR']);
                 return;

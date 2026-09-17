@@ -2,7 +2,10 @@
 class TipoPrenda extends CI_Controller {
     function __construct(){
         parent::__construct();
-        $this->load->model("CategoriaModel");
+        if (!$this->session->userdata('logged_in')) {
+            exit("Sesion no valida.");
+        }
+        $this->load->model("TipoPrendaModel");
     }
 
     function get_all(){
@@ -21,7 +24,7 @@ class TipoPrenda extends CI_Controller {
             $params = array_filter($params, function($val){
                 return $val !== null && $val !== '' && $val !== 0;
             });
-            $result = $this->CategoriaModel->getAll($params);
+            $result = $this->TipoPrendaModel->getAll($params);
             echo json_encode([
                 'status' => 'OK',
                 'success' => true,
@@ -38,17 +41,17 @@ class TipoPrenda extends CI_Controller {
     }
     function get_by_id($id = null){
         try {
-            if (!verificar_permiso('CATEGORIA_VER')) {
-				response_json('Acceso Denegado!.');
-				return;
-			}
+            // if (!verificar_permiso('TIPO_PRENDA_VER')) {
+			// 	response_json('Acceso Denegado!.');
+			// 	return;
+			// }
             $id = (int) $id;
             if ($id <= 0){
-                throw new Exception("Prenda no identificada.");
+                throw new Exception("Tipo no identificada.");
             }
-            $data = $this->CategoriaModel->getById($id);
+            $data = $this->TipoPrendaModel->getById($id);
             if (!$data){
-                response_json("Categoria no encontrada");
+                response_json("Tipo no encontrado");
                 return;
             }
 

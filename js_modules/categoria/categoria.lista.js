@@ -22,7 +22,7 @@
                 $('#md_categoria_nuevo').modal('hide');
                 app.preload('open', 'Guardando..');
                 let data = new FormData(event.target);
-                let categoria = new Categoria();
+                let categoria = new Categoriax();
                 let registro = await categoria.Registrar(data);
 
                 app.preload('close');
@@ -48,7 +48,7 @@
                 $('#md_categoria_editar').modal('hide');
                 app.preload('open', 'Guardando..');
                 let data = new FormData(event.target);
-                let categoria = new Categoria();
+                let categoria = new Categoriax();
                 let modifica = await categoria.Actualizar(data);
 
                 app.preload('close');
@@ -70,7 +70,7 @@
     async function Categorias(){
         try {
             app.preload('open', 'Cargando..');
-            let categoria = new Categoria();
+            let categoria = new Categoriax();
             let consulta = await categoria.Listar();
             
             app.preload('close');
@@ -125,7 +125,7 @@
                         try {
                             if (confirm('Eliminar categoria?')) {
                                 app.preload('open', 'Procesando..');
-                                let categoria = new Categoria();
+                                let categoria = new Categoriax();
                                 let elimina = await categoria.Eliminar(event.target.dataset.id);
 
                                 app.preload('close');
@@ -156,7 +156,7 @@
     async function get_tipos_prenda(_id = 0){
         try {
             document.getElementById('frm_registro').reset();
-            let tipo = new TipoPrenda();
+            let tipo = new TipoPrendax();
             let tconsulta = await tipo.Listar();
             let html = '';
             if (tconsulta.status === 'OK') {

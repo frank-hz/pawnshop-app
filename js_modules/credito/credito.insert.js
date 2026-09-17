@@ -111,8 +111,8 @@
         mdl_credito = new Credito();
         mdl_cliente = new Cliente();
         mdl_prenda = new Prenda();
-        mdl_tprenda = new TipoPrenda();
-        mdl_categoria = new Categoria();
+        mdl_tprenda = new TipoPrendax();
+        mdl_categoria = new Categoriax();
         mdl_creditoapi = new CreditoApi();
 
         app.inputMoney('dp_monto', (nval)=>{

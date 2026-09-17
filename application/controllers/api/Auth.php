@@ -109,7 +109,6 @@ class Auth extends CI_Controller {
             $this->_send_response(['message' => 'Sesión cerrada'], 200);
         } else {
             redirect('/');
-            // echo "adsdas";
         }
     }
 

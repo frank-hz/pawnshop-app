@@ -12,8 +12,11 @@ class TipoPrendaModel extends CI_Model {
 		$this->db->select("tpren_descripcion as descripcion");
 		$this->db->select("tpren_estado as estado");
 		$this->db->from("tipo_prenda");
-		$orden = !empty($params['orden']) ? $params['orden'] : 'ASC';
-		$this->db->order_by("c.cat_nombre", $orden);                        
+		$orden = 'ASC';
+		if (!empty($params['orden']) && in_array($params['orden'], ['ASC','DESC'])){
+			$orden = $params['orden'];
+		}
+		$this->db->order_by("tpren_nombre", $orden);                        
 		$res = $this->db->get();
 		return $res->result();
 	}
