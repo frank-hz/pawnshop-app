@@ -39,8 +39,10 @@
 			];
 
 			$gens = $this->AnalisisRestModel->get_all_credito_generado($data_receive);
-			$recs = $this->AnalisisRestModel->get_all_credito_recuperado($data_receive);
+			$recs = $this->AnalisisRestModel->get_all_credito_recuperado_v2($data_receive);
 			$rems = $this->AnalisisRestModel->get_all_credito_rematado($data_receive);
+
+			
 			foreach ($gens as $g) {
 				$rsp['genera_cantidad']++;
 				$rsp['genera_monto'] = $rsp['genera_monto'] + $g->monto;
@@ -48,7 +50,7 @@
 			}
 			foreach ($recs as $rc) {
 				$rsp['recupera_cantidad']++;
-				$rsp['recupera_monto'] = $rsp['recupera_monto'] + $rc->monto;
+				$rsp['recupera_monto'] = $rsp['recupera_monto'] + $rc->monto_prestado;
 				array_push($rsp['recupera_log'], $rc);
 			}
 			foreach ($rems as $rm) {

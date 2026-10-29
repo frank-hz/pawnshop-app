@@ -1,12 +1,13 @@
 FROM php:7.4-apache
 
-# Instalar extensiones necesarias para CodeIgniter 3
-RUN apt-get update && apt-get install -y \
+RUN printf 'deb http://snapshot.debian.org/archive/debian/20221114T000000Z bullseye main\ndeb http://snapshot.debian.org/archive/debian-security/20221114T000000Z bullseye-security main\ndeb http://snapshot.debian.org/archive/debian/20221114T000000Z bullseye-updates main\n' > /etc/apt/sources.list \
+    && apt-get -o Acquire::Check-Valid-Until=false update \
+    && apt-get install -y --no-install-recommends \
     libzip-dev \
     zip \
     unzip \
     libpng-dev \
-    libjpeg-dev \
+    libjpeg62-turbo-dev \
     libfreetype6-dev \
     git \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -14,19 +15,12 @@ RUN apt-get update && apt-get install -y \
     pdo_mysql \
     mysqli \
     zip \
-    gd
+    gd \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Habilitar mod_rewrite para Apache
 RUN a2enmod rewrite
-
-# Configurar el DocumentRoot para CodeIgniter
 RUN sed -i 's!/var/www/html!/var/www/html!g' /etc/apache2/sites-available/000-default.conf
-
-# Establecer el directorio de trabajo
 WORKDIR /var/www/html
-
-# Copiar archivo de configuración PHP personalizado
 COPY php.ini /usr/local/etc/php/
-
-# Exponer puerto (opcional, ya se define en docker-compose)
 EXPOSE 80

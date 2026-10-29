@@ -3096,26 +3096,33 @@ class Corex {
     async request(endpoint, { method = 'GET', body = null } = {}){
         try {
             const req = await fetch(App.URL_STATIC(endpoint), { method, body });
-            if (!req.ok){
-                return { ok: false, data: null, error: `Error HTTP ${ req.status }` };
+            const resp = await req.json().catch(()=>null);
+            if (!req.ok || !resp || resp.success !== true){
+                return {
+                    ok: false, 
+                    data: null, 
+                    message: resp?.message || `Error HTTP ${ resp.status }`, 
+                    errors: resp?.errors || null, 
+                };
             }
-
-            const resp = await req.json(); 
-            if (!resp.success && resp.status != 'OK') {
-                return { ok: false, data: null, message: resp.message || 'Respuesta erronea del servidor.', errors: resp.errors || null };
-            }
-
+            
             return { 
                 ok: true, 
                 data: resp.result || [], 
                 message: resp.message || 'Sin respuesta.', 
                 errors: resp.errors || null,
                 id: resp.id || null,
-                rows_affected: resp.rows_affected || null
+                rows_affected: resp.rows_affected || null,
+                status: req.status
             };
         } catch (error) {
             console.error(`[${ endpoint }]`, error);
-            return { ok: false, data: null, error: error.message || 'Error al procesar.'};
+            return {
+                ok: false, 
+                data: null,
+                message: error.message || 'Ocurrio un error al procesar.', 
+                error: error.message || 'Error al procesar.'
+            };
         }
     }
 } 

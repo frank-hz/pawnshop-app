@@ -42,7 +42,7 @@
 		Load_SucursalSelector(); // carga datos de sucursal
         
         await LoadTimeline(); 
-        await InitAllModules();
+        // await InitAllModules();
         
         // cierrar el loader
         setTimeout(() => {
@@ -142,7 +142,7 @@
         evt.target.disabled = true;
         const data_ = logs.utilidad.map(item => {
             return {
-                'Credito': item.serie_credito,
+                'Credito': item.credito_serie,
                 'Monto': item.monto,
                 'Tipo': TIPO_LOG[item.tipo],
                 'Cliente': item.cliente_nombre
@@ -185,10 +185,10 @@
         await recognizeFilter()        
 		await Module_DataGeneral()
 		await Module_GeneracionRecuperacion()
-		await Module_GeneracionRecuperacionDia()
-		await Module_DataUtilidad()
-		await Module_TotalIngresos()
-		await Module_BalanceDiario()
+		// await Module_GeneracionRecuperacionDia()
+		// await Module_DataUtilidad()
+		// await Module_TotalIngresos()
+		// await Module_BalanceDiario()
 	}
     async function Load_SucursalSelector(){
         try {
@@ -318,12 +318,12 @@
                                 <tr>
                                     <td>
                                         <a class="btn-link" href="${srv.url()}Credito/detalle/${e.id_credito}" target="_blank">
-                                        ${e.serie_credito}
+                                        ${e.credito_serie}
                                         </a>
                                     </td>
                                     <td>
                                         <a class="btn-link" href="${srv.url()}Pago/detalle/${e.id_pago}" target="_blank">
-                                        ${e.serie_pago}
+                                        ${e.pago_serie}
                                         </a>
                                     </td>
                                     <td>${e.cliente_nombre}</td>
@@ -359,14 +359,14 @@
                             rows_html += `
                                 <tr>
                                     <td>
-                                        <a class="btn-link" href="${srv.url()}Credito/detalle/${e.id_credito}" target="_blank">
-                                        ${e.serie_credito}
+                                        <a class="btn-link" href="${srv.url()}Credito/detalle/${e.credito_id}" target="_blank">
+                                        ${e.credito_serie}
                                         </a>
                                     </td>   
-                                    <td>${e.cliente_nombre}</td>                                 
+                                    <td>${e.cliente_nombre}</td>    
                                     <td>
-                                        <a class="btn-link" href="${srv.url()}Pago/detalle/${e.id_pago}" target="_blank">
-                                        ${e.serie_pago}
+                                        <a class="btn-link" href="${srv.url()}Pago/detalle/${e.pago_id}" target="_blank">
+                                        ${e.pago_serie}
                                         </a>
                                     </td>                                    
                                     <td>S/ ${e.monto}</td>
@@ -504,10 +504,30 @@
                     'Content-Type': 'application/json'
                 }
             });
+            
             const resp = await request.json();
 			logs.gen_vs_rec = [].concat(resp.recupera_log, resp.genera_log, resp.remate_log);
 			
+            const work_book = XLSX.utils.book_new(); 
+            let hoja_1 = null;
+            let hoja_2 = null;
+            if (resp.genera_log) {
+                hoja_1 = XLSX.utils.json_to_sheet(resp.genera_log);
+            }
+            if (resp.recupera_log) {
+                hoja_2 = XLSX.utils.json_to_sheet(resp.recupera_log);
+            }
 
+            if (hoja_1 != null) {
+                XLSX.utils.book_append_sheet(work_book, hoja_1, 'Generacion');
+            }
+            if (hoja_2 != null) {
+                XLSX.utils.book_append_sheet(work_book, hoja_2, 'Recuperacion');
+            }
+
+            XLSX.writeFile(work_book, 'data_export.csv');
+
+            return;
             app.render('generacion_cantidad', resp.genera_cantidad+' Registros');
             app.render('generacion_monto', `S/ ${ app.money_format(resp.genera_monto) }`);
             app.render('recuperado_cantidad', resp.recupera_cantidad+' Recuperaciones');
