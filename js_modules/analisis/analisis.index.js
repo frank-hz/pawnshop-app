@@ -35,8 +35,12 @@
        'GEN': 'Generacion'
     }
 
+    let DATA_EXPORT = [];
+    let EXPORT_WORKBOOK = null;
+
     d.addEventListener('DOMContentLoaded', async () => {
         app = new App();
+        EXPORT_WORKBOOK = XLSX.utils.book_new();
         
         RenderLoader('start'); // iniciar loader
 		Load_SucursalSelector(); // carga datos de sucursal
@@ -177,6 +181,19 @@
             evt.target.disabled = false;
         }, 500);
     })
+    d.getElementById('btn_export_data')?.addEventListener('click', evt => {
+        if (!DATA_EXPORT) {
+            console.log('Datos exportables no existen.');
+            return;
+        }
+        // DATA_EXPORT.forEach(item => {
+
+        // });
+        if (confirm('¿Exportar?')) {
+            // XLSX.writeFile(EXPORT_WORKBOOK, 'electrocash_data_export.xlsx');
+            XLSX.writeFile(EXPORT_WORKBOOK, 'electrocash_data_export.csv');
+        }
+    });
     
 
 
@@ -496,52 +513,37 @@
     }
     async function Module_GeneracionRecuperacion(){
         try {
-            const dt = new Date();
-            const request = await fetch(srv.url()+'AnalisisRest/service_generacion_recuperacion', {
+            const formatSoles = (monto) => `S/ ${app.money_format(monto)}`;
+            const response = await fetch(`${srv.url()}AnalisisRest/service_generacion_recuperacion`, {
                 method: 'POST',
-                body: JSON.stringify(filter_data),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(filter_data)
             });
-            
-            const resp = await request.json();
-			logs.gen_vs_rec = [].concat(resp.recupera_log, resp.genera_log, resp.remate_log);
-			
-            const work_book = XLSX.utils.book_new(); 
-            let hoja_1 = null;
-            let hoja_2 = null;
-            if (resp.genera_log) {
-                hoja_1 = XLSX.utils.json_to_sheet(resp.genera_log);
-            }
-            if (resp.recupera_log) {
-                hoja_2 = XLSX.utils.json_to_sheet(resp.recupera_log);
-            }
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const resp = await response.json();
+            const generacion_log = resp.genera_log ?? [];
+            const recuperacion_log = resp.recupera_log ?? [];
+            const remate_log = resp.remate_log ?? [];
 
-            if (hoja_1 != null) {
-                XLSX.utils.book_append_sheet(work_book, hoja_1, 'Generacion');
-            }
-            if (hoja_2 != null) {
-                XLSX.utils.book_append_sheet(work_book, hoja_2, 'Recuperacion');
-            }
+            logs.gen_vs_rec = [generacion_log, recuperacion_log, remate_log];
+            // DATA_EXPORT.push('Generacion - Recuperacion - Remate', logs.gen_vs_rec);
+            const paper = XLSX.utils.json_to_sheet([...generacion_log, ...recuperacion_log, ...remate_log]);
+            XLSX.utils.book_append_sheet(EXPORT_WORKBOOK, paper, 'Generacion vs Recuperacion');
 
-            XLSX.writeFile(work_book, 'data_export.csv');
-
-            return;
-            app.render('generacion_cantidad', resp.genera_cantidad+' Registros');
-            app.render('generacion_monto', `S/ ${ app.money_format(resp.genera_monto) }`);
-            app.render('recuperado_cantidad', resp.recupera_cantidad+' Recuperaciones');
-            app.render('recuperado_monto', `S/ ${ app.money_format(resp.recupera_monto) }`);
-            app.render('remate_cantidad', resp.remate_cantidad+' Rematados');
-            app.render('remate_monto', `S/ ${ app.money_format(resp.remate_monto) }`);
-
-            var diff_class = resp.diferencia > 0 ? 'text-greenbook' : 'text-danger';
-            app.render('diferencia_monto', `S/ ${ app.money_format(resp.diferencia) }`);
-            app.css_add('diferencia_monto', diff_class);
+            const campos = {
+                generacion_cantidad: `${resp.genera_cantidad} Registros`,
+                generacion_monto:    formatSoles(resp.genera_monto),
+                recuperado_cantidad: `${resp.recupera_cantidad} Recuperaciones`,
+                recuperado_monto:    formatSoles(resp.recupera_monto),
+                remate_cantidad:     `${resp.remate_cantidad} Rematados`,
+                remate_monto:        formatSoles(resp.remate_monto),
+                diferencia_monto:    formatSoles(resp.diferencia)
+            };
+            Object.entries(campos).forEach(([id, valor]) => app.render(id, valor));
+            app.css_add('diferencia_monto', resp.diferencia > 0 ? 'text-greenbook' : 'text-danger');
 
         } catch(e) {
-            // statements
-            console.log(e);
+            console.error('Error en Module_GeneracionRecuperacion:', e);
         }
     }
 	async function Module_DataUtilidad(){

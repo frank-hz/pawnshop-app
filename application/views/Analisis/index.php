@@ -215,6 +215,10 @@
 							<i class='bx bx-check'></i> 
 							Aceptar
 						</button>
+						<button id="btn_export_data" type="button" class="btn btn-block">
+							<i class='bx bx-download'></i> 
+							Descargar
+						</button>
 					</div>
 				</form>
 			</div>

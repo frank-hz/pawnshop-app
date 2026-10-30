@@ -57,10 +57,74 @@
 					c.cred_codigo as id,
 					c.cred_serie as serie,
 					ROUND(c.cred_monto, 1) as monto,
+					ROUND(c.cred_monto, 1) as monto_prestado,
 					DATE_FORMAT(c.cred_create_at, '%d/%m/%Y - %h:%i %p') as fecha_creacion,
 					DATE_FORMAT(c.cred_liquidacion, '%d/%m/%Y - %h:%i %p') as fecha_liquidacion,
 					c.cred_estado as estado,
 					'GEN' as tipo,
+					CONCAT(
+						cl.cli_nombres,' ',
+						cl.cli_paterno,' ',
+						cl.cli_materno
+					) as cliente_nombre,
+					IF (
+						c.cred_prenda > 0,
+						(SELECT pren_descripcion FROM prenda WHERE pren_codigo = c.cred_prenda),
+						'Sin Datos'
+					) as prenda_descripcion
+				FROM credito c
+				JOIN cliente cl ON cl.cli_codigo = c.cred_cliente 
+				WHERE 
+					(c.cred_estado = 'E' OR c.cred_estado = 'R') AND
+					c.cred_sucursal = ?
+			";
+			switch ($data->mode) {
+				case 'MES':
+					$sql .= "AND YEAR(c.cred_creacion) = ? AND MONTH(c.cred_creacion) = ?";
+					$array_attr = [$this->idsuc, $data->in_anio, $data->in_mes];
+					break;
+				
+				case 'ANIO':
+					$sql .= "AND YEAR(c.cred_creacion) = ?";
+					$array_attr = [$this->idsuc, $data->in_anio];
+					break;
+
+				case 'FECHA':
+					$sql .= "AND DATE(c.cred_creacion) = ?";
+					$array_attr = [$this->idsuc, $data->in_fecha];
+					break;
+
+				case 'FECHA_ACTUAL':
+					$sql .= "AND DATE(c.cred_creacion) = ?";
+					$array_attr = [$this->idsuc, date("Y-m-d")];
+					break;
+
+				case 'RANGO':
+					$sql .= "AND DATE(c.cred_creacion) BETWEEN ? AND ?";
+					$array_attr = [$this->idsuc, $data->in_rango_inicial, $data->in_rango_final];
+					break;
+				
+				case 'MES_ACTUAL':
+					$mesAC = date("m");
+					$anioAC = date("Y"); 
+					$sql .= "AND YEAR(c.cred_creacion) = ? AND MONTH(c.cred_creacion) = ?";
+					$array_attr = [$this->idsuc, $anioAC, $mesAC];
+					break;
+			}
+			$res = $this->db->query($sql, $array_attr);
+			return $res->result();
+		}
+		function get_all_credito_generado_v2($data){
+			$array_attr = [];
+			$sql = "
+				SELECT 
+					c.cred_codigo as credito_id,
+					c.cred_serie as credito_serie,
+					ROUND(c.cred_monto, 1) as monto_prestado,
+					DATE_FORMAT(c.cred_create_at, '%d/%m/%Y - %h:%i %p') as fecha_creacion,
+					DATE_FORMAT(c.cred_liquidacion, '%d/%m/%Y - %h:%i %p') as fecha_liquidacion,
+					c.cred_estado as estado,
+					'GENERACION' as tipo,
 					CONCAT(
 						cl.cli_nombres,' ',
 						cl.cli_paterno,' ',
@@ -119,6 +183,7 @@
 					c.cred_codigo as id,
 					c.cred_serie as serie,
 					c.cred_monto as monto,
+					c.cred_monto as monto_capital,
 					'RECU' as tipo,
 					CONCAT(
 						cl.cli_nombres,' ',
@@ -186,15 +251,18 @@
 					p.pag_codigo as pago_id,
 					p.pag_serie as pago_serie,
 					p.pag_concepto as concepto,
+					DATE_FORMAT(c.cred_create_at, '%d/%m/%Y - %h:%i %p') as fecha_creacion,
+					DATE_FORMAT(c.cred_liquidacion, '%d/%m/%Y - %h:%i %p') as fecha_liquidacion,
 					DATE_FORMAT(p.pag_fecha, '%d-%m-%Y') as pago_fecha,
 					ROUND(p.pag_subtotal, 1) as sub_total,
 					ROUND(p.pag_descuento, 1) as descuento,
 					ROUND(p.pag_total, 1) as total,
+					ROUND(pd.pdet_monto, 1) as monto_capital,
 					c.cred_codigo as credito_id,
 					c.cred_serie as credito_serie,
 					ROUND(c.cred_monto, 1) as monto_prestado,
-					'RECU' as tipo,
-					c.cred_estado,
+					'RECUPERACION' as tipo,
+					c.cred_estado as estado,
 					CONCAT(
 						cl.cli_nombres,' ',
 						cl.cli_paterno,' ',
@@ -205,10 +273,12 @@
 						(SELECT pren_descripcion FROM prenda WHERE pren_codigo = c.cred_prenda),
 						'Sin Datos'
 					) as prenda_descripcion
-				FROM pago p 
+				FROM pago_detalle pd 
+				INNER JOIN pago p ON p.pag_codigo = pd.pdet_pago 
 				INNER JOIN credito c on c.cred_codigo = p.pag_credito
 				JOIN cliente cl ON cl.cli_codigo = c.cred_cliente
 				WHERE 
+					pd.pdet_tipo = 'CAP' AND
 					p.pag_concepto = 'REC' AND
 					cred_estado = 'R' AND
 					cred_sucursal = ?
@@ -263,7 +333,77 @@
 					c.cred_codigo as id,
 					c.cred_serie as serie,
 					c.cred_monto as monto,
+					c.cred_monto as monto_prestado,
 					'REM' as tipo,
+					CONCAT(
+						cl.cli_nombres,' ',
+						cl.cli_paterno,' ',
+						cl.cli_materno
+					) as cliente_nombre,
+					IF (
+						c.cred_prenda > 0,
+						(SELECT pren_descripcion FROM prenda WHERE pren_codigo = c.cred_prenda),
+						'Sin Datos'
+					) as prenda_descripcion
+				FROM credito c 
+				JOIN cliente cl ON cl.cli_codigo = c.cred_cliente 
+				WHERE 
+					c.cred_estado = 'A' AND
+					c.cred_sucursal = ?
+			";
+            $params = [$this->idsuc];
+			switch ($data->mode) {
+				case 'MES':
+					$sql .= "AND YEAR(c.cred_liquidacion) = ? AND MONTH(c.cred_liquidacion) = ?";
+                    array_push($params, $data->in_anio);
+                    array_push($params, $data->in_mes);
+					break;
+				
+				case 'ANIO':
+					$sql .= "AND YEAR(c.cred_liquidacion) = ?";
+                    array_push($params, $data->in_anio);
+					break;
+
+				case 'FECHA':
+					$sql .= "AND DATE(c.cred_liquidacion) = ?";
+                    array_push($params, $data->in_fecha);
+					break;
+
+				case 'FECHA_ACTUAL':
+					$sql .= "AND DATE(c.cred_liquidacion) = ?";
+                    array_push($params, date("Y-m-d"));
+					break;
+
+				case 'RANGO':
+					$sql .= "AND DATE(c.cred_liquidacion) BETWEEN ? AND ?";
+                    array_push($params, $data->in_rango_inicial);
+                    array_push($params, $data->in_rango_final);
+					break;
+				
+				case 'MES_ACTUAL':
+					$mesAC = date("m");
+					$anioAC = date("Y"); 
+					$sql .= "
+						AND YEAR(c.cred_liquidacion) = ? 
+						AND MONTH(c.cred_liquidacion) = ?
+					";
+                    array_push($params, $anioAC);
+                    array_push($params, $mesAC);
+					break;
+			}
+			$res = $this->db->query($sql, $params);
+			return $res->result();
+		}
+		function get_all_credito_rematado_v2($data){			
+			$sql = "
+				SELECT 
+					c.cred_codigo as credito_id,
+					c.cred_serie as credito_serie,
+					c.cred_monto as monto_prestado,
+					DATE_FORMAT(c.cred_create_at, '%d/%m/%Y - %h:%i %p') as fecha_creacion,
+					DATE_FORMAT(c.cred_liquidacion, '%d/%m/%Y - %h:%i %p') as fecha_liquidacion,
+					'REMATE' as tipo,
+					c.cred_estado as estado,
 					CONCAT(
 						cl.cli_nombres,' ',
 						cl.cli_paterno,' ',

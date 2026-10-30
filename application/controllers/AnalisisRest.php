@@ -22,7 +22,7 @@
 				'final' => date("d/m/Y", strtotime($dates->final))				
 			]);
 		}
-        function service_generacion_recuperacion(){
+        function service_generacion_recuperacion_bk(){
             $file = file_get_contents("php://input");
 			$data_receive = json_decode($file);
 			$rsp = [
@@ -60,6 +60,42 @@
 			}	
 			$rsp['diferencia'] = round( ($rsp['genera_monto'] - $rsp['recupera_monto']),2 );
 			echo json_encode($rsp);
+        }
+		function service_generacion_recuperacion(){
+            $file = file_get_contents("php://input");
+			$data_receive = json_decode($file);
+			$filters = json_decode($this->input->raw_input_stream);
+			if (!is_object($filters)) {
+				return $this->output
+				->set_status_header(400)
+				->set_content_type('application/json')
+				->set_output(json_encode(['error' => 'Solucitud invalida.']));
+			}
+
+			$gens = $this->AnalisisRestModel->get_all_credito_generado_v2($filters);
+			$recs = $this->AnalisisRestModel->get_all_credito_recuperado_v2($filters);
+			$rems = $this->AnalisisRestModel->get_all_credito_rematado_v2($filters);
+			
+			$genera_monto    = array_sum(array_column($gens, 'monto_prestado'));
+			$recupera_monto  = array_sum(array_column($recs, 'monto_capital'));
+			$remate_monto    = array_sum(array_column($rems, 'monto_prestado'));
+
+			$rsp = [
+				'genera_cantidad'   => count($gens),
+				'genera_monto'      => $genera_monto,
+				'recupera_cantidad' => count($recs),
+				'recupera_monto'    => $recupera_monto,
+				'remate_cantidad'   => count($rems),
+				'remate_monto'      => $remate_monto,
+				'diferencia'        => round($genera_monto - $recupera_monto, 2),
+				'genera_log'        => $gens,
+				'recupera_log'      => $recs,
+				'remate_log'        => $rems,
+			];
+
+			$this->output
+				->set_content_type('application/json')
+				->set_output(json_encode($rsp));
         }
         function service_generacion_recuperacion_dia(){
             $file = file_get_contents("php://input");
