@@ -35,7 +35,14 @@ body {
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-template-rows: auto auto 1fr;
-	grid-template-areas: 'header header' 'front-header front-header' 'main main';
+	grid-template-areas: 
+		'header header' 
+		'front-header front-header' 
+		'export export' 
+		'main main';
+}
+.export_section {
+	grid-area: export;
 }
 .header {
 	grid-area: header;
@@ -1474,4 +1481,129 @@ body {
 	.panel-table table {
 		padding: 0;
 	}
+}
+
+
+
+
+
+/* EXPORT DESIGN */
+details#export_collapse {
+	/* border: 1px solid #21a366; */
+    /* border-radius: 10px; */
+    /* background: #33c481; */
+	/* color: #fff; */
+    overflow: hidden;
+	display: none;
+	border-bottom: 1px solid rgba(var(--border_1), .7);
+}
+details#export_collapse summary {
+	padding: .6rem 1.4rem;
+	/* background: #33c481; */
+	background: rgba(16, 124, 65, .1);
+	color: #21a366;
+	cursor: pointer;
+	font-weight: 600;
+	list-style: none;
+	user-select: none;
+}
+details#export_collapse summary::-webkit-details-marker {
+	display: none;
+}
+
+/* Indicador propio que rota */
+details#export_collapse summary::after {
+	content: "▾";
+	float: right;
+	transition: transform .4s ease;
+}
+details#export_collapse[open] summary::after {
+	transform: rotate(180deg);
+}
+
+  /* ESTADO CERRADO: altura 0, invisible, sin ocupar espacio */
+details#export_collapse::details-content {
+	block-size: 0;
+	opacity: 0;
+	overflow: hidden;
+	transition:
+		block-size .4s ease,
+		opacity .3s ease,
+		content-visibility .4s allow-discrete; /* mantiene el contenido renderizado mientras anima */
+}
+
+/* ESTADO ABIERTO: se despliega hacia abajo */
+details#export_collapse[open]::details-content {
+	block-size: auto;
+	opacity: 1;
+}
+.export_form {
+	padding: 0 1.2rem 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end; /* Alinea los inputs y el botón por la parte inferior */
+    width: 100%;
+    gap: 12px; /* Espaciado uniforme entre elementos */
+    flex-wrap: wrap;
+}
+
+
+.form-group {
+	flex: 1; /* Distribuye el espacio equitativamente */
+    min-width: 200px; /* Evita que se reduzcan demasiado en pantallas medianas */
+    display: flex;
+    flex-direction: column;
+    gap: 2px 6px;
+}
+.form-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.form-group input, 
+.form-group select {
+    width: 100%;
+    padding: 0 10px;
+    font-size: 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    outline: none;
+    transition: all 0.2s ease;
+    color: #1e293b;
+    box-sizing: border-box;
+    height: 38px; /* Altura fija para empatar con el botón */
+}
+.btn-exp {
+    padding: 0 16px;
+    font-size: 13px;
+    font-weight: 500;
+    background-color: #21a366;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    height: 38px; /* Misma altura que los inputs para un perfecto acoplamiento */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.2s ease;
+    white-space: nowrap; /* Evita que el texto del botón se rompa */
+}
+
+.btn-exp:hover {
+    background-color: #33c481;
+}
+
+/* Responsivo para dispositivos móviles */
+@media (max-width: 768px) {
+    .export_form {
+        flex-direction: column;
+        align-items: stretch; /* Ocupan todo el ancho disponible */
+    }
+    
+    .btn-exp {
+        width: 100%; 
+    }
 }

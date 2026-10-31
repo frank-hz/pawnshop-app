@@ -37,10 +37,12 @@
 
     let DATA_EXPORT = [];
     let EXPORT_WORKBOOK = null;
+    let EXPORT_SECTION = null;
 
     d.addEventListener('DOMContentLoaded', async () => {
         app = new App();
         EXPORT_WORKBOOK = XLSX.utils.book_new();
+        EXPORT_SECTION = d.getElementById('export_collapse');
         
         RenderLoader('start'); // iniciar loader
 		Load_SucursalSelector(); // carga datos de sucursal
@@ -181,18 +183,25 @@
             evt.target.disabled = false;
         }, 500);
     })
-    d.getElementById('btn_export_data')?.addEventListener('click', evt => {
-        if (!DATA_EXPORT) {
-            console.log('Datos exportables no existen.');
+    d.getElementById('form_exportacion')?.addEventListener('submit', evt => {
+        evt.preventDefault();
+        let form = evt.target;
+        let nombre = form.nombre.value.length > 0 
+            ? form.nombre.value : 'electrocash_export';
+        let formato = form.formato.value;
+        let formatos_validos = ['csv', 'xlsx', 'json'];
+        if (!formato || formato.length <= 0 || !formatos_validos.includes(formato)) {
+            console.log('Datos invalidos');
             return;
         }
-        // DATA_EXPORT.forEach(item => {
 
-        // });
+        let nombre_archivo = `${nombre}.${formato}`;
+        console.log(nombre_archivo);
+
         if (confirm('¿Exportar?')) {
-            // XLSX.writeFile(EXPORT_WORKBOOK, 'electrocash_data_export.xlsx');
-            XLSX.writeFile(EXPORT_WORKBOOK, 'electrocash_data_export.csv');
+            XLSX.writeFile(EXPORT_WORKBOOK, nombre_archivo);
         }
+
     });
     
 
@@ -202,10 +211,15 @@
         await recognizeFilter()        
 		await Module_DataGeneral()
 		await Module_GeneracionRecuperacion()
-		// await Module_GeneracionRecuperacionDia()
-		// await Module_DataUtilidad()
-		// await Module_TotalIngresos()
-		// await Module_BalanceDiario()
+		await Module_GeneracionRecuperacionDia()
+		await Module_DataUtilidad()
+		await Module_TotalIngresos()
+		await Module_BalanceDiario()
+
+
+        if (EXPORT_SECTION != null) {
+            EXPORT_SECTION.style.display = 'inherit';
+        } 
 	}
     async function Load_SucursalSelector(){
         try {

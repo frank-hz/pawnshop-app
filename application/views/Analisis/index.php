@@ -67,6 +67,28 @@
                 </div>
             </div>
         </div>
+		<div class="export_section">
+			<details id="export_collapse">
+				<summary>Exportacion</summary>
+				<form id="form_exportacion" class="export_form">
+					<div class="form-group">
+						<label for="">Nombre</label>
+						<input type="text" name="nombre" value="electrocash_export">
+					</div>
+					<div class="form-group">
+						<label for="">Formato</label>
+						<select name="formato">
+							<option value="xlsx">Excel (.xlsx)</option>
+							<option value="csv">CSV</option>
+						</select>
+					</div>
+					<button id="btn_export_data" type="submit" class="btn-exp">
+						<i class='bx bx-download'></i> 
+						Descargar
+					</button>
+				</form>
+			</details>
+		</div>
 		<div class="main">
 			<div id="collapse-filter" class="collapse">
 				<div class="collapse-header">
@@ -214,10 +236,6 @@
 						<button type="submit" class="btn btn-block btn-primary">
 							<i class='bx bx-check'></i> 
 							Aceptar
-						</button>
-						<button id="btn_export_data" type="button" class="btn btn-block">
-							<i class='bx bx-download'></i> 
-							Descargar
 						</button>
 					</div>
 				</form>
@@ -589,7 +607,6 @@
 				</div>
 
 			</div>
-			
 
 		</div>
 	</div>
