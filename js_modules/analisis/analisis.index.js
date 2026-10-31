@@ -35,13 +35,16 @@
        'GEN': 'Generacion'
     }
 
-    let DATA_EXPORT = [];
+    let DATA_EXPORT = {
+        generacion_recuperacion: [],
+        utilidad: [],
+        clientes: []
+    };
     let EXPORT_WORKBOOK = null;
     let EXPORT_SECTION = null;
 
     d.addEventListener('DOMContentLoaded', async () => {
         app = new App();
-        EXPORT_WORKBOOK = XLSX.utils.book_new();
         EXPORT_SECTION = d.getElementById('export_collapse');
         
         RenderLoader('start'); // iniciar loader
@@ -196,10 +199,16 @@
         }
 
         let nombre_archivo = `${nombre}.${formato}`;
-        console.log(nombre_archivo);
 
         if (confirm('¿Exportar?')) {
-            XLSX.writeFile(EXPORT_WORKBOOK, nombre_archivo);
+            let work_book = XLSX.utils.book_new();
+            let page_1 = XLSX.utils.json_to_sheet(DATA_EXPORT.generacion_recuperacion ?? []);
+            let page_2 = XLSX.utils.json_to_sheet(DATA_EXPORT.utilidad ?? []);
+            let page_3 = XLSX.utils.json_to_sheet(DATA_EXPORT.clientes ?? []);
+            XLSX.utils.book_append_sheet(work_book, page_1, 'Generacion - Recuperacion');
+            XLSX.utils.book_append_sheet(work_book, page_2, 'Utilidad');
+            XLSX.utils.book_append_sheet(work_book, page_3, 'Clientes Registrados');
+            XLSX.writeFile(work_book, nombre_archivo);
         }
 
     });
@@ -219,7 +228,7 @@
 
         if (EXPORT_SECTION != null) {
             EXPORT_SECTION.style.display = 'inherit';
-        } 
+        }
 	}
     async function Load_SucursalSelector(){
         try {
@@ -538,11 +547,14 @@
             const generacion_log = resp.genera_log ?? [];
             const recuperacion_log = resp.recupera_log ?? [];
             const remate_log = resp.remate_log ?? [];
+            const clientes_log = resp.clientes ?? [];
 
-            logs.gen_vs_rec = [generacion_log, recuperacion_log, remate_log];
-            // DATA_EXPORT.push('Generacion - Recuperacion - Remate', logs.gen_vs_rec);
-            const paper = XLSX.utils.json_to_sheet([...generacion_log, ...recuperacion_log, ...remate_log]);
-            XLSX.utils.book_append_sheet(EXPORT_WORKBOOK, paper, 'Generacion vs Recuperacion');
+            let log_compiled = [...recuperacion_log, ...generacion_log, ...remate_log];
+            logs.gen_vs_rec = log_compiled;
+
+            
+            DATA_EXPORT.generacion_recuperacion = log_compiled;
+            DATA_EXPORT.clientes = clientes_log;
 
             const campos = {
                 generacion_cantidad: `${resp.genera_cantidad} Registros`,
@@ -562,44 +574,85 @@
     }
 	async function Module_DataUtilidad(){
         try {
-            const dt = new Date();
-            const request = await fetch(srv.url()+'AnalisisRest/service_data_utilidad', {
+            const formatSoles = (monto) => `S/ ${app.money_format(monto)}`;
+            let url = `${srv.url()}AnalisisRest/service_data_utilidad`;
+            const response = await fetch(url, {
                 method: 'POST',
-                body: JSON.stringify(filter_data),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(filter_data)
             });
-            const resp = await request.json();
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const resp = await response.json();
+			let status_elem = d.getElementById('icon-status-utilidad');
 			
-			var statusEl = d.getElementById('icon-status-utilidad');
-			if (resp.status === 'OK') {
-				statusEl.title = 'Status: OK';
-				statusEl.classList.remove('status-error');
-
-				var result = resp.result;
-				logs.utilidad = result.log;
-                
-				app.render('utilidad_cuota_cant', result.cuota_cantidad);
-				app.render('utilidad_cuota_monto', `S/ ${ app.money_format(result.cuota_suma) }`);
-				app.render('utilidad_mora_cant', result.mora_cantidad);
-				app.render('utilidad_mora_monto', `S/ ${ app.money_format(result.mora_suma) }`);
-				app.render('utilidad_descuento_cant', result.descuento_cantidad);
-				app.render('utilidad_descuento_monto', `S/ ${ app.money_format(result.descuento_suma) }`);
-				app.render('utilidad_adicional_cant', result.adicional_cantidad);
-				app.render('utilidad_adicional_monto', `S/ ${ app.money_format(result.adicional_suma) }`);
-				
-				app.render('utilidad_total_neto', `S/ ${ app.money_format(result.utilidad_neta) }`);
-
-			}else {
-				statusEl.title = 'Status: ERR';
-				statusEl.classList.add('status-error');
+            if (!resp.status || resp.status != 'OK') {
+                status_elem.title = 'Status: ERR';
+				status_elem.classList.add('status-error');
 				logs.utilidad = [];
-			}
+                return;
+            }
 
+            let data = resp.result;
+            status_elem.title = 'Status: OK';
+            status_elem.classList.remove('status-error');
+            logs.utilidad = data.log;
+
+            let tipos = {
+                'CU': 'CUOTA',
+                'DESC': 'DESCUENTO',
+                'MO': 'MORA',
+            }
+            let estados = {
+                'R': 'RECUPERADO',
+                'E': 'ACTIVO',
+                'A': 'REMATE',
+            }
+            let batch = [];
+            if (data.log && data.log.length > 0) {
+                data.log.forEach(item => {
+                    const {
+                        pago_id, 
+                        pago_serie,
+                        credito_id,
+                        credito_serie,
+                        pago_fecha,
+                        tipo,
+                        pago_monto,
+                        credito_estado,
+                        cliente_nombre,
+                        prenda_descripcion
+                    } = item;
+                    
+
+                    const nuevo = {
+                        pago_id, 
+                        pago_serie,
+                        credito_id,
+                        credito_serie,
+                        pago_fecha,
+                        'tipo': tipos[tipo],
+                        pago_monto,
+                        'estado': estados[credito_estado],
+                        cliente_nombre,
+                        prenda_descripcion
+                    }
+                    batch.push(nuevo);
+                });
+
+            }
+            DATA_EXPORT.utilidad = batch;
+            
+            app.render('utilidad_cuota_cant', data.cuota_cantidad);
+            app.render('utilidad_cuota_monto', formatSoles(data.cuota_suma));
+            app.render('utilidad_mora_cant', data.mora_cantidad);
+            app.render('utilidad_mora_monto', formatSoles(data.mora_suma));
+            app.render('utilidad_descuento_cant', data.descuento_cantidad);
+            app.render('utilidad_descuento_monto', formatSoles(data.descuento_suma));
+            app.render('utilidad_adicional_cant', data.adicional_cantidad);
+            app.render('utilidad_adicional_monto', formatSoles(data.adicional_suma));
+            app.render('utilidad_total_neto', formatSoles(data.utilidad_neta));
         } catch(e) {
-            // statements
-            console.log(e);
+            console.error('Error en Module_Utilidad:', e);
         }
     }
 	async function Module_TotalIngresos(){

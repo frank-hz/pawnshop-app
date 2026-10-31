@@ -34,7 +34,7 @@ body {
 	height: 100vh;	
 	display: grid;
 	grid-template-columns: 1fr;
-	grid-template-rows: auto auto 1fr;
+	grid-template-rows: auto auto auto 1fr;
 	grid-template-areas: 
 		'header header' 
 		'front-header front-header' 
@@ -1165,6 +1165,7 @@ body {
 	font-weight: 600;
 	padding: 0 1rem 0 .2rem;
 	font-family: 'Roboto', sans-serif;
+	white-space: nowrap;
 }
 .final-value {
 	font-weight: 600;
@@ -1350,7 +1351,7 @@ body {
 
 
 /* Responsive Class */
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 768px) {
 	.header {
 		flex-direction: column;
 		justify-content: flex-start;
@@ -1499,9 +1500,10 @@ details#export_collapse {
 }
 details#export_collapse summary {
 	padding: .6rem 1.4rem;
-	/* background: #33c481; */
-	background: rgba(16, 124, 65, .1);
-	color: #21a366;
+	background: #21a366;
+	/* background: #33c481; */	
+	/* color: #21a366; */
+	color: #fff;
 	cursor: pointer;
 	font-weight: 600;
 	list-style: none;
@@ -1538,7 +1540,7 @@ details#export_collapse[open]::details-content {
 	opacity: 1;
 }
 .export_form {
-	padding: 0 1.2rem 1rem;
+	padding: 1.2rem 1rem;
     display: flex;
     flex-direction: row;
     align-items: flex-end; /* Alinea los inputs y el botón por la parte inferior */
@@ -1548,21 +1550,22 @@ details#export_collapse[open]::details-content {
 }
 
 
-.form-group {
+.form-group-x {
 	flex: 1; /* Distribuye el espacio equitativamente */
-    min-width: 200px; /* Evita que se reduzcan demasiado en pantallas medianas */
+    /* Evita que se reduzcan demasiado en pantallas medianas */
+	/* min-width: 200px; */
+	max-width: 320px;
     display: flex;
     flex-direction: column;
     gap: 2px 6px;
 }
-.form-group label {
+.form-group-x label {
     font-size: 12px;
     font-weight: 600;
     color: #334155;
 }
-
-.form-group input, 
-.form-group select {
+.form-group-x input, 
+.form-group-x select {
     width: 100%;
     padding: 0 10px;
     font-size: 14px;
@@ -1602,8 +1605,11 @@ details#export_collapse[open]::details-content {
         flex-direction: column;
         align-items: stretch; /* Ocupan todo el ancho disponible */
     }
-    
     .btn-exp {
         width: 100%; 
     }
+	.form-group-x {
+		max-width: 100%;
+	}
+	
 }

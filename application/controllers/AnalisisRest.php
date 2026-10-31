@@ -62,8 +62,6 @@
 			echo json_encode($rsp);
         }
 		function service_generacion_recuperacion(){
-            $file = file_get_contents("php://input");
-			$data_receive = json_decode($file);
 			$filters = json_decode($this->input->raw_input_stream);
 			if (!is_object($filters)) {
 				return $this->output
@@ -75,6 +73,7 @@
 			$gens = $this->AnalisisRestModel->get_all_credito_generado_v2($filters);
 			$recs = $this->AnalisisRestModel->get_all_credito_recuperado_v2($filters);
 			$rems = $this->AnalisisRestModel->get_all_credito_rematado_v2($filters);
+			$clientes = $this->AnalisisRestModel->get_clientes_registrados($filters);
 			
 			$genera_monto    = array_sum(array_column($gens, 'monto_prestado'));
 			$recupera_monto  = array_sum(array_column($recs, 'monto_capital'));
@@ -91,6 +90,7 @@
 				'genera_log'        => $gens,
 				'recupera_log'      => $recs,
 				'remate_log'        => $rems,
+				'clientes' => $clientes
 			];
 
 			$this->output
@@ -138,57 +138,67 @@
         }
         function service_data_utilidad(){
 			try {
-				$file = file_get_contents("php://input");
-				$data_receive = json_decode($file);
-				
-				$result = [
-					'cuota_cantidad' => 0,
-					'cuota_suma' => 0,
-					'mora_cantidad' => 0,
-					'mora_suma' => 0,
-					'adicional_cantidad' => 0,
-					'adicional_suma' => 0,
-					'descuento_cantidad' => 0,
-					'descuento_suma' => 0,
-					'utilidad_neta' => 0,					
-					'log' => []
-				];
-				$pagos_dets = $this->AnalisisRestModel->get_all_pagos($data_receive);
-				$descuentos = $this->AnalisisRestModel->get_all_descuentos($data_receive);
-				$adicionales = $this->AnalisisRestModel->get_all_adicionales($data_receive);
-				foreach ($pagos_dets as $pd) {
+				$filters = json_decode($this->input->raw_input_stream);
+				if (!is_object($filters)) {
+					return $this->output
+					->set_status_header(400)
+					->set_content_type('application/json')
+					->set_output(json_encode([
+						'status' => 'ERR',
+						'message' => 'Solucitud invalida.',
+					]));
+				}
+				$pagos       = $this->AnalisisRestModel->get_all_pagos_v2($filters);
+				$descuentos  = $this->AnalisisRestModel->get_all_descuentos_v2($filters);
+				$adicionales = $this->AnalisisRestModel->get_all_adicionales($filters);
+
+				$cuotaCant = $moraCant = 0;
+				$cuotaSum  = $moraSum  = 0.0;
+				$log = [];
+
+				foreach ($pagos as $pd) {
+					$monto = (float) $pd->monto;
 					if ($pd->tipo === 'CU') {
-						$result['cuota_cantidad']++;
-						$csum = $result['cuota_suma'] + $pd->monto;
-						$result['cuota_suma'] = round($csum, 2);
+						$cuotaCant++;
+						$cuotaSum += $monto;
+					} elseif ($pd->tipo === 'MO') {
+						$moraCant++;
+						$moraSum += $monto;
 					}
-					if ($pd->tipo === 'MO') {
-						$result['mora_cantidad']++;
-						$msum = $result['mora_suma'] + $pd->monto;
-						$result['mora_suma'] = round($msum, 2);
-					}
-					array_push($result['log'], $pd);
+					$log[] = $pd;
 				}
+
+				$descCant = 0;
+				$descSum  = 0.0;
 				foreach ($descuentos as $ds) {
-					$result['descuento_cantidad']++;
-					$dsum = $result['descuento_suma'] + $ds->monto;
-					$result['descuento_suma'] = round($dsum, 2);
-					array_push($result['log'], $ds);
+					$descCant++;
+					$descSum += (float) $ds->monto;
+					$log[] = $ds;
 				}
+
+				$adicCant = 0;
+				$adicSum  = 0.0;
 				foreach ($adicionales as $ad) {
-					$result['adicional_cantidad']++;
-					$asum = $result['adicional_suma'] + $ad->monto;
-					$result['adicional_suma'] = round($asum, 2);
+					$adicCant++;
+					$adicSum += (float) $ad->monto;
 				}
-				$result['cuota_suma'] = round($result['cuota_suma'], 2);
-				$result['mora_suma'] = round($result['mora_suma'], 2);
-				$result['descuento_suma'] = round($result['descuento_suma'], 2);
-				$result['utilidad_neta'] = $result['cuota_suma'] + $result['mora_suma'] - $result['descuento_suma'] + $result['adicional_suma'];
-				$result['utilidad_neta'] = round($result['utilidad_neta'], 2);
+
+				// Redondeo único al final
+				$result = [
+					'cuota_cantidad'     => $cuotaCant,
+					'cuota_suma'         => round($cuotaSum, 2),
+					'mora_cantidad'      => $moraCant,
+					'mora_suma'          => round($moraSum, 2),
+					'adicional_cantidad' => $adicCant,
+					'adicional_suma'     => round($adicSum, 2),
+					'descuento_cantidad' => $descCant,
+					'descuento_suma'     => round($descSum, 2),
+					'utilidad_neta'      => round($cuotaSum + $moraSum + $adicSum - $descSum, 2),
+					'log'                => $log,
+				];
 				echo json_encode([
 					'status' => 'OK',
-					'message' => 'i work and i ok',
-					'ident_filter' => $this->filter_recogn($data_receive),
+					'ident_filter' => $this->filter_recogn($filters),
 					'result' => $result
 				]);
 			} catch (Exception $e) {

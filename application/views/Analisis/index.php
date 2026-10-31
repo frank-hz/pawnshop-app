@@ -12,7 +12,7 @@
 	<script src="<?= base_url() ?>assets/plugins/sheetjs/dist/FileSaver.js"></script>
 	<script src="<?= base_url() ?>assets/plugins/sheetjs/dist/xlsx.full.min.js"></script>
 	<link rel="stylesheet" href="<?= base_url('global-code/css/vaporwave.css'); ?>">
-	<link rel="stylesheet" href="<?= base_url('assets/css/analisis.index.css?v=19012025'); ?>">
+	<link rel="stylesheet" href="<?= base_url('assets/css/analisis.index.css?v=311026'); ?>">
 </head>
 <body>	
 	<div class="wrapper">
@@ -71,11 +71,11 @@
 			<details id="export_collapse">
 				<summary>Exportacion</summary>
 				<form id="form_exportacion" class="export_form">
-					<div class="form-group">
+					<div class="form-group-x">
 						<label for="">Nombre</label>
 						<input type="text" name="nombre" value="electrocash_export">
 					</div>
-					<div class="form-group">
+					<div class="form-group-x">
 						<label for="">Formato</label>
 						<select name="formato">
 							<option value="xlsx">Excel (.xlsx)</option>
@@ -703,7 +703,7 @@
             </div>
         </div>
 	</div>
-	<script src="<?= base_url() ?>js_modules/app.js?v=46784"></script>
-	<script src="<?= base_url() ?>js_modules/analisis/analisis.index.js?v=27012025"></script>
+	<script src="<?= base_url() ?>js_modules/app.js?v=311026"></script>
+	<script src="<?= base_url() ?>js_modules/analisis/analisis.index.js?v=311026"></script>
 </body>
 </html>
