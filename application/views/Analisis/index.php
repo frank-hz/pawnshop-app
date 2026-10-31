@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="<?= base_url() ?>assets/fonts/boxicons 2.1.4/css/boxicons.min.css">
 	<script src="<?= base_url() ?>assets/plugins/sheetjs/dist/FileSaver.js"></script>
 	<script src="<?= base_url() ?>assets/plugins/sheetjs/dist/xlsx.full.min.js"></script>
+	<script src="<?= base_url() ?>assets/plugins/jszip.min.js"></script>
 	<link rel="stylesheet" href="<?= base_url('global-code/css/vaporwave.css'); ?>">
 	<link rel="stylesheet" href="<?= base_url('assets/css/analisis.index.css?v=311026'); ?>">
 </head>

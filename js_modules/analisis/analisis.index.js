@@ -186,7 +186,7 @@
             evt.target.disabled = false;
         }, 500);
     })
-    d.getElementById('form_exportacion')?.addEventListener('submit', evt => {
+    d.getElementById('form_exportacion')?.addEventListener('submit', async evt => {
         evt.preventDefault();
         let form = evt.target;
         let nombre = form.nombre.value.length > 0 
@@ -198,18 +198,61 @@
             return;
         }
 
-        let nombre_archivo = `${nombre}.${formato}`;
 
-        if (confirm('¿Exportar?')) {
-            let work_book = XLSX.utils.book_new();
-            let page_1 = XLSX.utils.json_to_sheet(DATA_EXPORT.generacion_recuperacion ?? []);
-            let page_2 = XLSX.utils.json_to_sheet(DATA_EXPORT.utilidad ?? []);
-            let page_3 = XLSX.utils.json_to_sheet(DATA_EXPORT.clientes ?? []);
-            XLSX.utils.book_append_sheet(work_book, page_1, 'Generacion - Recuperacion');
-            XLSX.utils.book_append_sheet(work_book, page_2, 'Utilidad');
-            XLSX.utils.book_append_sheet(work_book, page_3, 'Clientes Registrados');
-            XLSX.writeFile(work_book, nombre_archivo);
+        const createPage = (data, nombre) => {
+            const pg = XLSX.utils.json_to_sheet(data);
+            const book = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(book, pg, nombre);
+            return XLSX.write(book, {bookType: 'xlsx', type: 'array'});
         }
+        const descargarBLOB = (blob, nombre) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = nombre;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        
+        const zip = new JSZip();
+        // let page_1 = createPage(DATA_EXPORT.generacion_recuperacion, 'Generacion - Recuperacion');
+        // let page_2 = createPage(DATA_EXPORT.generacion_recuperacion, 'Generacion - Recuperacion');
+        zip.file(
+            `Generacion - Recuperacion.${formato}`,
+            createPage(DATA_EXPORT.generacion_recuperacion, 'Generacion - Recuperacion')
+        );
+        zip.file(
+            `Utilidad.${formato}`,
+            createPage(DATA_EXPORT.utilidad, 'Utilidad')
+        );
+
+        const blob = await zip.generateAsync({
+            type: 'blob',
+            compression: 'DEFLATE',
+            compressionOptions: { level: 6 }
+        });
+        descargarBLOB(blob, 'exportacion.zip');
+        // estado.textC
+        
+
+
+
+
+        // let nombre_archivo = `${nombre}.${formato}`;
+
+        // if (confirm('¿Exportar?')) {
+        //     let work_book = XLSX.utils.book_new();
+        //     let page_1 = XLSX.utils.json_to_sheet(DATA_EXPORT.generacion_recuperacion ?? []);
+        //     let page_2 = XLSX.utils.json_to_sheet(DATA_EXPORT.utilidad ?? []);
+        //     let page_3 = XLSX.utils.json_to_sheet(DATA_EXPORT.clientes ?? []);
+        //     XLSX.utils.book_append_sheet(work_book, page_1, 'Generacion - Recuperacion');
+        //     XLSX.utils.book_append_sheet(work_book, page_2, 'Utilidad');
+        //     XLSX.utils.book_append_sheet(work_book, page_3, 'Clientes Registrados');
+        //     XLSX.writeFile(work_book, nombre_archivo);
+        // }
 
     });
     
@@ -873,6 +916,10 @@
 		saveAs(data,filename+'_'+EXCEL_EXTENSION);
 	}
 
+    // EXPORTACION
+    function crear_archivo(){
+
+    }
 
 
 })(document);

@@ -926,7 +926,8 @@
 					cl.cli_paterno as apellido_paterno,
 					cl.cli_materno as apellido_materno,
 					cl.cli_telefono as telefono,
-					cl.cli_email as email
+					cl.cli_email as email,
+					DATE_FORMAT(cl.cli_fecha, '%d/%m/%Y - %h:%i %p') as fecha_creacion
 				FROM cliente cl
 				WHERE
 					cl.cli_codigo > 0 
