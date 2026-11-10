@@ -20,7 +20,11 @@ RUN printf 'deb http://snapshot.debian.org/archive/debian/20221114T000000Z bulls
     && rm -rf /var/lib/apt/lists/*
 
 RUN a2enmod rewrite
-RUN sed -i 's!/var/www/html!/var/www/html!g' /etc/apache2/sites-available/000-default.conf
-WORKDIR /var/www/html
+
+# Composer desde su imagen oficial
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# RUN sed -i 's!/var/www/html!/var/www/html!g' /etc/apache2/sites-available/000-default.conf
 COPY php.ini /usr/local/etc/php/
+WORKDIR /var/www/html
 EXPOSE 80

@@ -168,6 +168,12 @@
 							Analisis
 						</a>
 					</li>
+					<li>
+						<a href="<?= base_url('Exporter') ?>" name="menu-header-item" class="menu-spring-item">
+							<i class="fe fe-download"></i> 
+							Exporter
+						</a>
+					</li>
 				<?php endif ?>
 				<li>
 					<a href="<?= base_url() ?>Remate" name="menu-header-item" class="menu-spring-item">
