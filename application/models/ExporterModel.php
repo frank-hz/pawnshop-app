@@ -1,14 +1,7 @@
 <?php
 class ExporterModel extends CI_Model {
 
-    function validar_orden_busqueda($value = null){
-        $tipos = ['ASC','DESC'];
-        if (empty($value) || $value === null) {
-            return FALSE;
-        }
-        $value = trim(mb_strtoupper($value));
-        return in_array($value, $tipos) ? $value : 'ASC';
-    }
+    
     function get_clientes($prefs = []){
         $orden = $this->validar_orden_busqueda($prefs['orden_tipo'] ?? null);
         $limite = !empty($prefs['limite']) ? $prefs['limite'] : 20;
@@ -33,9 +26,37 @@ class ExporterModel extends CI_Model {
         $this->db->join("ubigeo u", "u.ubi_codigo = c.cli_ubigeo");
         $this->db->limit($limite);
         $this->db->order_by("c.cli_nombres", $orden);
+
+        $this->aplicar_filtros($prefs);
         $res = $this->db->get("cliente c");
         return $res->result_array();
     }
     
 
+
+
+    private function validar_orden_busqueda($value = null){
+        $tipos = ['ASC','DESC'];
+        if (empty($value) || $value === null) {
+            return FALSE;
+        }
+        $value = trim(mb_strtoupper($value));
+        return in_array($value, $tipos) ? $value : 'ASC';
+    }
+    private function aplicar_filtros(array $filtros){
+        $fecha_fija  = $filtros['fecha'];
+        $desde  = $filtros['fecha_desde'];
+        $hasta  = $filtros['fecha_hasta'];
+
+        if ($fecha_fija) {
+            $this->db->where('fecha_creacion', $fecha_fija);
+        }else {
+            if ($desde) {
+                $this->db->where('fecha_creacion' . ' >=', $desde . ' 00:00:00');
+            }
+            if ($hasta) {
+                $this->db->where('fecha_creacion' . ' <=', $hasta . ' 23:59:59');
+            }
+        }
+    }
 }

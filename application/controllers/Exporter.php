@@ -5,23 +5,16 @@ class Exporter extends CI_Controller {
     // maximo de registros procesador por tabla para evitar
     // desbordamiento de la memoria del server y navegador
     const MAX_FILAS = 50000;
-    private $tablas = [
+    const TABLAS = [
         'cliente' => [
-            'columnas' => [
-                'nombres','ape_paterno', 'ape_materno', 'documento',
-                'tipo_documento','email','telefono','fecha_creacion'
-            ],
             'numericos' => [],
-            'filtros' => ['fecha_creacion' => 'fecha']
+            'filtros' => ['fecha_creacion' => 'fecha'],
+            'funcion' => 'get_clientes'
         ],
         'prenda' => [
-            'columnas' => [
-                'descripcion','serial', 'marca', 'modelo', 'quilate',
-                'peso','placa','anio','kilometraje', 'color','estado',
-                'valoracion', 'observacion', 'comentario', 'fecha_creacion'
-            ],
             'numericos' => [],
-            'filtros' => ['fecha_creacion' => 'fecha']
+            'filtros' => ['fecha_creacion' => 'fecha'],
+            'source' => 'get_prendas'
         ],
     ];
 
@@ -36,90 +29,58 @@ class Exporter extends CI_Controller {
         $this->load->view('Layout/footer');
     }
     
+    function test(){
+        echo "tester";
+    }
 
     /** GET exportacion/datos?tablas[]=ventas&tablas[]=clientes&fecha_desde=... */
     function data_exportacion(){
-        $tablas_solicitud = (array) $this->input->get('tablas');
-        $tablas_elegidas = array_values(array_intersect(
-            $tablas_solicitud, array_keys($this->tablas))
-        );
 
-        if (empty($tablas_elegidas)) {
-            return $this->responder(['error' => 'Selecion de tabla vacia.', 400]);
+        $tablas_permitidas = self::TABLAS;
+        $entrada = json_decode($this->input->raw_input_stream,true);
+        if (!is_array($entrada)) {
+            return $this->responder(400, ['error' => 'JSON invalido.']);
         }
-
-        try {
-            $resultado = [];
-            foreach ($tablas_elegidas as $tabla) {
-                $resultado[$tabla] = $this->obtener_datos($tabla);
-            }
-        } catch (LengthException $e) {
-            return $this->responder(['error' => $e->getMessage()], 413);
-        }
-        return $this->responder(['tablas' => $resultado]);
-    }
-    // Consultar tabla usando filtros
-    function obtener_datos($tabla){
-        $config = $thi->tablas[$tabla];
-        $this->db->select( implode(',', $config['columnas'])->from($tabla) );
-        $this->aplicar_filtros($config['filtros']);
-
-        if ($this->input->get('sin_duplicados')) {
-            // Evitar filas identicas o repetidas
-            $his->db->distinct();
-        }
-        $this->db->order_by($config['columnas'][0], 'ASC');
-        $total= $this->db->count_all_results('', FALSE);
-        if ($total > self::MAX_FILAS) {
-            throw new LengthException(
-                "La tabla '$tabla' tiene $total filas - (max. permitido: " . self::MAX_FILAS .').';
-            );
-        }
-
-        $filas = $this->db->get()->result_array();
-        return [
-            'columnas' => $config['columnas'],
-            'filas' => $this->formatear_filas($filas, $config['numericas'])
-        ];
+        $tablas = isset($entrada['tablas']) 
+            ? $entrada['tablas'] : [];
+        $filtros = isset($entrada['filtros']) 
+            ? $entrada['filtros'] : [];
         
-    }
+        if (!is_array($tablas) || $tablas === []) {
+            return $this->responder(400, ['error' => 'Se requiere al menos una tabla.']);
+        }
+        if (!is_array($filtros)) {
+            return $this->responder(400, ['error' => 'Filtros invalidos.']);
+        }
 
-    
-    /** Filtros opcionales (el Query Builder escapa los valores). */
-    private function aplicar_filtros(array $campos){
-        $desde  = $this->input->get('fecha_desde');
-        $hasta  = $this->input->get('fecha_hasta');
-        $estado = $this->input->get('estado');
-        $min    = $this->input->get('monto_min');
-        $max    = $this->input->get('monto_max');
-
-        if (isset($campos['fecha'])) {
-            if ($desde) { $this->db->where($campos['fecha'] . ' >=', $desde . ' 00:00:00'); }
-            if ($hasta) { $this->db->where($campos['fecha'] . ' <=', $hasta . ' 23:59:59'); }
-        }
-        if (isset($campos['estado']) && $estado) {
-            $this->db->where($campos['estado'], $estado);
-        }
-        if (isset($campos['monto'])) {
-            if (is_numeric($min)) { $this->db->where($campos['monto'] . ' >=', $min); }
-            if (is_numeric($max)) { $this->db->where($campos['monto'] . ' <=', $max); }
-        }
-    }
-    /** Convierte cada fila en un array simple y las columnas numéricas en números. */
-    private function formatear_filas(array $filas, array $numericas){
-        foreach ($filas as &$fila) {
-            foreach ($numericas as $col) {
-                if (isset($fila[$col])) { $fila[$col] += 0; }   // "12.50" -> 12.5
+        $result = [];
+        foreach ($tablas as $tb){
+            if (!is_string($tb) || !array_key_exists($tb, $tablas_permitidas)) {
+                return $this->responder(422, ['error' => 'Tabla no permitida.']);
             }
-            $fila = array_values($fila);
+            // $result[$tb] = 
         }
-        return $filas;
+        $tablas = array_values(array_unique( $tablas ));
+
+        // foreach $tablas 
+        echo json_encode($tablas);
+
+        // try {
+        //     $resultado = [];
+        //     foreach ($tablas_elegidas as $tabla) {
+        //         $resultado[$tabla] = $this->obtener_datos($tabla);
+        //     }
+        // } catch (LengthException $e) {
+        //     return $this->responder(['error' => $e->getMessage()], 413);
+        // }
+        // return $this->responder(['tablas' => $resultado]);
     }
-    private function responder(array $datos, $codigo = 200){
-        return $this->output
-            ->set_status_header($codigo)
+    
+    private function responder($code, array $body) {
+        $this->output
+            ->set_status_header($code)
             ->set_content_type('application/json', 'utf-8')
-            ->set_output(json_encode($datos));
+            ->set_output(json_encode($body, JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION));
     }
 
 }
