@@ -6,26 +6,26 @@ class Exporter extends CI_Controller {
     // desbordamiento de la memoria del server y navegador
     const MAX_FILAS = 50000;
     const TABLAS = [
-        'cliente' => [
+        'clientes' => [
             'numericos' => [],
             'filtros' => ['fecha_creacion' => 'fecha'],
-            'funcion' => 'get_clientes'
+            'fx' => 'get_clientes'
         ],
-        'prenda' => [
+        'prendas' => [
             'numericos' => [],
             'filtros' => ['fecha_creacion' => 'fecha'],
-            'source' => 'get_prendas'
+            'fx' => 'get_prendas'
         ],
     ];
 
     function __construct(){
         parent::__construct();
-        // $this->load->helpder();
+        $this->load->model('ExporterModel');
     }
 
     function index(){
         $this->load->view('Layout/header');
-        $this->load->view('exporter/index', ['tablas' => array_keys($this->tablas)]);
+        $this->load->view('exporter/index', ['tablas' => array_keys(self::TABLAS)]);
         $this->load->view('Layout/footer');
     }
     
@@ -58,12 +58,14 @@ class Exporter extends CI_Controller {
             if (!is_string($tb) || !array_key_exists($tb, $tablas_permitidas)) {
                 return $this->responder(422, ['error' => 'Tabla no permitida.']);
             }
-            // $result[$tb] = 
         }
-        $tablas = array_values(array_unique( $tablas ));
-
-        // foreach $tablas 
-        echo json_encode($tablas);
+        $tablas_seleccion = array_values(array_unique( $tablas ));
+        $result = [];
+        foreach ($tablas_seleccion as $ts) { 
+            $config = $tablas_permitidas[$ts];
+            $result[$ts] = $this->ExporterModel->{$config['fx']}(['filtros' => $filtros]); 
+        }
+        echo json_encode($result);
 
         // try {
         //     $resultado = [];
