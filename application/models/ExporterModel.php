@@ -4,7 +4,7 @@ class ExporterModel extends CI_Model {
     
     function get_clientes($prefs = []){
         $orden = $this->validar_orden_busqueda($prefs['orden_tipo'] ?? null);
-        $limite = !empty($prefs['limite']) ? $prefs['limite'] : 20;
+        $limite = !empty($prefs['limite']) ? $prefs['limite'] : 1000;
         
         $this->db->select("c.cli_codigo as id");
         $this->db->select("c.cli_documento as documento");
@@ -23,15 +23,15 @@ class ExporterModel extends CI_Model {
         $this->db->limit($limite);
         $this->db->order_by("c.cli_nombres", $orden);
 
-        if ($prefs['filtros'] && !empty($prefs['filtros'])) {
-            $this->aplicar_filtros("c", $prefs['filtros']);
+        if ($prefs && !empty($prefs)) {
+            $this->aplicar_filtros("c", $prefs);
         }
         $res = $this->db->get("cliente c");
         return $res->result_array();
     }
     function get_prendas($prefs = []){
         $orden = $this->validar_orden_busqueda($prefs['orden_tipo'] ?? null);
-        $limite = !empty($prefs['limite']) ? $prefs['limite'] : 20;
+        $limite = !empty($prefs['limite']) ? $prefs['limite'] : 1000;
         
         $this->db->select("p.pren_codigo as id");
         $this->db->select("DATE_FORMAT(p.fecha_creacion, '%d/%m/%Y') as fecha_creacion");
@@ -63,8 +63,8 @@ class ExporterModel extends CI_Model {
         $this->db->limit($limite);
         $this->db->order_by("p.pren_descripcion", $orden);
 
-        if ($prefs['filtros'] && !empty($prefs['filtros'])) {
-            $this->aplicar_filtros("p", $prefs['filtros']);
+        if ($prefs && !empty($prefs)) {
+            $this->aplicar_filtros("p", $prefs);
         }
         $res = $this->db->get("prenda p");
         return $res->result_array();
@@ -81,10 +81,34 @@ class ExporterModel extends CI_Model {
         $desde = $this->normalizar_fecha($filtros['fecha_desde'] ?? null);
         $hasta = $this->normalizar_fecha($filtros['fecha_hasta'] ?? null);
 
+        // Año y mes (validados)
+        $anio = isset($filtros['anio']) ? (int) $filtros['anio'] : 0;
+        $mes  = isset($filtros['mes'])  ? (int) $filtros['mes']  : 0;
+
+        if ($anio < 1900 || $anio > 2100) {
+            $anio = 0;
+        }
+        if ($mes < 1 || $mes > 12) {
+            $mes = 0;
+        }
+
         // Fecha fija: se convierte en rango [dia 00:00:00, dia siguiente 00:00:00)
         if ($fecha) {
             $desde = $fecha;
             $hasta = $fecha;
+        }
+
+        // Año/mes: solo se aplican si no hay fecha fija ni rango explícito
+        elseif (!$desde && !$hasta && $anio) {
+            if ($mes) {
+                // Mes específico de un año: del día 1 al último día del mes
+                $desde = sprintf('%04d-%02d-01', $anio, $mes);
+                $hasta = date('Y-m-t', strtotime($desde));
+            } else {
+                // Año completo
+                $desde = sprintf('%04d-01-01', $anio);
+                $hasta = sprintf('%04d-12-31', $anio);
+            }
         }
 
         // Protección ante rango invertido
@@ -100,6 +124,11 @@ class ExporterModel extends CI_Model {
             // Límite exclusivo del día siguiente: cubre fracciones de segundo
             $siguiente = date('Y-m-d', strtotime($hasta . ' +1 day'));
             $this->db->where($CAMPO_FECHA . ' <', $siguiente . ' 00:00:00');
+        }
+
+         // Mes sin año: "ese mes en cualquier año" (no se puede expresar como rango)
+        if ($mes && !$anio) {
+            $this->db->where("MONTH($CAMPO_FECHA)", $mes);
         }
     }
     /** Devuelve la fecha en formato Y-m-d o null si es vacía/inválida. */
@@ -120,21 +149,5 @@ class ExporterModel extends CI_Model {
         }
         $value = trim(mb_strtoupper($value));
         return in_array($value, $tipos) ? $value : 'ASC';
-    }
-    private function aplicar_filtros_v1(array $filtros = []){
-        $fecha_fija  = $filtros['fecha'] ?? null;
-        $desde  = $filtros['fecha_desde'] ?? null;
-        $hasta  = $filtros['fecha_hasta'] ?? null;
-
-        if ($fecha_fija) {
-            $this->db->where('fecha_creacion', $fecha_fija);
-        }else {
-            if ($desde) {
-                $this->db->where('fecha_creacion' . ' >=', $desde . ' 00:00:00');
-            }
-            if ($hasta) {
-                $this->db->where('fecha_creacion' . ' <=', $hasta . ' 23:59:59');
-            }
-        }
     }
 }

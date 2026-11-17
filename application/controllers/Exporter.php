@@ -63,9 +63,12 @@ class Exporter extends CI_Controller {
         $result = [];
         foreach ($tablas_seleccion as $ts) { 
             $config = $tablas_permitidas[$ts];
-            $result[$ts] = $this->ExporterModel->{$config['fx']}(['filtros' => $filtros]); 
+            $result[$ts] = $this->ExporterModel->{$config['fx']}($filtros);
+            $result[$ts."_cantidad"] = count($result[$ts]);
         }
         echo json_encode($result);
+
+        // $filtros = 
 
         // try {
         //     $resultado = [];
